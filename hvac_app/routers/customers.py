@@ -11,6 +11,11 @@ def get_customers(db: Session = Depends(get_db)):
     customers = db.query(models.Customers).all()
     return customers
 
+@router.get("/customers/{customer_id}")
+def get_customers(customer_id: int, db: Session = Depends(get_db)):
+    existing_customer = db.query(models.Customers).filter(models.Customers.id == customer_id).first()
+    return existing_customer
+
 @router.post("/customers")
 def create_customers(customer: CustomerCreate, db: Session = Depends(get_db)):
     new_customer = models.Customers(

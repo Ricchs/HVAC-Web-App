@@ -11,6 +11,12 @@ def get_shifts(db: Session = Depends(get_db)):
     shifts = db.query(models.Shifts).all()
     return shifts
 
+
+@router.get("/shifts/{shifts_id}")
+def get_shifts(shifts_id: int, db: Session = Depends(get_db)):
+    existing_shift = db.query(models.Shifts).filter(models.Shifts.id == shifts_id).first()
+    return existing_shift
+
 @router.post("/shifts")
 def create_shifts(shift: ShiftCreate, db: Session = Depends(get_db)):
     new_shift = models.Shifts(

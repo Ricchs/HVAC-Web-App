@@ -11,6 +11,11 @@ def get_suppliers(db: Session = Depends(get_db)):
     suppliers = db.query(models.Suppliers).all()
     return suppliers
 
+@router.get("/suppliers/{supplier_id}")
+def get_suppliers(supplier_id: int, db: Session = Depends(get_db)):
+    existing_supplier = db.query(models.Suppliers).filter(models.Suppliers.id == supplier_id).first()
+    return existing_supplier
+
 @router.post("/suppliers")
 def create_suppliers(supplier: SupplierCreate, db: Session = Depends(get_db)):
     new_supplier = models.Suppliers(

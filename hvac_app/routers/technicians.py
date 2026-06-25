@@ -11,6 +11,11 @@ def get_technicians(db: Session = Depends(get_db)):
     technicians = db.query(models.Technicians).all()
     return technicians
 
+@router.get("/technicians/{technicians_id}")
+def get_technicians(technicians_id: int, db: Session = Depends(get_db)):
+    existing_technician = db.query(models.Technicians).filter(models.Technicians.id == technicians_id).first()
+    return existing_technician
+
 @router.post("/technicians")
 def create_technicians(technician: TechnicianCreate, db: Session = Depends(get_db)):
     new_technician = models.Technicians(

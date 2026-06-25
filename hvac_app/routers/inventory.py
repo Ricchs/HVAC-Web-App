@@ -11,6 +11,12 @@ def get_inventory(db: Session = Depends(get_db)):
     inventory = db.query(models.Inventory).all()
     return inventory
 
+@router.get("/inventory/{items_id}")
+def get_inventory(items_id: int, db: Session = Depends(get_db)):
+    existing_inventory = db.query(models.Inventory).filter(models.Inventory.id == items_id).first()
+    return existing_inventory
+    
+
 @router.post("/inventory")
 def create_inventory(inventory: InventoryCreate, db: Session = Depends(get_db)):
     new_inventory = models.Inventory(

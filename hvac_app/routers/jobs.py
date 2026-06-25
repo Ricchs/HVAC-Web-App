@@ -11,6 +11,11 @@ def get_jobs(db: Session = Depends(get_db)):
     jobs = db.query(models.Jobs).all()
     return jobs
 
+@router.get("/jobs/{jobs_id}")
+def get_jobs(jobs_id: int, db: Session = Depends(get_db)):
+    existing_job = db.query(models.Jobs).filter(models.Jobs.id == jobs_id).first()
+    return existing_job
+
 @router.post("/jobs")
 def create_jobs(job: JobCreate, db: Session = Depends(get_db)):
     new_job = models.Jobs(

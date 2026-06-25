@@ -11,6 +11,11 @@ def get_sales_items(db: Session = Depends(get_db)):
     sales_items = db.query(models.SalesItems).all()
     return sales_items
 
+@router.get("/sales_items/{sales_items_id}")
+def get_sales_items(sales_items_id: int, db: Session = Depends(get_db)):
+    existing_sale_item = db.query(models.SalesItems).filter(models.SalesItems.id == sales_items_id).first()
+    return existing_sale_item
+
 @router.post("/sales_items")
 def create_sales_items (sale_item: SaleItemCreate, db: Session = Depends(get_db)):
     new_sales_item = models.SalesItems(

@@ -11,6 +11,12 @@ def get_payroll(db: Session = Depends(get_db)):
     payroll = db.query(models.Payroll).all()
     return payroll
 
+@router.get("/payroll/{payroll_id}")
+def get_payroll(payroll_id: int, db: Session = Depends(get_db)):
+    existing_payroll = db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
+    return existing_payroll
+
+
 @router.post("/payroll")
 def create_payroll(payroll: PayrollCreate, db: Session = Depends(get_db)):
     new_payroll = models.Payroll(
