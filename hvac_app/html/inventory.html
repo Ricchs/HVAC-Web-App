@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+        <link rel="stylesheet" href="../css/inventory.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+        <!-- sidebar style -->
+         <link rel="stylesheet" href="../css/sidebar.css">
+    </head>
+
+    <body>
+        <div class="app">
+            <div id="sidebar"></div>
+
+            <main class="main-content">
+                <div class="container">
+                    <h1>Inventory</h1>
+                    <p class="page-subtitle">Search and edit items in your inventory</p>
+
+                    <div class="metrics">
+                            <div class="asset">
+                                <p class="metric-label">Total Asset Value</p>
+
+                                <p class="metric-value" id="total-asset">$0.00</p>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <div class="metric-stock">
+                                <div class="product-count">
+                                    <p class="metric-value" id="product-count">0</p>
+                                    <span>Products</span>
+                                </div>
+
+                                <div class="stock-bar">
+                                    <div class="seg green"></div>
+                                    <div class="seg yellow"></div>
+                                    <div class="seg red"></div>
+                                </div>
+
+                                <div class="stock-legend">
+                                    <span class="legend-item"><span class="legend-bar green"></span>In stock: <span id="count-in">0</span></span>
+                                    <span class="legend-item"><span class="legend-bar yellow"></span>Low stock: <span id="count-low">0</span></span>
+                                    <span class="legend-item"><span class="legend-bar red"></span>No stock: <span id="count-out">0</span></span>
+                                </div>
+                            </div>
+                    </div>
+                    
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="search">
+                                    <input type="search" placeholder="Search">
+                                    <i data-lucide="search"></i>
+                                </div>
+
+                                <div class="panel-right-side">
+                                    <select name="select-filter" id="inventory-supplier"><option value="">Supplier</option></select>
+                                    <select name="select-filter" id="inventory-category"><option value="">Category</option></select>
+                                    <select name="select-filter" id="inventory-status"><option value="">Status</option></select>
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Item</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                        <th class="col-price">Bought Price</th>
+                                        <th class="col-price">Sale Price</th>
+                                        <th>Supplier</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-body">
+                                </tbody>
+                            </table>
+
+                            
+                        </div>
+                    
+                        <span id="table-number"></span>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay" id = "add-modal">
+            <div class="modal">
+                <div class="modal-title">
+                    <h2>Add Item</h2>
+                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>
+
+                <hr>
+
+                <form id="add-form">
+                    <label for="file-input" class="add-dropzone">
+                        <i data-lucide="image-plus"></i>
+                        <span> Drag and drop image file, or</span>
+
+                        <div class="fake-drop">
+                            <span> Upload File</span>
+                        </div>
+
+                        <input type="file" id="file-input" accept="image/*" hidden>
+                    </label> 
+
+                    <div class="modal-field">
+                        <span>Item Name</span>
+                        <input name="item" placeholder="Product name" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Supplier</span>
+                        <input name="supplier" list = "supplier-options" placeholder="Supplier" required>
+                        <datalist id="supplier-options">
+                            <option value="Lennox"></option>
+                            <option value="Carrier"></option>
+                        </datalist>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Category</span>
+                        <input name="category" placeholder="Category" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Stock</span>
+                        <input name="stock" type="number" placeholder="Stock" required>
+                    </div>
+
+                    <div class="modal-price">
+                        <div class="price-field">
+                            <span>Item Bought Price</span>
+                            <input name="bought_price" type="number" placeholder="Bought price" required>
+                        </div>
+
+                        <div class="price-field">
+                            <span>Item Sale Price</span>
+                            <input name="sale_price" type="number" placeholder="Sale price" required>
+                        </div>
+                    </div>
+
+                    <hr class="hr-bottom">
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-btn">Cancel</button>
+                        <button type="submit">Upload Inventory Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+
+        <script>lucide.createIcons();</script>
+
+        <!-- Inventory JS -->
+        <script src="../js/inventory.js"></script>
+
+        <!-- Sidebar JS -->
+         <script src="../js/sidebar.js" defer></script>
+    </body>
+</html>

@@ -38,7 +38,7 @@ class InventoryCreate(BaseModel):
     stock: int
     bought_price: float
     sale_price: float
-    suppliers_id: int
+    supplier: str
 
 class InventoryUpdate(BaseModel):
     category: Optional[str] = None
@@ -46,7 +46,7 @@ class InventoryUpdate(BaseModel):
     stock: Optional[int] = None
     bought_price: Optional[float] = None
     sale_price: Optional[float] = None
-    suppliers_id: Optional[int] = None
+    supplier: Optional[str] = None
 
 class TechnicianCreate(BaseModel):
     full_name: str
