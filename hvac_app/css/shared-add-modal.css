@@ -1,0 +1,129 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.modal-overlay.open {
+    visibility: visible;
+    opacity: 1;
+    
+}
+
+.modal {
+    background: #FFFFFF;
+    padding: 24px;
+    width: 500px;
+    min-height: 800px;
+    max-height: 90vh;      
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 8px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    transform: scale(0.9);  
+    
+}
+
+.modal-overlay.open .modal {
+    transform: scale(1);     
+}
+
+.modal-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+#close-modal-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    border-radius: 8px;
+}
+
+#close-modal-btn:hover {
+    background-color: #E5E7EB;
+    border-radius: 8px;
+}
+
+.modal-title h2 {
+    font-size: 20px;
+}
+
+.modal hr {
+    border: 1px solid  #E8E7E7;;
+}
+
+.hr-bottom {
+    margin-top: auto;
+}
+
+#add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+.modal input {
+    padding: 10px;
+    border: 1px solid #C7C7C7;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.modal-field span {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.modal-price {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-price input {
+    width: 100%;
+}
+
+.price-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.modal-actions button {
+    flex: 1;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+}

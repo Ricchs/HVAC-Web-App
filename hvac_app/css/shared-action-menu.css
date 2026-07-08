@@ -1,0 +1,31 @@
+.action-menu {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    z-index: 100;
+}
+
+.action-menu.open {
+    display: flex;
+}
+
+.action-menu button {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+}
+
+.action-menu button:hover {
+    background: #F3F4F6;
+}
+
+.action-delete {
+    color: #DC2626;          
+}

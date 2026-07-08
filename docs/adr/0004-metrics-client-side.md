@@ -13,7 +13,7 @@ The inventory page shows summary metrics at the top: total asset value, product 
 
 ## Decision
 
-Compute the metrics client-side. The page already fetches all items for the table, so the JS reuses that same array: summing `stock * bought_price` for total value, counting items per status, and setting the bar segment widths ( no extra request).
+Compute the metrics client-side. The page already fetches all items for the table, so the JS reuses that same array: summing `stock * bought_price` for total value, counting items per status, and setting the bar segment widths (no extra request).
 
 ## Consequences
 

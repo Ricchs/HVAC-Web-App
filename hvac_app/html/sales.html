@@ -5,6 +5,8 @@
         <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
         <title>Office Dashboard Web App</title>
         <link rel="stylesheet" href="../css/sales.css">
+        <link rel="stylesheet" href="../css/base.css">
+        <link rel="stylesheet" href="../css/base.css">
 
         <!-- Inter font -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
@@ -17,9 +19,53 @@
     </head>
 
     <body>
-        
-        <div id="sidebar"></div>
-        
+        <div class="app">
+            <div id="sidebar"></div>
+            <main class="main-content">
+                <div class="container">
+                    <h1>Sales</h1>
+
+                    <p class="page-subtitle">View and edit sales transactions</p>
+
+                    <div class="metrics">
+
+                    </div>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="search">
+
+                                </div>
+
+                                <div class="sales-filter">
+
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+
+                            </table>
+                        </div>
+
+                        <span id="table-number">
+
+                        </span>
+                    </div>
+
+
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay">
+
+        </div>
+
+        <div class="action-menu" id="action-menu">
+
+        </div>
+
         <!-- Sidebar JS -->
         <script src="../js/sidebar.js" defer></script>
     </body>
