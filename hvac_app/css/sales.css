@@ -1,0 +1,126 @@
+/* -------------------------------------- Below is the metrics bar --------------------------------------*/
+.metrics {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.sales-metric-card {
+    flex: 1;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    padding: 16px;
+    border: 2px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+.metric-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #636363;
+}
+
+.amount-row {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.metric-amount {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #D1FAE5;
+    border-radius: 12px;
+    padding: 3px 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+.metric-trend svg , .metric-trend span{
+    color: #065F46;
+}
+
+.metric-trend svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 3.5px;
+}
+
+.metric-trend span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* -------------------------------------- Below is the modal overlay--------------------------------------*/
+.line-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.line-item-select {
+    flex: 2;
+}
+
+.line-qty {
+    flex-shrink: 0;
+    width: 70px;
+}
+
+.line-price {
+    flex-shrink: 0;
+    width: 100px;
+}
+
+.remove-line {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+}
+
+.remove-line:hover {
+    background-color: #E5E7EB;
+    border-radius: 4px;
+}
+
+.remove-line:active {
+    display: flex;
+    align-items: center;
+    background-color: #D1D5DB;
+    border-radius: 4px;
+}
+
+#add-line-item {
+    gap: 4px;
+    height: 32px;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    padding: 2px 8px;
+    background-color: #FFFFFF;
+    border: 1px solid #C7C7C7;
+    border-radius: 8px;
+    appearance: none;
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+}
+
+#add-line-item:hover {
+    background-color: #E5E7EB;
+    border-radius: 8px;
+}
+
+#add-line-item:active {
+    background-color: #D1D5DB;
+    border-radius: 8px;
+}
+

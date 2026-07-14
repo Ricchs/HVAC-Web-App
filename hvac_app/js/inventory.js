@@ -48,7 +48,7 @@ async function loadItems() {
 
 loadItems();
 
-/* open form when click on add item with button behaviour */
+/* open `add item` form when user clicks on `add item` + button behaviour */
 
 const modal = document.getElementById("add-modal");
 

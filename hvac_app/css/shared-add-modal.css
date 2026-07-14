@@ -1,6 +1,7 @@
 .modal-overlay {
     position: fixed;
     inset: 0;
+    z-index: 1000;
     display: flex;
     background: rgba(0,0,0,0.2);
     backdrop-filter: blur(4px);
@@ -31,6 +32,7 @@
     border-radius: 8px;
     transition: transform 0.15s ease, opacity 0.15s ease;
     transform: scale(0.9);  
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     
 }
 
@@ -122,8 +124,56 @@
 }
 
 .modal-actions button {
+    background: none;
+    border: none;
     flex: 1;
     height: 50px;
     font-size: 16px;
     font-weight: 500;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+#cancel-btn {
+    border: 1px solid #E5E7EB; 
+    border-radius: 8px;
+    color: #4F46E5;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+#cancel-btn:hover {
+    background: #F9FAFB;  ;
+    border-radius: 12px;
+}
+
+.modal-actions button[type="submit"] {
+    background: #4F46E5;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+.modal-actions button[type="submit"]:hover {
+    background: #4338CA;  
+}
+
+.modal select {
+    appearance: none;
+    padding: 10px;
+    border: 1px solid #C7C7C7;
+    border-radius: 8px;
+    font: inherit;
+    background-color: #FFFFFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+.modal select:invalid {
+    color: #9CA3AF;
 }

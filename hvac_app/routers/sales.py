@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from hvac_app.database import get_db
 from hvac_app import models
 from hvac_app.schemas import *
@@ -8,8 +9,25 @@ router = APIRouter()
 
 @router.get("/sales")
 def get_sales(db: Session = Depends(get_db)):
-    sales = db.query(models.Sales).all()
-    return sales
+    results = db.query(
+        models.Sales, 
+        models.Customers.full_name, 
+        func.coalesce(func.sum(models.SalesItems.quantity), 0).label('items_amount'),
+        func.coalesce(func.sum(models.SalesItems.quantity * models.SalesItems.price), 0).label('items_total'),
+    ).join(models.Customers, models.Sales.customers_id == models.Customers.id).outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id).group_by(models.Sales.id, models.Customers.full_name).all()
+    
+    return [
+        {
+            "id": sales.id,
+            "customers_name": full_name,
+            "date": sales.date,
+            "items_amount": items_amount,
+            "items_total": items_total,
+            "payment_method": sales.payment_method,
+            "payment_status": sales.payment_status
+        }
+        for sales, full_name, items_amount, items_total in results
+    ]
 
 @router.get("/sales/{sales_id}")
 def get_sales(sales_id: int, db: Session = Depends(get_db)):
@@ -26,6 +44,16 @@ def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):
     )
 
     db.add(new_sale)
+    db.flush()
+
+    for item in sale.items:
+        db.add(models.SalesItems(
+            sales_id = new_sale.id,
+            items_id = item.items_id,
+            quantity = item.quantity,
+            price = item.price
+        ))
+
     db.commit()
     db.refresh(new_sale)
     return new_sale

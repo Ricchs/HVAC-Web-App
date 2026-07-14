@@ -60,11 +60,17 @@ class TechnicianUpdate(BaseModel):
     email: Optional[str] = None
     hourly_rate: Optional[float] = None
 
+class SaleItemIn(BaseModel):
+    items_id: int
+    quantity: int
+    price: float
+
 class SaleCreate(BaseModel):
     customers_id: int
     date: date
     payment_method: str
     payment_status: str
+    items: list[SaleItemIn]
 
 class SaleUpdate(BaseModel):
     customers_id: Optional[int] = None

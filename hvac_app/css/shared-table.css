@@ -1,12 +1,14 @@
 .table-panel {
     background-color: #FFFFFF;
     border-radius: 12px;
+    border: 2px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
 }
 
 .table-container {
     width: 97%;
     margin: 0 auto;
-    max-height: calc(100vh - 283px);
+    max-height: calc(100vh - 291px);
     overflow-y: auto;
 }
 
@@ -29,6 +31,7 @@
     border: 1px solid #C7C7C7;
     border-radius: 8px;
     padding: 0 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
 }
 
 .search input {
@@ -69,6 +72,8 @@
     border-radius: 8px;
     appearance: none;
     transition: background-color 0.15s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
 }
 
 .filter-item {
@@ -174,6 +179,10 @@ tbody td{
     transform: translateY(1px);
 }
 
+.badge {
+    box-shadow: 0 2px 3px rgba(0,0,0,0.08);
+}
+
 .badge-in {
     display: inline-flex;
     align-items: center;
@@ -237,4 +246,15 @@ thead th:last-child {
     font-size: 16px;
     font-weight: 500;
     margin: 30px 0 20px 30px;
+}
+
+.table-container::-webkit-scrollbar {
+    width: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 999px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: transparent;
 }

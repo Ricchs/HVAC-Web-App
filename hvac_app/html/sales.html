@@ -4,9 +4,13 @@
         <meta charset="utf-8">
         <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
         <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-add-modal.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
         <link rel="stylesheet" href="../css/sales.css">
-        <link rel="stylesheet" href="../css/base.css">
-        <link rel="stylesheet" href="../css/base.css">
 
         <!-- Inter font -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
@@ -14,8 +18,6 @@
         <!-- Lucide icons -->
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
-        <!-- sidebar style -->
-         <link rel="stylesheet" href="../css/sidebar.css">
     </head>
 
     <body>
@@ -28,23 +30,104 @@
                     <p class="page-subtitle">View and edit sales transactions</p>
 
                     <div class="metrics">
+                        <div class="sales-metric-card">
+                            <p class="metric-title">Total Sales Value (Month)</p>
 
+                            <div class="amount-row">
+                                <p class="metric-amount" id="total-sales">$67,000</p>
+
+                                <div class="metric-trend">
+                                    <i data-lucide="trending-up"></i>
+                                    <span id="sales-trend-percentage">70%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sales-metric-card">
+                            <p class="metric-title">Total Revenue (Month)</p>
+
+                            <div class="amount-row">
+                                <p class="metric-amount" id="total-revenue">$67,000</p>
+
+                                <div class="metric-trend">
+                                    <i data-lucide="trending-up"></i>
+                                    <span id="revenue-trend-percentage">70%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sales-metric-card">
+                            <p class="metric-title">Total Profit (Month)</p>
+
+                            <div class="amount-row">
+                                <p class="metric-amount" id="total-profits">$67,000</p>
+
+                                <div class="metric-trend">
+                                    <i data-lucide="trending-up"></i>
+                                    <span id="total-profits-trend-percentage">70%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sales-metric-card">
+                            <p class="metric-title">Number of Sales (Month)</p>
+
+                            <div class="amount-row">
+                                <p class="metric-amount" id="number-sales">$67,000</p>
+
+                                <div class="metric-trend">
+                                    <i data-lucide="trending-up"></i>
+                                    <span id="number-sales-trend-percentage">70%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sales-metric-card">
+                            <p class="metric-title">Unpaid Sales</p>
+
+                            <div class="amount-row">
+                                <p class="metric-amount" id="unpaid-sales">$67,000</p>
+
+                                <div class="metric-trend">
+                                    <i data-lucide="trending-up"></i>
+                                    <span id="unpaid-sales-trend-percentage">70%</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-panel">
                         <div class="table-container">
                             <div class="top-part">
                                 <div class="search">
-
+                                    <input type="search" placeholder="Search">
+                                    <i data-lucide="search"></i>
                                 </div>
 
-                                <div class="sales-filter">
-
+                                <div class="panel-right-side">
+                                    <select name="select-filter" id="sale-date"><option value="">Date Range</option></select>
+                                    <select name="select-filter" id="sale-status"><option value="">Status</option></select>
+                                    <select name="select-filter" id="sale-customer"><option value="">Customer</option></select>
+                                    <select name="select-filter" id="sale-payment-method"><option value="">Payment Method</option></select>
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Sale</button>
                                 </div>
                             </div>
 
                             <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Customer Name</th>
+                                        <th>Date</th>
+                                        <th>Items</th>
+                                        <th>Amount</th>
+                                        <th>Payment Method</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
 
+                                <tbody id="sales-body"></tbody>
                             </table>
                         </div>
 
@@ -52,13 +135,75 @@
 
                         </span>
                     </div>
-
-
                 </div>
             </main>
         </div>
 
-        <div class="modal-overlay">
+        <div class="modal-overlay" id="add-modal">
+            <div class="modal">
+                <div class="modal-title">
+                    <h2>Sale Details</h2>
+                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>        
+                
+                <hr>
+
+                <form id="add-sale-form">
+                    <div class="modal-field">
+                        <span>Customer Name</span>
+                        <select name="customers_id" required>
+                            <option value="" disabled selected hidden>Select customer</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Date</span>
+                        <input type="date" name="date" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Payment Method</span>
+                        <select name="payment_method" required>
+                            <option value="" disabled selected hidden>Select method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Debit">Debit</option>
+                            <option value="Credit">Credit</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="E-transfer">E-transfer</option>
+                            <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Payment Status</span>
+                        <select name="payment_status" required>
+                            <option value="" disabled selected hidden>Select status</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Partial">Partially Paid</option>
+                        </select>
+                    </div>
+
+                    <div class="items-field">
+                        <span>Items</span>
+
+                        <div id="line-items">
+                        </div>
+
+                        <button type="button" id="add-line-item" class="filter-item"><i data-lucide="plus"></i>Add Item</button>
+                    </div>
+
+                    <p>Total: <span id="sale-total">$0.00</span></p>
+
+                    <hr class="hr-bottom">
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-btn">Cancel</button>
+                        <button type="submit">Save New Sale</button>
+                    </div>
+                </form>
+            </div>
 
         </div>
 
@@ -68,5 +213,8 @@
 
         <!-- Sidebar JS -->
         <script src="../js/sidebar.js" defer></script>
+
+        <!-- page JS -->
+        <script src="../js/sales.js"></script>
     </body>
 </html>
