@@ -34,6 +34,15 @@ def get_sales(sales_id: int, db: Session = Depends(get_db)):
     existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
     return existing_sale
 
+@router.get("/sales/{sales_id}/items")
+def get_sales(sales_id: int, db: Session = Depends(get_db)):
+    result = db.query(models.SalesItems, models.Inventory.item).join(models.Inventory, models.SalesItems.items_id == models.Inventory.id).filter(models.SalesItems.sales_id == sales_id).all()
+
+    return [
+        {"item": item_name, "quantity": sale.quantity, "price": sale.price, "subtotal": sale.quantity * sale.price}
+        for sale, item_name in result
+    ]
+
 @router.post("/sales")
 def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):
     new_sale = models.Sales (
@@ -72,7 +81,10 @@ def update_sales(sales_id: int, sale: SaleUpdate, db: Session = Depends(get_db))
 
 @router.delete("/sales/{sales_id}")
 def delete_sales(sales_id: int, db: Session = Depends(get_db)):
+    db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).delete()
+
     existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
     db.delete(existing_sale)
+    
     db.commit()
     return {"message": "Sale deleted successfully"}

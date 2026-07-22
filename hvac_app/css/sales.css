@@ -124,3 +124,21 @@
     border-radius: 8px;
 }
 
+/* -------------------------------------- Below is the details panel--------------------------------------*/
+#sales-details-panel {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    background: #FFFFFF;
+    width: 40vw;
+    height: 100%;
+    top: 0; 
+    right: 0;
+    z-index: 1000;
+    transform: translateX(100%);
+    transition: transform 0.15s ease;
+}
+
+#sales-details-panel.open {
+    transform: translateX(0);
+}

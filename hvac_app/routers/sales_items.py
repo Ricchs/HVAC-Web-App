@@ -44,6 +44,7 @@ def update_sales_items(sales_items_id: int, sale_item: SaleItemUpdate, db: Sessi
 
 @router.delete("/sales_items/{sales_items_id}")
 def delete_sales_items(sales_items_id: int, db: Session = Depends(get_db)):
+    
     existing_sale_item = db.query(models.SalesItems).filter(models.SalesItems.id == sales_items_id).first()
 
     db.delete(existing_sale_item)

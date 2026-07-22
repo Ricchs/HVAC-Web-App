@@ -1,3 +1,4 @@
+import {money} from './helper_functions.js'
 /* load sales */
 async function loadSales() {
     const response = await fetch('/sales');
@@ -8,7 +9,7 @@ async function loadSales() {
             <td>${i.customers_name}</td>
             <td>${i.date}</td>
             <td><button class="sales-items-details" data-id="${i.id}">${i.items_amount} Units</button></td>
-            <td>$${i.items_total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td>$${money(i.items_total)}</td>
             <td>${i.payment_method}</td>
             <td>${i.payment_status}</td>
             <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
@@ -20,7 +21,80 @@ async function loadSales() {
 
 loadSales()
 
+/* row details when user clicks on item units */
+const detailsPanel = document.getElementById("sales-details-panel")
+document.getElementById('sales-body').addEventListener('click', async(e) => {
+    const btn = e.target.closest('.sales-items-details');
+
+    if (!btn) return;
+
+    const response = await fetch(`/sales/${btn.dataset.id}/items`);
+    const items = await response.json()
+
+    const itemsHTML = items.map(i => 
+        `<div>Item: ${i.item} (x${i.quantity}) Unit Price: ${i.price} Subtotal: ${i.subtotal}</div>`
+    ).join('')
+
+    const subtotal = items.reduce((sum, i) => sum + i.subtotal, 0)
+
+    document.querySelector('.sales-details').innerHTML = itemsHTML + 
+    `<div>Subtotal: $${money(subtotal)}</div>` +
+    `<div>GST: $${money(subtotal*0.05)}</div>` + 
+    `<div>QST: $${money(subtotal*0.09975)}</div>` +
+    `<div>Total: $${money(subtotal*1.14975)}</div>`
+
+    detailsPanel.classList.add('open')
+})
+
+
+
 /* table row action */
+const actionMenu = document.getElementById('action-menu');
+let activeSaleId = null;
+let editingId = null;
+
+document.getElementById('sales-body').addEventListener('click', (e) => {
+    const btn = e.target.closest('.row-action-btn');
+    
+    if (!btn) return;
+
+    activeSaleId = btn.dataset.id
+
+    const rect = btn.getBoundingClientRect();
+
+    actionMenu.style.top = `${rect.bottom + window.scrollY}px`
+    actionMenu.style.left = `${rect.left + window.scrollX - 50}px`
+
+    actionMenu.classList.add('open')
+})
+
+/* table row action close */
+document.addEventListener('click', (e) => {
+        if (!e.target.closest('.row-action-btn') && !e.target.closest('.action-menu')) {
+            actionMenu.classList.remove('open')
+            activeSaleId = null
+        }   
+})
+
+/* table row action edit */
+
+
+
+/* table row action delete */
+document.querySelector('.action-delete').addEventListener('click', async(e) => {
+    if (!confirm('Delete this sale?')) return;
+
+    const response = await fetch(`/sales/${activeSaleId}`, {method: 'DELETE'});
+
+    if (response.ok) {
+        loadSales();
+    } else {
+        const err = await response.json()
+        alert(err.detail)
+    }
+
+    actionMenu.classList.remove('open');
+})
 
 
 /* open `add sale` form when user clicks on `add sale` + button behaviour */
