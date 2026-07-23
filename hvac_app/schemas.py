@@ -6,7 +6,11 @@ class CustomerCreate(BaseModel):
     full_name: str
     phone: str
     company_name: str
-    address: str
+    street_address: str
+    city: str
+    postal_code: str
+    country: str
+    province: str
     email: str
     rbq: str
     ccq: str
@@ -15,7 +19,11 @@ class CustomerUpdate(BaseModel):
     full_name: Optional[str] = None
     phone: Optional[str] = None
     company_name: Optional[str] = None
-    address: Optional[str] = None
+    street_address: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
+    province: Optional[str] = None
     email: Optional[str] = None
     rbq: Optional[str] = None
     ccq: Optional[str] = None

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-add-modal.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/customers.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    </head>
+
+    <body>
+        <div class="app">
+            <div id="sidebar"></div>
+            <main class="main-content">
+                <div class="container">
+                    <h1>Customers</h1>
+
+                    <p class="page-subtitle">View and add new customers</p>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="search">
+                                    <input type="search" placeholder="Search">
+                                    <i data-lucide="search"></i>
+                                </div>
+
+                                <div class="panel-right-side">
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Customer</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <th>Company</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Total Orders</th>
+                                        <th>Sales</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="customers-body"></tbody>
+                            </table>
+                        </div>
+
+                        <span id="table-number">
+
+                        </span>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay" id="add-modal">
+            <div class="modal">
+                <div class="modal-title">
+                    <h2>Customer Details</h2>
+                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>
+
+                <hr>
+
+                <form class='form' id="add-customer-form">
+                        <div class="modal-field">
+                            <span>Customer Full Name</span>
+                            <input type="text" name="full_name" placeholder="Customer Name" required>
+                        </div>
+
+                        <div class="modal-field">
+                            <span>Company Name</span>
+                            <input type="text" name="company_name" placeholder="Company Name">
+                        </div>
+
+                        <div class="modal-field">
+                            <span>Phone Number</span>
+                            <input type="tel" name="phone" placeholder="(123) 123-1234" required>
+                        </div>
+
+                        <div class="modal-field">
+                            <span>Email Address</span>
+                            <input type="text" name="email" placeholder="name@email.com">
+                        </div>
+
+                        <div class="modal-field">
+                            <span>Street Address</span>
+                            <input type="text" name="street_address" placeholder="1234 Street Bld">
+                        </div>
+
+                        <div class="modal-row">
+                            <div class="modal-field" id="city">
+                                <span>City</span>
+                                <input type="text" name="city" placeholder="Montreal">
+                            </div>
+
+                            <div class="modal-field" id="postal">
+                                <span>Postal Code</span>
+                                <input type="text" name="postal_code" placeholder="A1B 2C3">
+                            </div>
+                        </div>
+
+                        <div class="modal-row">
+                            <div class="modal-field" id="country">
+                                <span>Country</span>
+                                <select name="country">
+                                    <option value="" disabled selected hidden>Select Country</option>
+                                    <option value="Canada">Canada</option>
+                                </select>
+                            </div>
+                            <div class="modal-field" id="province">
+                                <span>Province</span>
+                                <select name="province">
+                                        <option value="" disabled selected hidden>Select Province</option>
+                                        <option value="AB">Alberta</option>
+                                        <option value="BC">British Columbia</option>
+                                        <option value="MB">Manitoba</option>
+                                        <option value="NB">New Brunswick</option>
+                                        <option value="NL">Newfoundland and Labrador</option>
+                                        <option value="NS">Nova Scotia</option>
+                                        <option value="NT">Northwest Territories</option>
+                                        <option value="NU">Nunavut</option>
+                                        <option value="ON">Ontario</option>
+                                        <option value="PE">Prince Edward Island</option>
+                                        <option value="QC">Quebec</option>
+                                        <option value="SK">Saskatchewan</option>
+                                        <option value="YT">Yukon</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-field">
+                            <span>RBQ</span>
+                            <input type="text" name="rbq" placeholder="Optional">
+                        </div>
+
+                        <div class="modal-field">
+                            <span>CCQ</span>
+                            <input type="text" name="ccq" placeholder="Optional">
+                        </div>
+
+                        <hr class="hr-bottom">
+
+                        <div class="modal-actions">
+                            <button type="button" id="cancel-btn">Cancel</button>
+                            <button type="submit">Save New Customer</button>
+                        </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+  
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+
+        <!-- page JS -->
+        <script src="../js/customers.js" type="module"></script>
+    </body>
+</html>

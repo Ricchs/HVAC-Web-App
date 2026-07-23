@@ -1,3 +1,4 @@
+import * as helpers from "./helper_functions";
 /* load table */
 
 async function loadItems() {
@@ -99,37 +100,16 @@ form.addEventListener('submit', async(e) => {
     }
 });
 
-/* action button for rows */
+/* action button for rows */;
+helpers.rowAction('inventory-body')
 
-const actionMenu = document.getElementById("action-menu");
-let activeItemId = null;
-let editingId = null;
-
-document.getElementById("inventory-body").addEventListener('click', (e) => {
-    const btn = e.target.closest('.row-action-btn')
-    if (!btn) return;
-
-    activeItemId = btn.dataset.id;
-
-    const rect = btn.getBoundingClientRect();
-
-    actionMenu.style.top = `${rect.bottom + window.scrollY}px`
-    actionMenu.style.left = `${rect.left + window.scrollX - 50}px`
-
-    actionMenu.classList.add('open')
-})
-
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.row-action-btn') && !e.target.closest('.action-menu')) {
-        actionMenu.classList.remove('open')
-    }
-})
+helpers.rowClose();
 
 /* when user clicks on edit */
 
 document.querySelector(".action-edit").addEventListener('click', async () => {
-    editingId = activeItemId;
-    actionMenu.classList.remove('open');
+    editingId = helpers.getActiveId();
+    helpers.rowForceClose();
 
     const response = await fetch(`/inventory/${editingId}`);
     const item = await response.json();
@@ -155,9 +135,9 @@ document.querySelector(".action-delete").addEventListener('click', async (e) => 
         loadItems();
     } else {
         const err = await response.json();
-        alert(err.detail)
+        alert(err.detail);
     }
     
-    actionMenu.classList.remove('open');
+    helpers.rowForceClose();
 })
 

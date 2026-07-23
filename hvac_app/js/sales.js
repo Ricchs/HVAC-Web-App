@@ -1,4 +1,4 @@
-import {money} from './helper_functions.js'
+import * as helpers from './helper_functions.js'
 /* load sales */
 async function loadSales() {
     const response = await fetch('/sales');
@@ -49,32 +49,10 @@ document.getElementById('sales-body').addEventListener('click', async(e) => {
 
 
 /* table row action */
-const actionMenu = document.getElementById('action-menu');
-let activeSaleId = null;
-let editingId = null;
-
-document.getElementById('sales-body').addEventListener('click', (e) => {
-    const btn = e.target.closest('.row-action-btn');
-    
-    if (!btn) return;
-
-    activeSaleId = btn.dataset.id
-
-    const rect = btn.getBoundingClientRect();
-
-    actionMenu.style.top = `${rect.bottom + window.scrollY}px`
-    actionMenu.style.left = `${rect.left + window.scrollX - 50}px`
-
-    actionMenu.classList.add('open')
-})
+helpers.rowAction('sales-body')
 
 /* table row action close */
-document.addEventListener('click', (e) => {
-        if (!e.target.closest('.row-action-btn') && !e.target.closest('.action-menu')) {
-            actionMenu.classList.remove('open')
-            activeSaleId = null
-        }   
-})
+helpers.rowClose()
 
 /* table row action edit */
 
@@ -93,7 +71,7 @@ document.querySelector('.action-delete').addEventListener('click', async(e) => {
         alert(err.detail)
     }
 
-    actionMenu.classList.remove('open');
+    helpers.rowForceClose()
 })
 
 

@@ -4,55 +4,28 @@
         <meta charset="utf-8">
         <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
         <title>Office Dashboard Web App</title>
-        <link rel="stylesheet" href="../css/base.css">
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
 
         <!-- Inter font -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
         <!-- Lucide icons -->
         <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     </head>
 
     <body>
         <div class="app">
-            <aside class="sidebar">
-                <button class="sidebar-close"><i data-lucide="panel-left"></i></button>
-                
-                <div class="sidebar-logo">
-                    <img src="logo" alt="logo">
-                    <span>Caobec</span>
-                </div>
-
-                
-
-                <hr>
-
-                <nav class="sidebar-tabs">
-                    <ul>
-                        <li><a href="index.html"><i data-lucide="house"></i>Home</a></li>
-                        <li><a href="inventory.html"><i data-lucide="package-search"></i>Inventory</a></li>
-                        <li><a href="customer.html"><i data-lucide="users-round"></i>Customers</a></li>
-                        <li><a href="jobs.html"><i data-lucide="briefcase"></i>Jobs</a></li>
-                        <li><a href="sales.html"><i data-lucide="receipt"></i>Sales</a></li>
-                        <li><a href="technicians.html"><i data-lucide="hard-hat"></i>Technicians</a></li>
-                        <li><a href="history.html"><i data-lucide="clock"></i>History</a></li>
-                        <li><a href="analytics.html"> <i data-lucide="chart-column-increasing"></i>Analytics</a></li>
-                    </ul>
-                </nav>
-
-                <div class="sidebar-bottom">
-                    <button class="sidebar-btn"><i data-lucide="bell-ring"></i>Notifications</button>
-                    <button class="sidebar-btn"><i data-lucide="circle-user"></i>User</button>
-                    <button class="sidebar-btn"><i data-lucide="settings"></i>Settings</button>
-                </div>
-            </aside>
-
-           
-
+            <aside id="sidebar"></aside>
             <main class="main-content">
-
+                
             </main>
         </div>
 
         <script>lucide.createIcons();</script>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
     </body>
 </html>

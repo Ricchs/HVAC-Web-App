@@ -1,4 +1,4 @@
-from sqlalchemy import *
+from sqlalchemy import Column, Integer, Text, Numeric, Date, Time, ForeignKey
 from hvac_app.database import Base
 
 class Suppliers(Base):
@@ -25,7 +25,11 @@ class Customers(Base):
     full_name = Column(Text)
     phone = Column(Text)
     company_name = Column(Text)
-    address = Column(Text)
+    street_address = Column(Text)
+    city = Column(Text)
+    postal_code = Column(Text)
+    country = Column(Text)
+    province = Column(Text)
     email = Column(Text)
     rbq = Column(Text)
     ccq = Column(Text)

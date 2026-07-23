@@ -1,0 +1,24 @@
+.table-panel {
+    margin-top: 20px;
+}
+
+.modal-row {
+    display: flex;
+    gap: 12px;
+}
+
+#city {
+    flex: 2;
+}
+
+#postal {
+    flex: 1;
+}
+
+#country {
+    flex: 2;
+}
+
+#province {
+    flex: 1;
+}
