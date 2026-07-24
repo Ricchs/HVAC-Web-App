@@ -9,7 +9,7 @@ async function loadSales() {
             <td>${i.customers_name}</td>
             <td>${i.date}</td>
             <td><button class="sales-items-details" data-id="${i.id}">${i.items_amount} Units</button></td>
-            <td>$${money(i.items_total)}</td>
+            <td>$${helpers.money(i.items_total)}</td>
             <td>${i.payment_method}</td>
             <td>${i.payment_status}</td>
             <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
@@ -38,10 +38,10 @@ document.getElementById('sales-body').addEventListener('click', async(e) => {
     const subtotal = items.reduce((sum, i) => sum + i.subtotal, 0)
 
     document.querySelector('.sales-details').innerHTML = itemsHTML + 
-    `<div>Subtotal: $${money(subtotal)}</div>` +
-    `<div>GST: $${money(subtotal*0.05)}</div>` + 
-    `<div>QST: $${money(subtotal*0.09975)}</div>` +
-    `<div>Total: $${money(subtotal*1.14975)}</div>`
+    `<div>Subtotal: $${helpers.money(subtotal)}</div>` +
+    `<div>GST: $${helpers.money(subtotal*0.05)}</div>` + 
+    `<div>QST: $${helpers.money(subtotal*0.09975)}</div>` +
+    `<div>Total: $${helpers.money(subtotal*1.14975)}</div>`
 
     detailsPanel.classList.add('open')
 })
@@ -62,7 +62,7 @@ helpers.rowClose()
 document.querySelector('.action-delete').addEventListener('click', async(e) => {
     if (!confirm('Delete this sale?')) return;
 
-    const response = await fetch(`/sales/${activeSaleId}`, {method: 'DELETE'});
+    const response = await fetch(`/sales/${helpers.getActiveId()}`, {method: 'DELETE'});
 
     if (response.ok) {
         loadSales();

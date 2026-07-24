@@ -11,6 +11,27 @@ export function formatPhone(raw) {
     return phone
 }
 
+export function formatDate(raw) {
+    return new Date(raw).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'})
+}
+
+export function formatRelativeDate(raw) {
+    const shift = new Date(raw);
+    const now = new Date();
+
+    const days = Math.round((now - shift) / (1000 * 60 * 60 * 24))
+
+    let value, unit;
+
+    if (days < 30) { value = days; unit = 'day'; }
+    else if (days < 365) { value = Math.round(days/30); unit = 'month'; }
+    else { value = Math.round(days/365); unit = 'year'; }
+
+    const rtf = new Intl.RelativeTimeFormat('en', {numeric: 'auto'});
+    const text = rtf.format(-value, unit);
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 const actionMenu = document.getElementById('action-menu');
 let activeId = null;
 
@@ -49,3 +70,8 @@ export function rowForceClose() {
 export function getActiveId() {
     return activeId
 }
+
+export function addModalBehaviour(modal) {
+    document.querySelector('.add-item').addEventListener('click', () => {
+        modal.classList.add('open')
+    })}

@@ -11,9 +11,9 @@ async function loadCustomers() {
     document.getElementById("customers-body").innerHTML = customers.map(i => `
         <tr>
             <td>${i.full_name}</td>
-            <td>${i.company_name}</td>
+            <td>${i.company_name || '-'}</td>
             <td>${helpers.formatPhone(i.phone)}</td>
-            <td>${i.email}</td>
+            <td>${i.email|| '-'}</td>
             <td>${i.order_count}</td>
             <td>$${helpers.money(i.total_spent)}</td>
             <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
@@ -73,6 +73,7 @@ document.querySelector('.action-delete').addEventListener('click', async(e) => {
 })
 
 /* add modal */
+helpers.addModalBehaviour()
 
 function closeModal() {
     form.reset();
@@ -80,17 +81,15 @@ function closeModal() {
     editingId = null;
 }
 
-document.querySelector('.add-item').addEventListener('click', () => {
-    modal.classList.add('open')
-})
-
 document.getElementById("cancel-btn").addEventListener('click', () => {
-    closeModal();
-});
+        closeModal();
+    });
 
 document.getElementById("close-modal-btn").addEventListener('click', () => {
-    closeModal();
-});
+        closeModal();
+    });
+
+
 
 /* add modal submit */
 form.addEventListener('submit', async(e) => {

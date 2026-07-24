@@ -1,6 +1,8 @@
-import * as helpers from "./helper_functions";
-/* load table */
+import * as helpers from "./helper_functions.js";
 
+let editingId = null;
+
+/* load table */
 async function loadItems() {
     const response = await fetch('/inventory');
     const items = await response.json();
@@ -17,8 +19,8 @@ async function loadItems() {
             <td>${i.category}</td>
             <td>${i.stock}</td>
             <td><span class="badge badge-${i.status_code}">${i.status}</span></td>
-            <td class="col-price">$${i.bought_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="col-price">$${i.sale_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            <td class="col-price">$${helpers.money(i.bought_price)}</td>
+            <td class="col-price">$${helpers.money(i.sale_price)}</td>
             <td>${i.supplier}</td>
             <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
         </tr>`).join('');
@@ -26,7 +28,7 @@ async function loadItems() {
     document.getElementById("product-count").textContent = items.length;
 
     const totalAsset = items.reduce((sum, i) => sum + i.stock * i.bought_price, 0)
-    document.getElementById("total-asset").textContent = `$${totalAsset.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById("total-asset").textContent = `$${helpers.money(totalAsset)}`;
 
     const inStock  = items.filter(i => i.status_code === 'in').length;
     const lowStock = items.filter(i => i.status_code === 'low').length;
@@ -129,7 +131,7 @@ document.querySelector(".action-edit").addEventListener('click', async () => {
 
 document.querySelector(".action-delete").addEventListener('click', async (e) => {
     if (!confirm('Delete this item?')) return;
-    const response = await fetch(`/inventory/${activeItemId}`, {method: 'DELETE'});
+    const response = await fetch(`/inventory/${helpers.getActiveId()}`, {method: 'DELETE'});
     
     if (response.ok) {
         loadItems();

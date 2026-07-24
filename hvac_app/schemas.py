@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date, time
+from datetime import date as date_type, time
 
 class CustomerCreate(BaseModel):
     full_name: str
@@ -75,14 +75,14 @@ class SaleItemIn(BaseModel):
 
 class SaleCreate(BaseModel):
     customers_id: int
-    date: date
+    date: date_type
     payment_method: str
     payment_status: str
     items: list[SaleItemIn]
 
 class SaleUpdate(BaseModel):
     customers_id: Optional[int] = None
-    date: Optional[date] = None
+    date: Optional[date_type] = None
     payment_method: Optional[str] = None
     payment_status: Optional[str] = None
 
@@ -102,32 +102,32 @@ class ShiftCreate(BaseModel):
     technicians_id: int
     start_time: time 
     end_time: time
-    date: date
+    date: date_type
     total_pay: float
 
 class ShiftUpdate(BaseModel):
     technicians_id: Optional[int] = None
     start_time: Optional[time] = None 
     end_time: Optional[time] = None
-    date: Optional[date] = None
+    date: Optional[date_type] = None
     total_pay: Optional[float] = None
 
 class PayrollCreate(BaseModel):
     technicians_id: int
     paid_status: str
-    last_paid_date: date
+    last_paid_date: date_type
 
 class PayrollUpdate(BaseModel):
     technicians_id: Optional[int] = None
     paid_status: Optional[str] = None
-    last_paid_date: Optional[date] = None
+    last_paid_date: Optional[date_type] = None
 
 class JobCreate(BaseModel): 
     customers_id: int
     job_type: str
     technicians_id: int
     labour_cost: float
-    scheduled_date: date
+    scheduled_date: date_type
     completion_status: str
     payment_method: str
     payment_status: str  
@@ -137,7 +137,7 @@ class JobUpdate(BaseModel):
     job_type: Optional[str] = None
     technicians_id: Optional[int] = None
     labour_cost: Optional[float] = None
-    scheduled_date: Optional[date] = None
+    scheduled_date: Optional[date_type] = None
     completion_status: Optional[str] = None
     payment_method: Optional[str] = None
     payment_status: Optional[str] = None

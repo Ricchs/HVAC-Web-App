@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-add-modal.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/technicians.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    </head>
+
+    <body>
+        <div class="app">
+            <aside id="sidebar"></aside>
+            <main class="main-content">
+                <div class="container">
+                    <h1>Technicians</h1>
+
+                    <p class="page-subtitle">View and edit technicians information</p>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="search">
+                                    <input type="search" placeholder="Search">
+                                    <i data-lucide="search"></i>
+                                </div>
+
+                                <div class="panel-right-side">
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Technician</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Hourly Rate</th>
+                                        <th>Paid Status</th>
+                                        <th>Last Paid Date</th>
+                                        <th>Last Shift</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="technicians-body"></tbody>
+                            </table>
+                        </div>
+
+                        <span id="table-number"></span>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay" id="add-modal">
+            <div class="modal">
+                <div class="modal-title">
+                    <h2>Technician Details</h2>
+                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>
+
+                <hr>
+
+                <form class="form" id="add-technician-form">
+                    <div class="modal-field">
+                        <span>Name</span>
+                        <input type="text" name="full_name" placeholder="John Smith" requried>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Phone</span>
+                        <input type="tel" name="phone" placeholder="(514) 555-0123" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Email</span>
+                        <input type="text" name="email" placeholder="john@example.com">
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Hourly Rate</span>
+                        <input type="number" name="hourly_rate" placeholder="25" required>
+                    </div>
+
+                    <hr class="hr-bottom">
+
+                    <div class="modal-actions">
+                        <button type="button" id="cancel-btn">Cancel</button>
+                        <button type="submit">Save New Technician</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+
+        <!-- Page JS -->
+         <script src="../js/technicians.js" type="module"></script>
+    </body>
+
+</html>
