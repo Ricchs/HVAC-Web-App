@@ -19,13 +19,20 @@ def get_payroll(payroll_id: int, db: Session = Depends(get_db)):
 
 @router.post("/payroll")
 def create_payroll(payroll: PayrollCreate, db: Session = Depends(get_db)):
+    shifts = db.query(models.Shifts).filter(models.Shifts.technicians_id == payroll.technicians_id, models.Shifts.payroll_id.is_(None)).all()
+    total = sum(shift.total_pay for shift in shifts)
+
     new_payroll = models.Payroll(
         technicians_id = payroll.technicians_id,
-        paid_status = payroll.paid_status,
-        last_paid_date = payroll.last_paid_date
+        pay_date = payroll.pay_date,
+        amount = total
     )
 
     db.add(new_payroll)
+    db.flush()
+    db.query(models.Shifts)\
+        .filter(models.Shifts.technicians_id == payroll.technicians_id, models.Shifts.payroll_id.is_(None))\
+        .update({models.Shifts.payroll_id: new_payroll.id}, synchronize_session=False)
     db.commit()
     db.refresh(new_payroll)
     return new_payroll

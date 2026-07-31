@@ -21,6 +21,7 @@ app.include_router(jobs.router)
 app.include_router(jobs_items.router)
 
 #Static files
+app.mount("/logo", StaticFiles(directory="hvac_app/logo"), name="logo")
 app.mount("/css", StaticFiles(directory="hvac_app/css"), name="css")
 app.mount("/js", StaticFiles(directory="hvac_app/js"), name="js")
 app.mount("/", StaticFiles(directory="hvac_app/html", html=True), name="html")

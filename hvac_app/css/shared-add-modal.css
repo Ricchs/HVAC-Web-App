@@ -44,22 +44,6 @@
     justify-content: space-between;
 }
 
-#close-modal-btn {
-    display: flex;
-    align-items: center;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-    border-radius: 8px;
-}
-
-#close-modal-btn:hover {
-    background-color: #E5E7EB;
-    border-radius: 8px;
-}
-
 .modal-title h2 {
     font-size: 20px;
 }
@@ -129,7 +113,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1)
 }
 
-#cancel-btn {
+.cancel-btn {
     border: 1px solid #E5E7EB; 
     border-radius: 8px;
     color: #4F46E5;
@@ -138,7 +122,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1)
 }
 
-#cancel-btn:hover {
+.cancel-btn:hover {
     background: #F9FAFB;  ;
     border-radius: 12px;
 }

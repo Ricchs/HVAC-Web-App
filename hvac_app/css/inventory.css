@@ -1,3 +1,7 @@
+.table-panel {
+    flex: 1;
+}
+
 /* -------------------------------------- Below is the metrics bar --------------------------------------*/
 .metrics {
     display: flex;
@@ -6,7 +10,8 @@
     border: 2px solid #E5E7EB;
     margin: 20px auto;
     padding: 10px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
 }
 
 .asset {

@@ -126,7 +126,6 @@ thead th:first-child {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     padding-left: 40px;
-    width: 22%;
 }
 
 thead th:last-child {
@@ -241,7 +240,7 @@ thead th:last-child {
     border-radius: 8px;
 }
 
-#table-number {
+.pagination {
     display: inline-block;
     font-size: 16px;
     font-weight: 500;
@@ -257,4 +256,9 @@ thead th:last-child {
 }
 .table-container::-webkit-scrollbar-track {
     background: transparent;
+}
+
+tr:hover {
+    background-color: #F9FAFB;
+    cursor: pointer;
 }

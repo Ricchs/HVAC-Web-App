@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from hvac_app.database import get_db
 from hvac_app import models
 from hvac_app.schemas import *
+from datetime import datetime, date
 
 router = APIRouter()
 
@@ -19,12 +20,18 @@ def get_shifts(shifts_id: int, db: Session = Depends(get_db)):
 
 @router.post("/shifts")
 def create_shifts(shift: ShiftCreate, db: Session = Depends(get_db)):
+    technician = db.query(models.Technicians).filter(models.Technicians.id == shift.technicians_id).first()
+    start = datetime.combine(date.today(), shift.start_time)
+    end = datetime.combine(date.today(), shift.end_time)
+    duration = end - start 
+    hours = duration.total_seconds() / 3600
+
     new_shift = models.Shifts(
         technicians_id = shift.technicians_id,
         start_time = shift.start_time,
         end_time = shift.end_time,
         date = shift.date,
-        total_pay = shift.total_pay
+        total_pay = hours * float(technician.hourly_rate)
     )
 
     db.add(new_shift)

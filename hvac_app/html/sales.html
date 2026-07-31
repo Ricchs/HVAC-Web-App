@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="../css/base.css">       
         <link rel="stylesheet" href="../css/sidebar.css"> 
         <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-button.css">
         <link rel="stylesheet" href="../css/shared-add-modal.css">
         <link rel="stylesheet" href="../css/shared-action-menu.css">
         <link rel="stylesheet" href="../css/sales.css">
@@ -117,6 +118,7 @@
                             <table class="inventory-table">
                                 <thead>
                                     <tr>
+                                        <th>Sale #</th>
                                         <th>Customer Name</th>
                                         <th>Date</th>
                                         <th>Items</th>
@@ -131,7 +133,7 @@
                             </table>
                         </div>
 
-                        <span id="table-number"></span>
+                        <span class="pagination" id="inventory-pagination"></span>
                     </div>
                 </div>
             </main>
@@ -141,7 +143,7 @@
             <div class="modal">
                 <div class="modal-title">
                     <h2>Sale Details</h2>
-                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                    <button class="close-modal-btn"><i data-lucide="x"></i></button>
                 </div>        
                 
                 <hr>
@@ -164,8 +166,8 @@
                         <select name="payment_method" required>
                             <option value="" disabled selected hidden>Select method</option>
                             <option value="Cash">Cash</option>
-                            <option value="Debit">Debit</option>
-                            <option value="Credit">Credit</option>
+                            <option value="Debit card">Debit card</option>
+                            <option value="Credit card">Credit card</option>
                             <option value="Cheque">Cheque</option>
                             <option value="E-transfer">E-transfer</option>
                             <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
@@ -178,8 +180,6 @@
                             <option value="" disabled selected hidden>Select status</option>
                             <option value="Paid">Paid</option>
                             <option value="Unpaid">Unpaid</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Partial">Partially Paid</option>
                         </select>
                     </div>
 
@@ -197,7 +197,7 @@
                     <hr class="hr-bottom">
 
                     <div class="modal-actions">
-                        <button type="button" id="cancel-btn">Cancel</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
                         <button type="submit">Save New Sale</button>
                     </div>
                 </form>
@@ -210,10 +210,69 @@
             <button class="action-delete">Delete</button>
         </div>
 
+        <div id="panel-overlay"></div>
         <aside id="sales-details-panel">
+            <div class="panel-header">
+                <div class="title-wrapper">
+                    <div class="title-row">
+                        <h2 class="sale-details-title"></h2>
+                        <p class="sale-details-date"></p>
+                    </div>
+
+                    <p id="details-badge" class="badge"></p>
+                </div>
+
+                <div class="button-wrapper">
+                    <button class="print-btn" id="sale-details-print"><i data-lucide="printer"></i></button>
+                    <button class="close-modal-btn" id="sale-details-close"><i data-lucide="x"></i></button>
+                </div>
+                
+            </div>
+
+            <hr>
+
+            <div class="customer-sale-details">
+                <p class="subsection-title">Customer</p>
+                <p class="customer-name"></p>
+                <p class="customer-phone"></p>
+            </div>
+
+            <hr>
+
+            <div class="sales-items">
+                <p class="subsection-title">Items</p>
+                <div class="items-details-wrapper"></div>
+            </div>
+
+            <div class="sale-total">
+                <div class="price-wrapper">
+                    <span class="subtotal-title">Payment method</span>
+                    <span class="subtotal-amount" id="payment-method"></span>
+                </div>
+                <div class="price-wrapper">
+                    <span class="subtotal-title">Subtotal</span>
+                    <span class="subtotal-amount" id="subtotal"></span>
+                </div>
+                
+                <div class="price-wrapper">
+                    <span class="subtotal-title">GST (5%)</span>
+                    <span class="subtotal-amount" id="GST"></span>
+                </div>
+
+                <div class="price-wrapper">
+                    <span class="subtotal-title">QST (9.975%)</span>
+                    <span class="subtotal-amount" id="QST"></span>
+                </div>
+
+                <hr>
+
+                <div class="total-wrapper">
+                    <span class="total-title">Total</span>
+                    <span class="subtotal" id="total"></span>
+                </div>
+            </div>
+
             
-            <h1>Sale Details</h1>
-            <div class="sales-details"></div>
         </aside>
 
         <!-- Sidebar JS -->

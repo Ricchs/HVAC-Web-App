@@ -43,8 +43,6 @@ async function loadItems() {
     document.querySelector(".seg.green").style.flex = inStock;
     document.querySelector(".seg.yellow").style.flex = lowStock;
     document.querySelector(".seg.red").style.flex = outStock;
-
-    document.getElementById("table-number").textContent = `Result 1-${items.length} of ${items.length}`
         
     lucide.createIcons();
 }

@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-add-modal.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/technician_details.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    </head>
+
+    <body>
+        <div class="app">
+            <aside id="sidebar"></aside>
+
+            <main class="main-content">
+                <div class="container">
+                    <a href="technicians.html" class="back-link"><- Technicians</a>
+                    <div class="title-wrapper">
+                        <div class="identity">
+                            <div class="avatar"></div>
+                            <div class="technician-info-wrapper">
+                                <h1 id="technician-h1"></h1>
+                                <p id="phone-email"></p>
+                            </div>
+                        </div>
+                        
+                        <button id="technician-pay"><i data-lucide="hand-coins"></i>Pay</button>
+                    </div>
+                   
+                    <div class="metrics">
+                        <div class="stat">
+                            <span class="stat-label">Hourly rate</span>
+                            <span class="stat-value" id="hourly-rate"></span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="stat-label">Last Paid</span>
+                            <span class="stat-value" id="last-paid"></span>
+                        </div>
+
+                        <div class="stat">
+                            <span class="stat-label">Shifts this week</span>
+                            <span class="stat-value" id="shifts-week"></span>
+                        </div>
+                        
+                        <div class="stat">
+                            <span class="stat-label">Hours this week</span>
+                            <span class="stat-value" id="hours-week"></span>
+                        </div>
+                    </div>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <h2>Recent shifts</h2>
+                                <div class="panel-right-side">
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Shift</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Hours</th>
+                                        <th>Pay</th>
+                                        <th>Paid status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="technicians-details-body"></tbody>
+                            </table>
+                        </div>
+
+                        <span id="table-number"></span>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="modal-overlay">
+            <div class="modal">
+                <div class="modal-title">
+                    <h2>Shift Details</h2>
+                    <button class="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>
+
+                <hr>
+
+                <form class="form" id="add-shift-form">
+                    <div class="modal-field">
+                        <span>Date</span>
+                        <input type="date" name="date" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>Start time</span>
+                        <input type="time" name="start_time" required>
+                    </div>
+
+                    <div class="modal-field">
+                        <span>End time</span>
+                        <input type="time" name="end_time" required>
+                    </div>
+
+                    <hr class="hr-bottom">
+
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit">Save New Shift</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+
+        <div class="modal-overlay" id="pay-modal">
+            <div class="modal">
+                <div class="modal-title">
+                    <div class="pay-title-wrapper">
+                        <h2 id="pay-details"></h2>
+                        <p>Confirm payment for unpaid shifts</p>
+                    </div>
+                    
+                    <button class="close-modal-btn" id="pay-close"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="form"></div>
+                    <div class="amount-wrapper">
+                        <p>Amount Owed</p>
+                        <p id="amount-owed"></p>
+                    </div>
+
+                    <div class="unpaid-shifts-wrapper">
+                        <p id="unpaid-shifts-label"></p>
+                        <div class="wrapper" id="unpaid-shifts"></div>
+                    </div>
+
+                    <div class="date-wrapper">
+                        <p>Pay date</p>
+                        <input type="date" name="pay_date" id="pay-date" required'>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn" id="pay-cancel">Cancel</button>
+                        <button type="submit" id="confirm-pay-btn">Confirm Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+
+        <!-- Page JS -->
+         <script src="../js/technician_details.js" type="module"></script>
+    </body>
+</html>

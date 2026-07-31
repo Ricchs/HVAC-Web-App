@@ -25,6 +25,7 @@ class Customers(Base):
     full_name = Column(Text)
     phone = Column(Text)
     company_name = Column(Text)
+    business_phone = Column(Text)
     street_address = Column(Text)
     city = Column(Text)
     postal_code = Column(Text)
@@ -66,13 +67,14 @@ class Shifts(Base):
     end_time = Column(Time)
     date = Column(Date)
     total_pay = Column(Numeric)
+    payroll_id = Column(Integer, ForeignKey("payroll.id"))
 
 class Payroll(Base):
     __tablename__ = "payroll"
     id = Column(Integer, primary_key=True)
     technicians_id = Column(Integer, ForeignKey("technicians.id"))
-    paid_status = Column(Text)
-    last_paid_date = Column(Date)
+    pay_date = Column(Date)
+    amount = Column(Numeric)
 
 class Jobs(Base):
     __tablename__ = "jobs"

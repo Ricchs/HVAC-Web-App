@@ -6,6 +6,7 @@ class CustomerCreate(BaseModel):
     full_name: str
     phone: str
     company_name: str
+    business_phone: str
     street_address: str
     city: str
     postal_code: str
@@ -19,6 +20,7 @@ class CustomerUpdate(BaseModel):
     full_name: Optional[str] = None
     phone: Optional[str] = None
     company_name: Optional[str] = None
+    business_phone: Optional[str] = None
     street_address: Optional[str] = None
     city: Optional[str] = None
     postal_code: Optional[str] = None
@@ -103,7 +105,6 @@ class ShiftCreate(BaseModel):
     start_time: time 
     end_time: time
     date: date_type
-    total_pay: float
 
 class ShiftUpdate(BaseModel):
     technicians_id: Optional[int] = None
@@ -114,13 +115,11 @@ class ShiftUpdate(BaseModel):
 
 class PayrollCreate(BaseModel):
     technicians_id: int
-    paid_status: str
-    last_paid_date: date_type
+    pay_date: date_type
 
 class PayrollUpdate(BaseModel):
     technicians_id: Optional[int] = None
-    paid_status: Optional[str] = None
-    last_paid_date: Optional[date_type] = None
+    pay_date: Optional[date_type] = None
 
 class JobCreate(BaseModel): 
     customers_id: int

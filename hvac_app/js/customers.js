@@ -9,7 +9,7 @@ async function loadCustomers() {
     const customers = await response.json();
 
     document.getElementById("customers-body").innerHTML = customers.map(i => `
-        <tr>
+        <tr data-id="${i.id}">
             <td>${i.full_name}</td>
             <td>${i.company_name || '-'}</td>
             <td>${helpers.formatPhone(i.phone)}</td>
@@ -72,8 +72,16 @@ document.querySelector('.action-delete').addEventListener('click', async(e) => {
     helpers.rowForceClose();
 })
 
+/* Interactable row */
+document.getElementById('customers-body').addEventListener('click', (e) => {
+    if (e.target.closest('.row-action') || e.target.closest('.row-check')) return;
+
+    const row = e.target.closest('tr')
+    location.href = `customer_details.html?id=${row.dataset.id}`;
+})
+
 /* add modal */
-helpers.addModalBehaviour()
+helpers.addModalBehaviour(modal)
 
 function closeModal() {
     form.reset();

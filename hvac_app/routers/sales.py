@@ -14,7 +14,12 @@ def get_sales(db: Session = Depends(get_db)):
         models.Customers.full_name, 
         func.coalesce(func.sum(models.SalesItems.quantity), 0).label('items_amount'),
         func.coalesce(func.sum(models.SalesItems.quantity * models.SalesItems.price), 0).label('items_total'),
-    ).join(models.Customers, models.Sales.customers_id == models.Customers.id).outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id).group_by(models.Sales.id, models.Customers.full_name).all()
+    )\
+        .join(models.Customers, models.Sales.customers_id == models.Customers.id)\
+        .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)\
+        .group_by(models.Sales.id, models.Customers.full_name)\
+        .order_by(models.Sales.date.desc())\
+        .all()
     
     return [
         {
@@ -36,12 +41,27 @@ def get_sales(sales_id: int, db: Session = Depends(get_db)):
 
 @router.get("/sales/{sales_id}/items")
 def get_sales(sales_id: int, db: Session = Depends(get_db)):
-    result = db.query(models.SalesItems, models.Inventory.item).join(models.Inventory, models.SalesItems.items_id == models.Inventory.id).filter(models.SalesItems.sales_id == sales_id).all()
+    items_info = db.query(models.SalesItems, models.Inventory.item).join(models.Inventory, models.SalesItems.items_id == models.Inventory.id).filter(models.SalesItems.sales_id == sales_id).all()
+    sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
+    customer = db.query(models.Customers).filter(models.Customers.id == sales_info.customers_id).first()
 
-    return [
+    items_info = [
         {"item": item_name, "quantity": sale.quantity, "price": sale.price, "subtotal": sale.quantity * sale.price}
-        for sale, item_name in result
+        for sale, item_name in items_info
     ]
+
+    return {
+        "id": sales_info.id,
+        "customer": customer.full_name,
+        "customer_phone": customer.phone,
+        "customer_company": customer.company_name,
+        "customer_rbq": customer.rbq,
+        "customer_ccq": customer.ccq,
+        "date": sales_info.date,
+        "payment_method": sales_info.payment_method,
+        "payment_status": sales_info.payment_status,
+        "items_info": items_info
+    }
 
 @router.post("/sales")
 def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):

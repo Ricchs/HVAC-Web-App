@@ -1,17 +1,24 @@
 import * as helpers from './helper_functions.js'
+
+const statusClass = {
+    'Paid': 'badge-in',
+    'Unpaid': 'badge-out'
+}
 /* load sales */
+
 async function loadSales() {
     const response = await fetch('/sales');
     const items = await response.json();
 
     document.getElementById('sales-body').innerHTML = items.map(i => `
-        <tr>
+        <tr data-id="${i.id}">
+            <td>Sale #${i.id}</td>
             <td>${i.customers_name}</td>
             <td>${i.date}</td>
-            <td><button class="sales-items-details" data-id="${i.id}">${i.items_amount} Units</button></td>
+            <td>${i.items_amount} Units</td>
             <td>$${helpers.money(i.items_total)}</td>
             <td>${i.payment_method}</td>
-            <td>${i.payment_status}</td>
+            <td><span class="badge ${statusClass[i.payment_status]}">${i.payment_status}</span></td>
             <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
         </tr>
     `).join('');
@@ -21,32 +28,66 @@ async function loadSales() {
 
 loadSales()
 
-/* row details when user clicks on item units */
+let currentSaleId;
+/* Sale details */
 const detailsPanel = document.getElementById("sales-details-panel")
 document.getElementById('sales-body').addEventListener('click', async(e) => {
-    const btn = e.target.closest('.sales-items-details');
+    if (e.target.closest('.row-action') || e.target.closest('.row-check')) return;
+    const row = e.target.closest('tr');
 
-    if (!btn) return;
-
-    const response = await fetch(`/sales/${btn.dataset.id}/items`);
+    currentSaleId = row.dataset.id
+    const response = await fetch(`/sales/${currentSaleId}/items`);
     const items = await response.json()
 
-    const itemsHTML = items.map(i => 
-        `<div>Item: ${i.item} (x${i.quantity}) Unit Price: ${i.price} Subtotal: ${i.subtotal}</div>`
-    ).join('')
+    document.querySelector('.sale-details-title').textContent = `Sale #${items.id}`
+    document.querySelector('.sale-details-date').textContent = helpers.formatDate(items.date)
+    const badge = document.getElementById('details-badge')
+    badge.textContent = items.payment_status
+    badge.className = `badge ${statusClass[items.payment_status]}`
 
-    const subtotal = items.reduce((sum, i) => sum + i.subtotal, 0)
 
-    document.querySelector('.sales-details').innerHTML = itemsHTML + 
-    `<div>Subtotal: $${helpers.money(subtotal)}</div>` +
-    `<div>GST: $${helpers.money(subtotal*0.05)}</div>` + 
-    `<div>QST: $${helpers.money(subtotal*0.09975)}</div>` +
-    `<div>Total: $${helpers.money(subtotal*1.14975)}</div>`
+    document.querySelector('.customer-name').textContent = items.customer;
+    document.querySelector('.customer-phone').textContent = helpers.formatPhone(items.customer_phone);
 
+    document.querySelector('.items-details-wrapper').innerHTML = items.items_info.map(i => `
+        <div class="item-row">
+            <div class="item-row-left">
+                <span class="row-name">${i.item}</span>
+                <span class="row-quantity">× ${i.quantity}</span>
+            </div>
+            
+            <span class="row-subtotal">$${helpers.money(i.subtotal)}</span>
+        </div>`
+    ).join('');
+
+    document.getElementById('payment-method').textContent = items.payment_method;
+    const subtotal = items.items_info.reduce((sum, i) => sum + Number(i.subtotal), 0);
+    document.getElementById('subtotal').textContent = `$${helpers.money(subtotal)}`;
+    document.getElementById('GST').textContent = `$${helpers.money(subtotal*0.05)}`;
+    document.getElementById('QST').textContent = `$${helpers.money(subtotal*0.09975)}`;
+    document.getElementById('total').textContent = `$${helpers.money(subtotal*1.14975)}`;
+
+    document.getElementById('panel-overlay').classList.add('open')
     detailsPanel.classList.add('open')
 })
 
+/* Print Sale details */
+document.getElementById('sale-details-print').addEventListener('click', () => {
+    window.open(`invoice.html?id=${currentSaleId}`, '_blank')
+})
 
+function closePanel() {
+    detailsPanel.classList.remove('open');
+    document.getElementById('panel-overlay').classList.remove('open');
+}
+
+document.getElementById('sale-details-close').addEventListener('click', () => {
+    closePanel();
+})
+
+document.getElementById('panel-overlay').addEventListener('click', () => {
+    closePanel();
+})
 
 /* table row action */
 helpers.rowAction('sales-body')
@@ -112,11 +153,11 @@ document.querySelector(".add-item").addEventListener('click', () => {
     modal.classList.add("open")
 });
 
-document.querySelector("#cancel-btn").addEventListener('click', () => {
+document.querySelector(".cancel-btn").addEventListener('click', () => {
     closeModal();
 });
 
-document.querySelector("#close-modal-btn").addEventListener('click', () => {
+document.querySelector(".close-modal-btn").addEventListener('click', () => {
     closeModal();
 });
 
@@ -193,3 +234,4 @@ form.addEventListener('submit', async(e) => {
         console.error('Failed', await response.text());
     }
 });
+

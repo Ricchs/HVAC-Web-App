@@ -6,7 +6,7 @@ async function loadTechnicians() {
     const technicians = await response.json();
 
     document.getElementById('technicians-body').innerHTML = technicians.map(i => 
-        `<tr>
+        `<tr data-id="${i.id}">
             <td>${i.full_name}</td>
             <td>${helpers.formatPhone(i.phone)}</td>
             <td>${i.email ? i.email : '-'}</td>
@@ -22,6 +22,14 @@ async function loadTechnicians() {
 }
 
 loadTechnicians();
+
+/* Clickable row to show details*/
+document.getElementById('technicians-body').addEventListener('click', (e) => {
+    if (e.target.closest('.row-action') || e.target.closest('.row-check')) return;
+    
+    const row = e.target.closest('tr');
+    location.href = `technician_details.html?id=${row.dataset.id}`;
+})
 
 let activeId = null;
 let editingId = null;
@@ -74,4 +82,39 @@ form.addEventListener('submit', async(e) => {
     } else {
         console.error('Failed', await response.text())
     }
+})
+
+/* Action menu */
+helpers.rowAction('technicians-body');
+helpers.rowClose();
+
+/* Action menu edit */
+document.querySelector('.action-edit').addEventListener('click', async() => {
+    editingId = helpers.getActiveId();
+    helpers.rowForceClose();
+
+    const response = await fetch(`/technicians/${editingId}`)
+    const technician = await response.json();
+
+    form.full_name.value = technician.full_name;
+    form.phone.value = technician.phone
+    form.email.value = technician.email
+    form.hourly_rate.value = technician.hourly_rate
+
+    modal.classList.add('open')
+})
+
+/* Action menu delete */
+document.querySelector('.action-delete').addEventListener('click', async() => {
+    if (!confirm('Delete this technician?')) return;
+    
+    const response = await fetch(`/technicians/${helpers.getActiveId()}`, {'method': 'DELETE'})
+    if (response.ok) {
+        loadTechnicians();
+    } else {
+        const err = await response.json();
+        alert(err.detail)
+    }
+
+    helpers.rowForceClose();
 })

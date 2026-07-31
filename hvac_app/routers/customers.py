@@ -12,9 +12,10 @@ def get_customers(db: Session = Depends(get_db)):
     result = db.query(models.Customers, func.count(distinct(models.Sales.id)), func.coalesce(func.sum(models.SalesItems.quantity * models.SalesItems.price),0)).outerjoin(models.Sales, models.Sales.customers_id == models.Customers.id).outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id).group_by(models.Customers.id).all()
     return [{
         'full_name': customer.full_name,
-        'company_name': customer.company_name,
         'phone': customer.phone,
         'email': customer.email,
+        'company_name': customer.company_name,
+        'business_phone': customer.business_phone,
         'street_address': customer.street_address,
         'city': customer.city,
         'postal_code': customer.postal_code,
@@ -29,8 +30,44 @@ def get_customers(db: Session = Depends(get_db)):
 
 @router.get("/customers/{customer_id}")
 def get_customers(customer_id: int, db: Session = Depends(get_db)):
-    existing_customer = db.query(models.Customers).filter(models.Customers.id == customer_id).first()
-    return existing_customer
+    customer = db.query(models.Customers)\
+                .filter(models.Customers.id == customer_id)\
+                .first()
+
+    sales = db.query(models.Sales, 
+                    func.coalesce(func.sum(models.SalesItems.quantity), 0).label('items_amount'),
+                    func.coalesce(func.sum(models.SalesItems.quantity * models.SalesItems.price), 0).label('amount'))\
+        .filter(models.Sales.customers_id == customer_id)\
+        .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)\
+        .group_by(models.Sales.id)\
+        .all()
+
+    return {
+        'full_name': customer.full_name,
+        'phone': customer.phone,
+        'email': customer.email,
+        'company_name': customer.company_name,
+        'business_phone': customer.business_phone,
+        'street_address': customer.street_address,
+        'city': customer.city,
+        'postal_code': customer.postal_code,
+        'country': customer.country,
+        'province': customer.province,
+        'rbq': customer.rbq,
+        'ccq':customer.ccq,
+        'total_sales': sum(amount for sale, items_amount, amount in sales),
+        'total_orders': len(sales),
+        'outstanding': sum(amount for sale, items_amount, amount in sales if sale.payment_status != 'Paid'),
+        'first_order': min((sale.date for sale, items_amount, amount in sales), default=None),
+        'last_order': max((sale.date for sale, items_amount, amount in sales), default=None),
+        'sales': [{
+            'id': sale.id,
+            'date': sale.date,
+            'items_amount': items_amount,
+            'amount': amount,
+            'status': sale.payment_status,
+        } for sale, items_amount, amount in sales]
+    }
 
 @router.post("/customers")
 def create_customers(customer: CustomerCreate, db: Session = Depends(get_db)):

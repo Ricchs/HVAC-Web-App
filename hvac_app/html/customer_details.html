@@ -1,0 +1,254 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-button.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css"> 
+        <link rel="stylesheet" href="../css/shared-action-menu.css"> 
+        <link rel="stylesheet" href="../css/customer_details.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    </head>
+    
+    <body>
+        <div class="app">
+            <aside id="sidebar"></aside>
+            
+            <main class="main-content">
+                <div class="container">
+                    <a href="customers.html" class="back-link"><- Customers</a>
+                    <div class="customer-layout">
+                        <aside class="customer-profile">
+                            <button class="edit-btn"><i data-lucide="square-pen"></i></button>
+                            <div class="profile-header">
+                                <div class="avatar"></div>
+                                <h1 id="customer-h1"></h1>
+                                <p class="extra-info" id="first-order"></p>
+                            </div>
+
+                            <hr>
+                            
+                            <div class="profile-section">
+                                <p class="info-title">Business Information</p>
+                                <div class="info-wrapper">
+                                    <span class="info-name">Company</span>
+                                    <span class="info-text" id="customer-company"></span>
+                                </div>
+                                
+                                <div class="info-wrapper">
+                                    <span class="info-name">Business Phone</span>
+                                    <span class="info-text" id="customer-business-phone"></span>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="profile-section">
+                                <p class="info-title">Address</p>
+                                <div class="info-wrapper">
+                                    <span class="info-name">Country</span>
+                                    <span class="info-text" id="customer-country"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">State/Province</span>
+                                    <span class="info-text" id="customer-province"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">City</span>
+                                    <span class="info-text" id="customer-city"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">Street</span>
+                                    <span class="info-text" id="customer-street"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">Postal Code</span>
+                                    <span class="info-text" id="customer-postal"></span>
+                                </div>
+                            </div>
+
+                            <hr>
+                            
+                            <div class="profile-section">
+                                <p class="info-title">Personal Information</p>
+                                <div class="info-wrapper">
+                                    <span class="info-name">Phone</span>
+                                    <span class="info-text" id="customer-phone"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">Email</span>
+                                    <span class="info-text" id="customer-email"></span>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="profile-section">
+                                <p class="info-title">Licenses</p>
+                                <div class="info-wrapper">
+                                    <span class="info-name">RBQ</span>
+                                    <span class="info-text" id="customer-rbq"></span>
+                                </div>
+
+                                <div class="info-wrapper">
+                                    <span class="info-name">CCQ</span>
+                                    <span class="info-text" id="customer-ccq"></span>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <div class="customer-main">
+                            <div class="customer-sales-widgets">
+                                <div class="stat">
+                                    <p class="stat-label">Total spent</p>
+                                    <p class="stat-value" id="total-sales"></p>
+                                </div>
+                                
+                                <div class="stat">
+                                    <p class="stat-label">Total orders</p>
+                                    <p class="stat-value" id="total-orders"></p>
+                                </div>
+
+                                <div class="stat">
+                                    <p class="stat-label">Outstanding</p>
+                                    <p class="stat-value" id="outstanding"></p>
+                                </div>
+
+                                <div class="stat">
+                                    <p class="stat-label">Last order</p>
+                                    <p class="stat-value" id="last-order"></p>
+                                </div>
+                            </div>
+
+                            <div class="table-panel">
+                                <div class="table-container">
+                                    <div class="top-part">
+                                        <h2>Order history</h2>
+
+                                        <div class="panel-right-side">
+                                            <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                            <button class="add-item"><i data-lucide="plus"></i>Add sale</button>
+                                        </div>
+                                    </div>
+
+                                    <table class="inventory-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Sale #</th>
+                                                <th>Date</th>
+                                                <th>Items</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="customer-details-body"></tbody>
+                                    </table>
+
+                                    <span class="pagination" id="customer-details-pagination"></span>
+                                </div>
+                            </div>
+
+                            <div class="customer-notes">
+                                <div class="notes-wrapper">
+                                    <h2 class="notes-header">Notes</h2>
+                                    <textarea id="customer-notes" placeholder="Add a note about this customer..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+
+        <div id="panel-overlay"></div>
+        <aside id="sales-details-panel">
+            <div class="panel-header">
+                <div class="title-wrapper">
+                    <div class="title-row">
+                        <h2 class="sale-details-title"></h2>
+                        <p class="sale-details-date"></p>
+                    </div>
+
+                    <p id="details-badge" class="badge"></p>
+                </div>
+
+                <div class="button-wrapper">
+                    <button class="print-btn" id="sale-details-print"><i data-lucide="printer"></i></button>
+                    <button class="close-modal-btn" id="sale-details-close"><i data-lucide="x"></i></button>
+                </div>
+                
+            </div>
+
+            <hr>
+
+            <div class="customer-sale-details">
+                <p class="subsection-title">Customer</p>
+                <p class="customer-name"></p>
+                <p class="customer-phone"></p>
+            </div>
+
+            <hr>
+
+            <div class="sales-items">
+                <p class="subsection-title">Items</p>
+                <div class="items-details-wrapper"></div>
+            </div>
+
+            <div class="sale-total">
+                <div class="price-wrapper">
+                    <span class="subtotal-title">Payment method</span>
+                    <span class="subtotal-amount" id="payment-method"></span>
+                </div>
+                <div class="price-wrapper">
+                    <span class="subtotal-title">Subtotal</span>
+                    <span class="subtotal-amount" id="subtotal"></span>
+                </div>
+                
+                <div class="price-wrapper">
+                    <span class="subtotal-title">GST (5%)</span>
+                    <span class="subtotal-amount" id="GST"></span>
+                </div>
+
+                <div class="price-wrapper">
+                    <span class="subtotal-title">QST (9.975%)</span>
+                    <span class="subtotal-amount" id="QST"></span>
+                </div>
+
+                <hr>
+
+                <div class="total-wrapper">
+                    <span class="total-title">Total</span>
+                    <span class="subtotal" id="total"></span>
+                </div>
+            </div>
+
+            
+        </aside>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+
+        <!-- Page JS -->
+         <script src="../js/customer_details.js" type="module"></script>
+    </body>
+</html>

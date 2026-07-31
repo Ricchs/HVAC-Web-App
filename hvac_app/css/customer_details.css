@@ -1,127 +1,167 @@
-/* -------------------------------------- Below is the metrics bar --------------------------------------*/
-.metrics {
+.customer-layout {
     display: flex;
     gap: 16px;
-    margin: 16px 0;
-}
-
-.sales-metric-card {
     flex: 1;
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    padding: 16px;
+    max-height: 100%;
+    min-height: 0;
+}
+
+.customer-profile {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    padding: 20px 18px;
     border: 2px solid #E5E7EB;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
-}
-
-.metric-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #636363;
-}
-
-.amount-row {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.metric-amount {
-    font-size: 24px;
-    font-weight: 600;
-}
-
-.metric-trend {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background-color: #D1FAE5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     border-radius: 12px;
-    padding: 3px 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+    gap: 15px;
+    width: 370px;
+    min-width: 0;
+    overflow-y: auto;
+    max-height: 100%;
 }
 
-.metric-trend svg , .metric-trend span{
-    color: #065F46;
+.customer-profile hr {
+    margin: 0 -10px;
+    border: none;
+    border-top: 2px solid #E5E7EB;
 }
 
-.metric-trend svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 3.5px;
+.edit-btn {
+    margin-left: auto;
 }
 
-.metric-trend span {
-    font-size: 12px;
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #EEF0FF;
+    font-size: 30px;
+    color: #6366F1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-top: -20px;
+}
+
+#customer-h1 {
+    font-size: 24px;
     font-weight: 500;
 }
 
-/* -------------------------------------- Below is the modal overlay--------------------------------------*/
-.line-row {
+.extra-info {
+    font-size: 14px;
+    color: #636363;
+    margin-top: -18px;
+}
+
+.profile-section {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
 }
 
-.line-item-select {
-    flex: 2;
+.info-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #9CA3AF; 
+    margin-bottom: 8px;
 }
 
-.line-qty {
-    flex-shrink: 0;
-    width: 70px;
-}
-
-.line-price {
-    flex-shrink: 0;
-    width: 100px;
-}
-
-.remove-line {
+.info-wrapper {
     display: flex;
     align-items: center;
-    flex-shrink: 0;
-    background: none;
-    border: none;
+    gap: 24px;
 }
 
-.remove-line:hover {
-    background-color: #E5E7EB;
-    border-radius: 4px;
+.info-name {
+    min-width: 130px;
+    color: #636363;
+    font-size: 14px;
 }
 
-.remove-line:active {
+.info-text {
+    text-align: left;
+    font-size: 15px;
+    color: black;
+    overflow-wrap: anywhere;
+}
+
+.customer-main {
     display: flex;
-    align-items: center;
-    background-color: #D1D5DB;
-    border-radius: 4px;
+    flex-direction: column;
+    flex: 1;
+    gap: 14px;
 }
 
-#add-line-item {
-    gap: 4px;
-    height: 32px;
-    font-size: 16px;
-    font-weight: 400;
+.customer-sales-widgets {
     display: flex;
-    align-items: center;
-    padding: 2px 8px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.stat {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+}
+
+.stat-label {
+    color: #636363;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.stat-value {
+font-size: 22px;
+font-weight: 500;
+}
+
+#outstanding { color: #B45309; } 
+
+.customer-profile::-webkit-scrollbar {
+    width: 6px;
+}
+.customer-profile::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 999px;
+}
+.customer-profile::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-panel {
+    flex: 1;
+}
+
+.customer-notes {
     background-color: #FFFFFF;
-    border: 1px solid #C7C7C7;
-    border-radius: 8px;
-    appearance: none;
-    transition: background-color 0.15s ease;
-    cursor: pointer;
+    border-radius: 12px;
+    border: 2px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+    height: 140px; 
+    resize: vertical;
 }
 
-#add-line-item:hover {
-    background-color: #E5E7EB;
-    border-radius: 8px;
-}
-
-#add-line-item:active {
-    background-color: #D1D5DB;
-    border-radius: 8px;
+.notes-wrapper {
+    width: 97%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
 }
 
 /* -------------------------------------- Below is the details panel--------------------------------------*/
