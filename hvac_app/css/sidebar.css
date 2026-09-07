@@ -12,7 +12,7 @@ a {
     flex-direction: column;
     align-self: stretch;
     background-color: #FEFEFE;
-    width: 220px;
+    width: 170px;
     border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
@@ -62,9 +62,8 @@ a {
 }
 
 .sidebar hr {
-    width: 198px;
-    margin: 10px auto 0;
     border: none;
+    margin: 0 8px;
     border-top: 2px solid #E5E7EB;
 }
 
@@ -74,6 +73,12 @@ a {
 
 .sidebar-tabs ul li {
     margin: 6px 10px;
+    font-size: 14px;
+}
+
+.sidebar-tabs svg {
+    width: 18px;
+    height: 18px;
 }
 
 .sidebar-tabs ul li a {
@@ -104,6 +109,12 @@ a {
     margin-right: 10px;
     padding-bottom: 14px;
     gap: 6px;
+    font-size: 14px;
+}
+
+.sidebar-bottom svg {
+    width: 18px;
+    height: 18px;
 }
 
 .sidebar-btn {
@@ -117,6 +128,7 @@ a {
     font-size: inherit;
     font-weight: inherit;
     transition: background-color 0.15s ease, transform 0.15s ease;
+    border-radius: 8px;
 }
 
 .sidebar-btn:hover {
@@ -126,7 +138,7 @@ a {
 }
 
 .sidebar.collapsed .sidebar-tabs, .sidebar.collapsed .sidebar-bottom,
-.sidebar.collapsed hr, .sidebar.collapsed .sidebar-logo span {
+.sidebar.collapsed hr, .sidebar.collapsed .sidebar-logo {
     display: none;
 }
 

@@ -9,8 +9,8 @@
         <link rel="stylesheet" href="../css/sidebar.css"> 
         <link rel="stylesheet" href="../css/shared-table.css">
         <link rel="stylesheet" href="../css/shared-button.css">
-        <link rel="stylesheet" href="../css/shared-add-modal.css">
         <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/toast.css">
         <link rel="stylesheet" href="../css/sales.css">
 
         <!-- Inter font -->
@@ -22,6 +22,8 @@
     </head>
 
     <body>
+        <div id="panel-overlay"></div>
+
         <div class="app">
             <div id="sidebar"></div>
             <main class="main-content">
@@ -131,78 +133,24 @@
 
                                 <tbody id="sales-body"></tbody>
                             </table>
-                        </div>
 
-                        <span class="pagination" id="inventory-pagination"></span>
+                            <div class="pagination">
+                                <button class="pagination-arrow" id="sale-first"><i data-lucide="chevron-first"></i></button>
+                                <button class="pagination-arrow" id="sale-previous"><i data-lucide="chevron-left"></i></button>
+
+                                <span class="pagination-number">
+                                    <span id="pagination-current"></span>
+                                    /
+                                    <span id="pagination-last"></span>
+                                </span>
+
+                                <button class="pagination-arrow" id="sale-next"><i data-lucide="chevron-right"></i></button>
+                                <button class="pagination-arrow" id="sale-last"><i data-lucide="chevron-last"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
-        </div>
-
-        <div class="modal-overlay" id="add-modal">
-            <div class="modal">
-                <div class="modal-title">
-                    <h2>Sale Details</h2>
-                    <button class="close-modal-btn"><i data-lucide="x"></i></button>
-                </div>        
-                
-                <hr>
-
-                <form class='form' id="add-sale-form">
-                    <div class="modal-field">
-                        <span>Customer Name</span>
-                        <select name="customers_id" required>
-                            <option value="" disabled selected hidden>Select customer</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-field">
-                        <span>Date</span>
-                        <input type="date" name="date" required>
-                    </div>
-
-                    <div class="modal-field">
-                        <span>Payment Method</span>
-                        <select name="payment_method" required>
-                            <option value="" disabled selected hidden>Select method</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Debit card">Debit card</option>
-                            <option value="Credit card">Credit card</option>
-                            <option value="Cheque">Cheque</option>
-                            <option value="E-transfer">E-transfer</option>
-                            <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
-                        </select>
-                    </div>
-
-                    <div class="modal-field">
-                        <span>Payment Status</span>
-                        <select name="payment_status" required>
-                            <option value="" disabled selected hidden>Select status</option>
-                            <option value="Paid">Paid</option>
-                            <option value="Unpaid">Unpaid</option>
-                        </select>
-                    </div>
-
-                    <div class="items-field">
-                        <span>Items</span>
-
-                        <div id="line-items">
-                        </div>
-
-                        <button type="button" id="add-line-item" class="filter-item"><i data-lucide="plus"></i>Add Item</button>
-                    </div>
-
-                    <p>Total: <span id="sale-total">$0.00</span></p>
-
-                    <hr class="hr-bottom">
-
-                    <div class="modal-actions">
-                        <button type="button" class="cancel-btn">Cancel</button>
-                        <button type="submit">Save New Sale</button>
-                    </div>
-                </form>
-            </div>
-
         </div>
 
         <div class="action-menu" id="action-menu">
@@ -210,7 +158,86 @@
             <button class="action-delete">Delete</button>
         </div>
 
-        <div id="panel-overlay"></div>
+        <div class="modal-overlay" id="sale-edit-modal">
+            <div class="modal">
+                <div class="modal-header-wrapper">
+                    <h2 id="sale-edit-title"></h2>
+                    <button class="close-modal-btn" id="close-sale-edit"><i data-lucide="x"></i></button>
+                </div>        
+                
+                <hr>
+
+                <form class='form' id="sale-form">
+                    <div class="modal-section">
+                        <p class="modal-title">Customer</p>
+                        <div class="customer-info">
+                            <p id="edit-modal-customer"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="items-field">
+                        <div class="item-title-wrapper">
+                            <span class="modal-title">ITEMS</span>
+                            <button type="button" class="sale-add-item">+ Add Item</button>
+                        </div>
+                        
+                        <div class="modal-item-header hidden" id="modal-item-header">
+                            <span>ITEM</span>
+                            <span>QTY</span>
+                            <span>PRICE</span>
+                        </div>
+                        
+                        <div class="hidden" id="modal-line-items"></div> 
+                    </div>
+                    
+                    <div class="modal-section">
+                        <p class="modal-title">PAYMENT</p>
+                        <div class="modal-row">
+                            <div class="modal-field">
+                                <p class="input-title">Date</p>
+                                
+                                <input type="date" name="date" placeholder="$0.00">
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Method</p>
+
+                                <select id="job-modal-payment" class="required" name="payment_method" required>
+                                    <option value="" disabled selected hidden>Select method</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Debit card">Debit card</option>
+                                        <option value="Credit card">Credit card</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="E-transfer">E-transfer</option>
+                                        <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Status</p>
+                                
+                                <select id="job-modal-payment-status" class="required" name="payment_status" required>
+                                    <option value="" disabled selected hidden>Select status</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Unpaid">Unpaid</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-total-wrapper">
+                        <p class="modal-total">Total:</p>
+                        <span id="modal-items-total">$0.00</span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn" id="sale-modal-cancel">Cancel</button>
+                        <button type="submit" class="add-button" id="sale-modal-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
         <aside id="sales-details-panel">
             <div class="panel-header">
                 <div class="title-wrapper">
@@ -223,6 +250,7 @@
                 </div>
 
                 <div class="button-wrapper">
+                    <button class="print-btn" id="sale-details-edit"><i data-lucide="pen"></i></button>
                     <button class="print-btn" id="sale-details-print"><i data-lucide="printer"></i></button>
                     <button class="close-modal-btn" id="sale-details-close"><i data-lucide="x"></i></button>
                 </div>
@@ -271,9 +299,9 @@
                     <span class="subtotal" id="total"></span>
                 </div>
             </div>
-
-            
         </aside>
+
+        <div class="toast-container"></div>
 
         <!-- Sidebar JS -->
         <script src="../js/sidebar.js" defer></script>

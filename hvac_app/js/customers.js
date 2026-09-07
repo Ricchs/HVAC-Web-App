@@ -4,11 +4,24 @@ const modal = document.getElementById('add-modal')
 const form = document.getElementById('add-customer-form')
 
 /* load customers */
+let rowsPerPage; 
+let rowsTotal;
+let numberPages;
+let currentPage = 1;
 async function loadCustomers() {
     const response = await fetch('/customers');
     const customers = await response.json();
 
-    document.getElementById("customers-body").innerHTML = customers.map(i => `
+    if (rowsPerPage === undefined) rowsPerPage = helpers.rowPerPage();
+    rowsTotal = customers.length;
+    numberPages = Math.ceil(rowsTotal/rowsPerPage);
+    if (currentPage == numberPages) {
+        document.getElementById('customer-next').disabled = true;
+        document.getElementById('customer-last').disabled = true;
+    }
+    document.getElementById('pagination-last').textContent = numberPages
+
+    document.getElementById("customers-body").innerHTML = customers.slice(0, rowsPerPage).map(i => `
         <tr data-id="${i.id}">
             <td>${i.full_name}</td>
             <td>${i.company_name || '-'}</td>
@@ -24,6 +37,72 @@ async function loadCustomers() {
 }
 
 loadCustomers();
+
+/* pagination */
+document.getElementById('customer-first').disabled = true;
+document.getElementById('customer-previous').disabled = true;
+document.getElementById('pagination-current').textContent = currentPage;
+
+const pageNumber = document.getElementById('pagination-current');
+
+document.getElementById('customer-first').addEventListener('click', () => {
+    currentPage = 1
+    document.querySelector('.pagination').dispatchEvent(new Event('change'));
+})
+
+document.getElementById('customer-previous').addEventListener('click', () => {
+    currentPage = Math.max(1, currentPage - 1);  
+    document.querySelector('.pagination').dispatchEvent(new Event('change'));
+})
+
+document.getElementById('customer-next').addEventListener('click', () => {
+    currentPage = Math.min(numberPages, currentPage + 1)
+    document.querySelector('.pagination').dispatchEvent(new Event('change'));
+})
+
+document.getElementById('customer-last').addEventListener('click', () => {
+    currentPage = numberPages
+    document.querySelector('.pagination').dispatchEvent(new Event('change'));
+})
+
+document.querySelector('.pagination').addEventListener('change', async() => {
+    if (currentPage == 1) {
+        document.getElementById('customer-first').disabled = true;
+        document.getElementById('customer-previous').disabled = true;
+    } else {
+        document.getElementById('customer-first').disabled = false;
+        document.getElementById('customer-previous').disabled = false;
+    }
+
+    if (currentPage == numberPages) {
+        document.getElementById('customer-next').disabled = true;
+        document.getElementById('customer-last').disabled = true;
+    } else {
+        document.getElementById('customer-next').disabled = false;
+        document.getElementById('customer-last').disabled = false;
+    }
+
+    pageNumber.textContent = currentPage;
+
+    const start = (currentPage - 1) * rowsPerPage;
+
+    const response = await fetch('/customers');
+    const customers = await response.json();
+
+    document.getElementById("customers-body").innerHTML = customers.slice(start, start + rowsPerPage).map(i => `
+        <tr data-id="${i.id}">
+            <td>${i.full_name}</td>
+            <td>${i.company_name || '-'}</td>
+            <td>${helpers.formatPhone(i.phone)}</td>
+            <td>${i.email|| '-'}</td>
+            <td>${i.order_count}</td>
+            <td>$${helpers.money(i.total_spent)}</td>
+            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
+        </tr>
+    `).join('');
+
+    lucide.createIcons();
+})
 
 /* table row action*/
 helpers.rowAction('customers-body')
@@ -63,12 +142,13 @@ document.querySelector('.action-delete').addEventListener('click', async(e) => {
     const response = await fetch(`/customers/${helpers.getActiveId()}`, {method: 'DELETE'})
 
     if (response.ok) {
+        helpers.showToast('Success', `Customer #${helpers.getActiveId()} has been deleted.`)
         loadCustomers();
     } else {
         const err = await response.json()
         alert(err.detail)
     }
-
+    
     helpers.rowForceClose();
 })
 
@@ -91,11 +171,11 @@ function closeModal() {
 
 document.getElementById("cancel-btn").addEventListener('click', () => {
         closeModal();
-    });
+});
 
 document.getElementById("close-modal-btn").addEventListener('click', () => {
         closeModal();
-    });
+});
 
 
 
@@ -129,9 +209,12 @@ form.addEventListener('submit', async(e) => {
     })
 
     if (response.ok) {
+        const customer = await response.json();
+        editingId? helpers.showToast('Success', `Customer #${editingId} has been updated.`) : helpers.showToast('Success', `Customer #${customer.id} has been created.`);
         closeModal();
         loadCustomers();
     } else {
-        console.error('Failed', await response.text())
+        console.error('Failed', await response.text());
     }
-})
+});
+

@@ -1,11 +1,23 @@
 import * as helpers from './helper_functions.js'
 
 /* Load table */
+let rowsPerPage; 
+let rowsTotal;
+let numberPages;
+let currentPage = 1;
 async function loadTechnicians() {
     const response = await fetch('/technicians');
     const technicians = await response.json();
 
-    document.getElementById('technicians-body').innerHTML = technicians.map(i => 
+    rowsPerPage = helpers.rowPerPage();
+    rowsTotal = technicians.length;
+    numberPages = Math.ceil(rowsTotal/rowsPerPage);
+    const start = (currentPage - 1) * rowsPerPage;
+    document.getElementById('pagination-current').textContent = currentPage;
+    updatePagination();
+    document.getElementById('pagination-last').textContent = numberPages
+
+    document.getElementById('technicians-body').innerHTML = technicians.slice(start, start + rowsPerPage).map(i => 
         `<tr data-id="${i.id}">
             <td>${i.full_name}</td>
             <td>${helpers.formatPhone(i.phone)}</td>
@@ -22,6 +34,39 @@ async function loadTechnicians() {
 }
 
 loadTechnicians();
+
+/* pagination */
+document.getElementById('technician-first').addEventListener('click', () => {
+    currentPage = 1
+    updatePagination();
+    loadTechnicians();
+})
+
+document.getElementById('technician-previous').addEventListener('click', () => {
+    currentPage = Math.max(1, currentPage - 1);  
+    updatePagination();
+    loadTechnicians();
+})
+
+document.getElementById('technician-next').addEventListener('click', () => {
+    currentPage = Math.min(numberPages, currentPage + 1)
+    updatePagination();
+    loadTechnicians();
+})
+
+document.getElementById('technician-last').addEventListener('click', () => {
+    currentPage = numberPages
+    updatePagination();
+    loadTechnicians();
+})
+
+function updatePagination() {
+    document.getElementById('pagination-current').textContent = currentPage;
+    document.getElementById('technician-first').disabled = currentPage === 1;
+    document.getElementById('technician-previous').disabled = currentPage === 1;
+    document.getElementById('technician-next').disabled = currentPage === numberPages;
+    document.getElementById('technician-last').disabled = currentPage === numberPages;
+}
 
 /* Clickable row to show details*/
 document.getElementById('technicians-body').addEventListener('click', (e) => {
@@ -48,11 +93,11 @@ function closeModal() {
 
 document.getElementById("cancel-btn").addEventListener('click', () => {
         closeModal();
-    });
+});
 
 document.getElementById("close-modal-btn").addEventListener('click', () => {
         closeModal();
-    });
+});
 
 /* Add modal submit */
 form.addEventListener('submit', async(e) => {
@@ -77,6 +122,8 @@ form.addEventListener('submit', async(e) => {
     });
     
     if (response.ok) {
+        const technician = await response.json();
+        editingId? helpers.showToast('Success', `Item #${editingId} has been updated.`) : helpers.showToast('Success', `Technician #${technician.id} has been added.`);
         closeModal();
         loadTechnicians();
     } else {
@@ -110,6 +157,7 @@ document.querySelector('.action-delete').addEventListener('click', async() => {
     
     const response = await fetch(`/technicians/${helpers.getActiveId()}`, {'method': 'DELETE'})
     if (response.ok) {
+        helpers.showToast('Success', `Item #${helpers.getActiveId()} has been deleted.`)
         loadTechnicians();
     } else {
         const err = await response.json();

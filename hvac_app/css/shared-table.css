@@ -1,15 +1,23 @@
 .table-panel {
+    display: flex;
+    flex-direction: column;
     background-color: #FFFFFF;
     border-radius: 12px;
     border: 2px solid #E5E7EB;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-height: 0;
+    flex: 1;
 }
 
 .table-container {
-    width: 97%;
-    margin: 0 auto;
-    max-height: calc(100vh - 291px);
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 15px;
+    min-height: 0;
+    flex: 1;
+    max-height: 100%;
+
 }
 
 .top-part {
@@ -17,7 +25,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;    
-    padding: 15px 0;
     top: 0;
     position: sticky;
     z-index: 2;
@@ -41,6 +48,7 @@
     appearance: none;
     font: inherit;
     flex: 1;
+    box-shadow: none;
 }
 
 .search input::placeholder {
@@ -101,10 +109,8 @@
 }
 
 .inventory-table {
-    width: 100%;
     border-collapse: collapse;
-    padding-bottom: 15px;
-
+    min-height: 0;
 }
 
 thead th{
@@ -116,16 +122,14 @@ thead th{
 }
 
 .inventory-table thead th {
-    position: sticky;
     top: 62px;
-    background-color: #EFEFEF;   /* keep the bg so rows don't show through */
+    background-color: #EFEFEF;
     z-index: 1;
 }
 
 thead th:first-child {
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
-    padding-left: 40px;
 }
 
 thead th:last-child {
@@ -135,27 +139,20 @@ thead th:last-child {
 
 tbody tr {
     border-bottom: 1px solid #E8E7E7;
+    height: 50px;
 }
 
 
-
 tbody td{
-    padding: 19px 16px;
+    padding: 0 16px;
     font-size: 14px;
     font-weight: 400;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .col-price {
     text-align: right;
-}
-
-.name-cell {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-left: 10px;
-
 }
 
 .row-check {
@@ -165,21 +162,6 @@ tbody td{
     cursor: pointer;
     border: 1px solid #A5A5A5;
     border-radius: 4px;
-}
-
-.badge::before {
-    content: "";
-    display: inline-block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: currentColor;  
-    margin-right: 6px;
-    transform: translateY(1px);
-}
-
-.badge {
-    box-shadow: 0 2px 3px rgba(0,0,0,0.08);
 }
 
 .badge-in {
@@ -215,6 +197,28 @@ tbody td{
     padding: 0 8px;
 }
 
+.badge-progress {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #DBEAFE;
+    color: #1E40AF;
+    border-radius: 12px;
+    height: 26px;
+    padding: 0 8px;
+}
+
+.badge-neutral {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F3F4F6;
+    color: #4B5563;
+    border-radius: 12px;
+    height: 26px;
+    padding: 0 8px;
+}
+
 thead th:last-child {
     text-align: center;
 }
@@ -239,12 +243,59 @@ thead th:last-child {
     background-color: #E5E7EB;
     border-radius: 8px;
 }
-
+    
 .pagination {
-    display: inline-block;
-    font-size: 16px;
+    width: fit-content;
+    border: 1px solid #E5E7EB; 
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: auto auto 0;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.pagination-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 5px;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color 0.15s ease;
+    color: black;
+    border-radius: 8px;
+}
+
+.pagination-arrow:not(:disabled):hover {
+    background: #F9FAFB;
+}
+
+.pagination-arrow:not(:disabled):active {
+    background-color: #E5E7EB;
+}
+
+.pagination-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: none; 
+    color: #9CA3AF;
+}
+
+.pagination-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+.pagination span {
+    font-weight: 400;
+    color:#9CA3AF;
+}
+
+#pagination-current {
     font-weight: 500;
-    margin: 30px 0 20px 30px;
+    color: black;
 }
 
 .table-container::-webkit-scrollbar {

@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="../css/shared-table.css">
         <link rel="stylesheet" href="../css/shared-add-modal.css">
         <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/toast.css">
         <link rel="stylesheet" href="../css/technicians.css">
 
         <!-- Inter font -->
@@ -57,9 +58,21 @@
 
                                 <tbody id="technicians-body"></tbody>
                             </table>
-                        </div>
 
-                        <span id="table-number"></span>
+                            <div class="pagination">
+                                <button class="pagination-arrow" id="technician-first"><i data-lucide="chevron-first"></i></button>
+                                <button class="pagination-arrow" id="technician-previous"><i data-lucide="chevron-left"></i></button>
+
+                                <span class="pagination-number">
+                                    <span id="pagination-current"></span>
+                                    /
+                                    <span id="pagination-last"></span>
+                                </span>
+
+                                <button class="pagination-arrow" id="technician-next"><i data-lucide="chevron-right"></i></button>
+                                <button class="pagination-arrow" id="technician-last"><i data-lucide="chevron-last"></i></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -109,6 +122,8 @@
             <button class="action-edit">Edit</button>
             <button class="action-delete">Delete</button>
         </div>
+
+        <div class="toast-container"></div>
 
         <!-- Sidebar JS -->
         <script src="../js/sidebar.js" defer></script>
