@@ -1,0 +1,402 @@
+<aside class="steps">
+    <div class="step-wrapper">
+        <span class="step-circle" id="customer-circle"></span>
+        <span>Customer</span>
+    </div>
+    
+    <div class="step-wrapper">
+        <div class="step-circle" id="job-circle"></div>
+        <span>Job</span>
+    </div>
+
+    <div class="step-wrapper">
+        <div class="step-circle" id="items-circle"></div>
+        <span>Items</span>
+    </div>
+
+    <div class="step-wrapper">
+        <div class="step-circle" id="review-circle"></div>
+        <span>Review</span>
+    </div>
+</aside>
+
+<div class="wizards-container">
+    <button class="close-modal-btn" id="wizard-close"><i data-lucide="x"></i></button>
+    <div class="wizard-container hidden" id="customer-wizard">
+        <h3>Customer details</h3>
+
+        <div class="new-customer">
+            <p>New Customer?</p>
+
+            <div class="toggle-wrapper">
+                <button class="customer-toggle"  id="customer-no">No</button>
+                <hr>
+                <button class="customer-toggle" id="customer-yes">Yes</button>
+            </div>
+
+            <select class="hidden" id="customer-select"></select>
+        </div>
+        
+        <div class="section-wrapper hidden">
+            <p class="section-title">CONTACT</p>
+    
+            <div class="input-wrapper">
+                <input class="required" id="wizard-customer-name" type="text" placeholder="Full name" required>
+            </div>
+    
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <input class="required" id="wizard-customer-phone" type="text" placeholder="Phone" required>
+                </div>
+    
+                <div class="input-wrapper">
+                    <input type="text" id="wizard-customer-email" placeholder="Email">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-wrapper hidden">
+            <p class="section-title">BUSINESS</p>
+
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <input id="wizard-customer-company" type="text" placeholder="Company name">
+                </div>
+
+                <div class="input-wrapper">
+                    <input id="wizard-customer-business-phone" type="text" placeholder="Business phone">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-wrapper hidden">
+            <p class="section-title">LICENCES</p>
+
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <input id="wizard-customer-rbq" type="text" placeholder="RBQ">
+                </div>
+
+                <div class="input-wrapper">
+                    <input id="wizard-customer-ccq" type="text" placeholder="CCQ">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-wrapper hidden">
+            <p class="section-title">ADDRESS</p>
+
+            <div class="input-wrapper">
+                <input id="wizard-customer-street" class="required" type="text" placeholder="Street address" required>
+            </div>
+            
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <input id="wizard-customer-city" class="required" type="text" placeholder="City" required>
+                </div>
+
+                <div class="input-wrapper">
+                    <select id="wizard-customer-province" class="required" name="province" required>
+                        <option value="" disabled selected hidden>Select Province</option>
+                        <option value="AB">Alberta</option>
+                        <option value="BC">British Columbia</option>
+                        <option value="MB">Manitoba</option>
+                        <option value="NB">New Brunswick</option>
+                        <option value="NL">Newfoundland and Labrador</option>
+                        <option value="NS">Nova Scotia</option>
+                        <option value="NT">Northwest Territories</option>
+                        <option value="NU">Nunavut</option>
+                        <option value="ON">Ontario</option>
+                        <option value="PE">Prince Edward Island</option>
+                        <option value="QC">Quebec</option>
+                        <option value="SK">Saskatchewan</option>
+                        <option value="YT">Yukon</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <input id="wizard-customer-postal" class="required" type="text" placeholder="Postal code" required>
+                </div>
+
+                <div class="input-wrapper">
+                    <select id="wizard-customer-country" class="required" name="country" required>
+                        <option value="" disabled selected hidden>Select Country</option>
+                        <option value="Canada">Canada</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-button-wrapper">
+            <button class="cancel-btn" id="job-cancel">Cancel</button>
+            <button class="add-button" id="customer-continue" disabled>Continue</button>
+        </div>
+    </div>
+
+    <div class="wizard-container hidden" id="job-wizard">
+        <h3>Job details</h3>
+        
+        <div class="section-wrapper">
+            <p class="section-title">JOB</p>
+    
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <p class="input-title">Type</p>
+
+                    <select id="wizard-job-type" class="required" name="job_type" required>
+                        <option value="" disabled selected hidden>Select Type</option>
+                        <option value="Installation">Installation</option>
+                        <option value="Repair">Repair</option>
+                        <option value="Maintenance">Maintenance</option>
+                    </select>
+                </div>
+    
+                <div class="input-wrapper">
+                    <div class="optional-input">
+                        <span class="input-title">Scheduled date</span>
+                        <span class="input-optional">(optional)</span>
+                    </div>
+                    
+                    <input type="date" id="wizard-job-date" placeholder="yyyy-mm-dd">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-wrapper">
+            <p class="section-title">PAYMENT</p>
+    
+            <div class="input-row">
+                <div class="input-wrapper">
+                    <p class="input-title">Labour cost</p>
+                    <input type="number" id="wizard-job-cost" placeholder="$0.00">
+                </div>
+
+                <div class="input-wrapper">
+                    <p class="input-title">Method</p>
+
+                    <select id="wizard-job-payment" class="required" name="job_payment" required>
+                        <option value="" disabled selected hidden>Select method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Debit card">Debit card</option>
+                            <option value="Credit card">Credit card</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="E-transfer">E-transfer</option>
+                            <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
+                    </select>
+                </div>
+
+                <div class="input-wrapper">
+                    <p class="input-title">Status</p>
+
+                    <select id="wizard-job-payment-status" class="required" name="job_payment_status" required>
+                        <option value="" disabled selected hidden>Select status</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Unpaid">Unpaid</option>
+                    </select>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="job-warning-wrapper">
+            <i data-lucide="info"></i>
+            <span class="job-warning">Job status is set automatically — "Scheduled" if a date is chosen, otherwise "Unscheduled". This can be modified later.</span>
+        </div>
+
+        <div class="modal-button-wrapper">
+            <button class="cancel-btn" id="job-back">Back</button>
+            <button class="add-button" id="job-continue" disabled>Continue</button>
+        </div>
+    </div>
+
+    <div class="wizard-container hidden" id="items-wizard">
+        <div class="wizard-title-wrapper">
+            <h3>Items used</h3>
+            <p class="wizard-subtitle">Parts used for this job (optional)</p>
+        </div>
+
+        <div class="input-title hidden" id="wizard-item-header">
+            <span>ITEM</span>
+            <span>QTY</span>
+            <span>PRICE</span>
+        </div>
+
+        <div class="input-row hidden" id="line-items"></div>
+
+        <button id="add-line-item" class="cancel-btn">+ Add item</button>
+
+        <hr>
+        
+        <div class="total-wrapper">
+            <span>Items subtotal</span>
+            <span id="wizard-items-total"></span>
+        </div>
+
+        <hr>
+
+        <div class="modal-button-wrapper">
+            <button class="cancel-btn" id="items-back">Back</button>
+            <button class="add-button" id="items-continue" disabled>Continue</button>
+        </div>
+    </div>
+
+    <div class="wizard-container hidden" id="review-wizard">
+        <div class="wizard-title-wrapper">
+            <h3>Review</h3>
+            <p class="wizard-subtitle">Confirm the details before creating the job.</p>
+        </div>
+
+        <div class="review-column-wrapper">
+            <div class="review-column" id="review-left-side">
+                <div class="review-wrapper">
+                    <div class="review-header">
+                        <span class="section-title">CUSTOMER</span>
+                        <button class="review-edit-btn">Edit</button>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Full Name</span>
+                        <span class="review-value" id="review-customer-name"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Phone</span>
+                        <span class="review-value" id="review-customer-phone"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Email</span>
+                        <span class="review-value" id="review-customer-email"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Company</span>
+                        <span class="review-value" id="review-customer-company"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Business Phone</span>
+                        <span class="review-value" id="review-customer-business-phone"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">RBQ</span>
+                        <span class="review-value" id="review-customer-rbq"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">CCQ</span>
+                        <span class="review-value" id="review-customer-ccq"></span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="review-wrapper">
+                    <div class="review-header">
+                        <span class="section-title">ADDRESS</span>
+                        <button class="review-edit-btn">Edit</button>
+                    </div>
+
+                    <div class="review-address-wrapper">
+                        <p id="review-customer-street"></p>
+                        <p id="review-customer-address"></p>
+                    </div>
+                    
+                </div>
+
+                <hr>
+
+                <div class="review-wrapper">
+                    <div class="review-header">
+                        <span class="section-title">JOB</span>
+                        <button class="review-edit-btn">Edit</button>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Type</span>
+                        <span id="review-job-type"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Scheduled Date</span>
+                        <span class="review-value" id="review-job-date"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="review-column" id="review-right-side">
+                <div class="review-wrapper">
+                    <div class="review-header">
+                        <span class="section-title">ITEMS & LABOUR</span>
+                        <button class="review-edit-btn">Edit</button>
+                    </div>
+
+                    <div class="review-items-labour"></div>
+                </div>
+
+                <hr>
+
+                <div class="review-wrapper">
+                    <div class="review-header">
+                        <span class="section-title">PAYMENT</span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Payment Method</span>
+                        <span id="review-payment"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Payment Status</span>
+                        <span class="review-value" id="review-payment-status"></span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="review-wrapper">
+                    <div class="review-info-wrapper">
+                        <span class="review-title">Subtotal</span>
+                        <span class="review-value" id="review-subtotal"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">GST (5%)</span>
+                        <span class="review-value" id="review-gst"></span>
+                    </div>
+
+                    <div class="review-info-wrapper">
+                        <span class="review-title">QST (9.975%)</span>
+                        <span class="review-value" id="review-qst"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="review-info-wrapper total">
+                        <span class="review-total-title">Total</span>
+                        <span class="review-total-value" id="review-total"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-button-wrapper">
+            <button class="cancel-btn" id="review-back">Back</button>
+            <button class="add-button" id="review-confirm" type="submit">Confirm</button>
+        </div>
+    </div>
+
+    <div class="wizard-container hidden" id="success-wizard">
+        <div class="success-check"><i data-lucide="check"></i></div>
+        <p class="success-title">Job successfully created!</p>
+        <p class="success-subtitle" id="success-subtitle"></p>
+
+        <div id="success-buttons">
+            <button class="success-btn" id="success-print"><i data-lucide="printer"></i>Print invoice</button>
+            <button class="success-btn" id="success-close">Close</button>
+        </div>
+    </div>
+</div>

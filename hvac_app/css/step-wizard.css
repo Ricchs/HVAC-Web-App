@@ -1,0 +1,559 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.modal-overlay.open {
+    visibility: visible;
+    opacity: 1;
+} 
+
+
+.step-wizard {
+    display: flex;
+    background: #FFFFFF;
+    padding: 24px;
+    width: 900px; 
+    min-height: 685px;    
+    overflow-y: auto;
+    gap: 12px;
+    border-radius: 8px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    transform: scale(0.6);  
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    
+}
+
+.step-wizard.success {
+    width: 500px;
+    min-height: 320px;
+}
+
+#add-job-wizard.open .step-wizard {
+    transform: scale(1);     
+}
+
+/* -------------------------------------- Below is the step bar --------------------------------------*/
+.steps{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: space-between;
+    background-color: #F9FAFB;
+    padding: 24px;
+    margin: -24px 0 -24px -24px;
+    border-right: 1px solid #E5E7EB;
+    transition: background-color 0.15s ease;
+}
+
+.steps::after {
+    content: '';
+    position: absolute;
+    left: 33px;
+    top: 30px;
+    height: var(--progress, 0px);
+    width: 2px;
+    background-color: #6366F1;
+    z-index: 0;
+    transition: height 0.7s ease
+}
+
+.steps.reverse::after {
+    content: '';
+    position: absolute;
+    left: 33px;
+    top: 30px;
+    height: var(--progress, 0px);
+    width: 2px;
+    background-color: #6366F1;
+    z-index: 0;
+    transition: height 0.7s ease 0.05s;
+}
+
+.steps::before {
+    content: '';
+    position: absolute;
+    left: 33.5px;
+    top: 30px;
+    bottom: 30px;
+    width: 1px;
+    background-color: #9CA3AF;
+}
+
+.step-wrapper {
+    position: relative;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.step-wrapper span {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.step-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: relative;
+    border: 1px solid #9CA3AF;
+    background-color: white;
+    z-index: 1;
+
+    background-image: linear-gradient(#6366F1, #6366F1);
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: 100% 0%;
+    transition: background-size 0.1s ease 0s;
+}
+
+.step-circle.active {
+    background-size: 100% 100%;
+    border-color: #6366F1;
+    transition: background-size 0.15s ease 0.55s;
+}
+
+/* -------------------------------------- Below is the general main ui --------------------------------------*/
+.wizards-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+}
+
+#wizard-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+}
+
+.wizard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+}
+
+.wizard-container h3 {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.section-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.modal-button-wrapper {
+    display: flex;
+    margin-top: auto;
+    justify-content: space-between;
+}
+
+
+.modal-button-wrapper button {
+    width: fit-content;
+    padding: 10px 20px;
+}
+
+
+.section-title {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+}
+
+.wizard-container input,
+.wizard-container select {
+    width: 100%;
+    height: 40px;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #C7C7C7;
+    border-radius: 5px;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.optional-input {
+    display: flex;
+    gap: 4px;
+}
+
+.input-title, .input-optional {
+    font-size: 13px;
+    font-weight: 400;
+    color: #636363;
+}
+
+.input-optional {
+    color: #9CA3AF
+}
+
+/* -------------------------------------- Below is the customer step --------------------------------------*/
+
+.toggle-wrapper {
+    display: flex;
+    gap: 4px;
+    background: #F3F4F6; 
+    padding: 4px;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.toggle-wrapper hr {
+    width: 1px;
+    height: 18px;
+    border: none;
+    background: #D1D5DB;
+    align-self: center;
+    margin: 0;
+}
+
+.customer-toggle {
+    padding: 8px 20px;
+    border: none;
+    background: none;
+    color: #636363; 
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.customer-toggle:not(.active):hover {
+    background-color: #E5E7EB;
+}
+
+.customer-toggle.active {
+    color: #111;
+    background-color: white;  
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.new-customer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.new-customer p {
+    font-size: 14px;
+}
+
+#customer-select {
+    height: 32px;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    padding: 2px 8px;
+    background-color: #FFFFFF;
+    border: 1px solid #C7C7C7;
+    border-radius: 8px;
+    appearance: none;
+    transition: background-color 0.15s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1)
+}
+
+
+/* -------------------------------------- Below is the job step --------------------------------------*/
+.job-warning-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.job-warning-wrapper svg, .job-warning {
+    color: #9CA3AF;
+}
+.job-warning {
+    font-size: 14px;
+}
+
+/* -------------------------------------- Below is the customer step --------------------------------------*/
+#wizard-item-header,
+.line-row {
+    display: grid;
+    grid-template-columns: 2fr 0.8fr 1fr 28px;   /* item | qty | price | trash */
+    gap: 8px;
+    align-items: center;
+}
+
+#wizard-item-header {
+    margin-bottom: -12px;
+}
+
+#items-wizard hr {
+    border: none;
+    border-top: 1px solid #E5E7EB;
+}
+
+.wizard-subtitle {
+    font-size: 14px;
+    color: #636363;
+}
+
+#line-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#add-line-item {
+    font-size: 13px;
+    color: black;
+    font-weight: 400;
+    width: fit-content;
+}
+
+.total-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-wrapper span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #636363;
+}
+
+#wizard-items-total {
+    font-size: 16px;
+    font-weight: 500;
+    color: black;
+}
+
+/* -------------------------------------- Below is the review step --------------------------------------*/
+.review-column-wrapper{
+    display: flex;
+    gap: 8px;
+}
+
+.review-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    padding: 15px;
+    gap: 20px;
+}
+
+#review-left-side, #review-right-side {
+    height: fit-content;
+}
+
+.review-column hr {
+    border: none;
+    border-top: 1px solid #E5E7EB;
+}
+
+.review-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.review-header .section-title {
+    margin: 0;
+}
+
+.review-edit-btn {
+    font-size: 12px;
+    color: #6366F1;
+    background: none;
+    border: none;
+    transition: background-color 0.15s ease;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.review-edit-btn:hover {
+    background: #EEF2FF;
+    cursor: pointer;
+}
+
+.review-edit-btn:active {
+    background: #E0E7FF;
+}
+
+.review-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.review-info-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.review-info-wrapper.total {
+    margin-top: 12px;
+    font-size: 19px;
+    font-weight: 500;
+}
+
+.review-title{
+    font-size: 14px;
+    font-weight: 400;
+    color: #636363;
+}
+
+.review-value {
+    font-size: 14px;
+    color: black;
+}
+
+.review-address-wrapper {
+    font-size: 14px;
+    color: black;
+}
+
+.review-items-labour {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.review-item-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.item-name-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 14px;
+}
+
+/* -------------------------------------- Below is the succes panel --------------------------------------*/
+#success-wizard {
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes check-pop {
+    0%   { transform: scale(0);   opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.success-check {
+    display: flex;
+    width: 60px;
+    height: 60px;
+    align-items: center;
+    justify-content: center;
+    background-color: #6366F1;
+    border-radius: 50%;
+    border: 7px solid #E0E7FF;
+    animation: check-pop 0.35s ease-out;
+}
+
+.success-check svg {
+    color: white;
+}
+
+.success-title    {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.success-subtitle {
+    font-size: 14px;
+    color: #9CA3AF;
+}
+
+#success-buttons {
+    gap: 12px;
+    display: flex;
+    align-self: center;
+    width: 385px;  
+}
+
+.success-btn {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 16px;
+    border-radius: 8px;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: background-color 0.15s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.success-btn svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+#success-print {
+    color: black;
+    background: none;
+    border: 1px solid #C7C7C7;
+    gap: 6px;
+}
+
+#success-print:hover {
+    background-color: #F9FAFB;
+}
+
+#success-print:active {
+    background-color: #E5E7EB;
+}
+
+#success-close {
+    background-color: #6366F1;
+    border: 1px solid #6366F1;
+    color: #FFFFFF;
+}
+
+#success-close:hover {
+    background-color: #4F46E5;
+}
+
+#success-close:active {
+    background-color: #4338CA;
+}
