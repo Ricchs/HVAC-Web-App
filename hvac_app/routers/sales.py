@@ -36,8 +36,25 @@ def get_sales(db: Session = Depends(get_db)):
 
 @router.get("/sales/{sales_id}")
 def get_sales(sales_id: int, db: Session = Depends(get_db)):
-    existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    return existing_sale
+    items = db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).all()
+    sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
+    customer = db.query(models.Customers).filter(models.Customers.id == sales_info.customers_id).first()
+
+    return {
+        "id": sales_info.id,
+        "customer": {
+            "full_name": customer.full_name,
+            "phone": customer.phone
+        },
+        "date": sales_info.date,
+        "payment_method": sales_info.payment_method,
+        "payment_status": sales_info.payment_status,
+        "items": [{
+            "items_id": i.items_id,
+            "quantity": i.quantity,
+            "price": i.price
+        } for i in items]
+        }
 
 @router.get("/sales/{sales_id}/items")
 def get_sales(sales_id: int, db: Session = Depends(get_db)):
@@ -72,17 +89,7 @@ def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):
         payment_status = sale.payment_status
     )
 
-    db.add(new_sale)
-    db.flush()
-
-    for item in sale.items:
-        db.add(models.SalesItems(
-            sales_id = new_sale.id,
-            items_id = item.items_id,
-            quantity = item.quantity,
-            price = item.price
-        ))
-
+    db.add(new_sale) 
     db.commit()
     db.refresh(new_sale)
     return new_sale

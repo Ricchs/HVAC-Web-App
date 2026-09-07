@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-button.css">
+        <link rel="stylesheet" href="../css/new_sale.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    </head>
+
+    <body>
+        <div class="app">
+            <div id="sidebar"></div>
+            <main class="main-content">
+                <div class="container">
+                    <div class="header-row">
+                        <div class="header-wrapper">
+                            <button class="close-modal-btn" id="sale-back"><i data-lucide="arrow-left"></i></button>
+                            <h1>Add New Sale</h1>
+                        </div>
+
+                        <button class="create-sale">Create Sale</button>
+                    </div>
+                    
+                    <div class="new-sale-sides">
+                        <!-- This is the customer side -->
+                        <div class="customer-side">
+                            <div class="new-customer">
+                                <p>New Customer?</p>
+                                <div class="toggle-wrapper required">
+                                    <button class="customer-toggle"  id="customer-no">No</button>
+                                    <hr>
+                                    <button class="customer-toggle" id="customer-yes">Yes</button>
+                                </div>
+                            </div>
+
+                            <select class="required hidden" id="customer-select"></select>
+
+                            <!-- contact -->
+                            <div class="section-wrapper hidden">
+                                <p class="section-title">Customer Details</p>
+
+                                <div class="field-wrapper">
+                                    <p class="field-title">Full name</p>
+                                    <input class="required" name="full_name">
+                                </div>
+
+                                <div class="field-wrapper">
+                                    <p class="field-title">Phone number</p>
+                                    <input class="required" type="number" name="phone">
+                                </div>
+
+                                <div class="field-wrapper">
+                                    <p class="field-title">Email</p>
+                                    <input class="required" name="email">
+                                </div>
+                            </div>
+
+                            <hr class="side-hr hidden">
+
+                            <!-- business -->
+                            <div class="section-wrapper hidden">
+                                <p class="section-title">Business Credentials (Optional)</p>
+
+                                <div class="field-row">
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Company name</p>
+                                        <input name="company_name">
+                                    </div>
+                                    
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Business phone</p>
+                                        <input type="number" name="business_phone">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="side-hr hidden">
+
+                            <!-- licenses -->
+                            <div class="section-wrapper hidden">
+                                <p class="section-title">Licenses (Optional)</p>
+
+                                <div class="field-row">
+                                    <div class="field-wrapper">
+                                        <p class="field-title">RBQ</p>
+                                        <input type="text" name="rbq">
+                                    </div>
+                                    
+                                    <div class="field-wrapper">
+                                        <p class="field-title">CCQ</p>
+                                        <input type="text" name="ccq">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="side-hr hidden">
+
+                            <!-- address -->
+                            <div class="section-wrapper hidden">
+                                <p class="section-title">Customer Address (Optional)</p>
+
+                                <div class="field-wrapper">
+                                    <p class="field-title">Street address</p>
+                                    <input name="street_address">
+                                </div>
+
+                                <div class="field-row">
+                                    <div class="field-wrapper">
+                                        <p class="field-title">City</p>
+                                        <input type="text" name="city">
+                                    </div>
+                                    
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Province</p>
+                                        <select name="province">
+                                            <option value="" disabled selected hidden>Select Province</option>
+                                            <option value="AB">Alberta</option>
+                                            <option value="BC">British Columbia</option>
+                                            <option value="MB">Manitoba</option>
+                                            <option value="NB">New Brunswick</option>
+                                            <option value="NL">Newfoundland and Labrador</option>
+                                            <option value="NS">Nova Scotia</option>
+                                            <option value="NT">Northwest Territories</option>
+                                            <option value="NU">Nunavut</option>
+                                            <option value="ON">Ontario</option>
+                                            <option value="PE">Prince Edward Island</option>
+                                            <option value="QC">Quebec</option>
+                                            <option value="SK">Saskatchewan</option>
+                                            <option value="YT">Yukon</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="field-row">
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Postal code</p>
+                                        <input name="postal_code">
+                                    </div>
+                                    
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Country</p>
+                                        <select name="country">
+                                            <option value="" disabled selected hidden>Select Country</option>
+                                            <option value="Canada">Canada</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- This is the items and payment side -->
+                        <div class="item-side">
+                            <div class="section-wrapper">
+                                <div class="section-title-wrapper">
+                                    <p class="section-title">Item(s)</p>
+                                    <button class="sale-add-item">+ Add item</button>
+                                </div>
+                                
+                                <div class="items-header hidden">
+                                    <span>ITEM</span>
+                                    <span>QTY</span>
+                                    <span>PRICE</span>
+                                </div>
+
+                                <div class="items-section hidden">
+                                </div>
+
+                               
+                            </div>
+
+                            <div class="section-wrapper">
+                                <p class="section-title">Payment</p>
+
+                                <div class="field-wrapper">
+                                    <p class="field-title">Date</p>
+                                    <input class="required" type="date" name="date">
+                                </div>
+
+                                <div class="field-row">
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Payment method</p>
+                                        <select class="required" name="payment_method">
+                                            <option value="" disabled selected hidden>Select method</option>
+                                            <option value="Cash">Cash</option>
+                                            <option value="Debit card">Debit card</option>
+                                            <option value="Credit card">Credit card</option>
+                                            <option value="Cheque">Cheque</option>
+                                            <option value="E-transfer">E-transfer</option>
+                                            <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
+                                        </select>
+                                    </div>
+    
+                                    <div class="field-wrapper">
+                                        <p class="field-title">Status</p>
+                                        <select class="required" name="payment_status" required>
+                                            <option value="" disabled selected hidden>Select status</option>
+                                            <option value="Paid">Paid</option>
+                                            <option value="Unpaid">Unpaid</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <hr class="side-hr">
+
+                                <div class="sale-total">
+                                    <span class="total">Total</span>
+                                    <span class="total-value">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js"  defer></script>
+
+        <!-- page JS -->
+        <script src="../js/new_sale.js" type="module"></script>
+    </body>
+</html>

@@ -4,13 +4,31 @@ const statusClass = {
     'Paid': 'badge-in',
     'Unpaid': 'badge-out'
 }
-/* load sales */
 
+if (sessionStorage.getItem('createdSaleId')) {
+    helpers.showToast('Success!',`Sale #${sessionStorage.getItem('createdSaleId')} has been created`);
+    sessionStorage.removeItem('createdSaleId');
+}
+
+/* load sales */
+let rowsPerPage; 
+let rowsTotal;
+let numberPages;
+let currentPage = 1;
 async function loadSales() {
     const response = await fetch('/sales');
     const items = await response.json();
 
-    document.getElementById('sales-body').innerHTML = items.map(i => `
+    rowsPerPage = helpers.rowPerPage();
+    rowsTotal = items.length;
+    numberPages = Math.ceil(rowsTotal/rowsPerPage);
+    const start = (currentPage - 1) * rowsPerPage;
+    document.getElementById('pagination-current').textContent = currentPage;
+    updatePagination();
+
+    document.getElementById('pagination-last').textContent = numberPages
+
+    document.getElementById('sales-body').innerHTML = items.slice(start, start + rowsPerPage).map(i => `
         <tr data-id="${i.id}">
             <td>Sale #${i.id}</td>
             <td>${i.customers_name}</td>
@@ -28,6 +46,39 @@ async function loadSales() {
 
 loadSales()
 
+/* pagination */
+document.getElementById('sale-first').addEventListener('click', () => {
+    currentPage = 1
+    updatePagination();
+    loadSales();
+})
+
+document.getElementById('sale-previous').addEventListener('click', () => {
+    currentPage = Math.max(1, currentPage - 1);  
+    updatePagination();
+    loadSales();
+})
+
+document.getElementById('sale-next').addEventListener('click', () => {
+    currentPage = Math.min(numberPages, currentPage + 1)
+    updatePagination();
+    loadSales();
+})
+
+document.getElementById('sale-last').addEventListener('click', () => {
+    currentPage = numberPages
+    updatePagination();
+    loadSales();
+})
+
+function updatePagination() {
+    document.getElementById('pagination-current').textContent = currentPage;
+    document.getElementById('sale-first').disabled = currentPage === 1;
+    document.getElementById('sale-previous').disabled = currentPage === 1;
+    document.getElementById('sale-next').disabled = currentPage === numberPages;
+    document.getElementById('sale-last').disabled = currentPage === numberPages;
+}
+
 let currentSaleId;
 /* Sale details */
 const detailsPanel = document.getElementById("sales-details-panel")
@@ -36,6 +87,7 @@ document.getElementById('sales-body').addEventListener('click', async(e) => {
     const row = e.target.closest('tr');
 
     currentSaleId = row.dataset.id
+    document.getElementById('sale-details-edit').dataset.id = currentSaleId;
     const response = await fetch(`/sales/${currentSaleId}/items`);
     const items = await response.json()
 
@@ -89,149 +141,231 @@ document.getElementById('panel-overlay').addEventListener('click', () => {
     closePanel();
 })
 
+/*************************************** Row behaviour ***************************************/
 /* table row action */
 helpers.rowAction('sales-body')
 
 /* table row action close */
 helpers.rowClose()
 
-/* table row action edit */
-
-
-
 /* table row action delete */
 document.querySelector('.action-delete').addEventListener('click', async(e) => {
     if (!confirm('Delete this sale?')) return;
-
+    
     const response = await fetch(`/sales/${helpers.getActiveId()}`, {method: 'DELETE'});
 
     if (response.ok) {
         loadSales();
+        helpers.showToast('Success!',`Sale #${helpers.getActiveId()} has been deleted`);
     } else {
-        const err = await response.json()
-        alert(err.detail)
+        const err = await response.json();
+        alert(err.detail);
     }
+    helpers.rowForceClose();
+});
 
-    helpers.rowForceClose()
-})
+/*************************************** Edit modal behaviour ***************************************/
+function modalRecomputeTotal() {
+    const rows = document.querySelectorAll('#modal-line-items .line-row');
+    const subtotal = [...rows].reduce((sum, row) => {
+        const qty = Number(row.querySelector('[name="quantity"]').value)
+        const price = Number(row.querySelector('[name="price"').value)
 
-
-/* open `add sale` form when user clicks on `add sale` + button behaviour */
-const modal = document.getElementById("add-modal");
-
-const form = document.getElementById("add-sale-form");
-
-async function loadCustomers() {
-    const response = await fetch ('/customers');
-    const customers = await response.json();
-    document.querySelector('[name=customers_id]').innerHTML = 
-        '<option value="" disabled selected hidden>Select customer</option>' +
-        customers.map(c => `<option value="${c.id}">${c.full_name}</option>`).join('');
-}
-
-loadCustomers();
-
-let itemOptionHTML= '<option value="" disabled selected hidden>Select item </option>'
-
-async function loadItems() {
-    const response = await fetch('/inventory')
-    const items = await response.json()
+        return sum + qty * price
+    }, 0);
     
-    itemOptionHTML += items.map(i => `<option value="${i.id}" data-price="${i.sale_price}">${i.item}</option>`).join('')
+    document.getElementById('modal-items-total').textContent = `$${helpers.money(subtotal)}`
 }
-
-loadItems();
 
 function closeModal() {
-    form.reset();
-    modal.classList.remove("open");
-
-    document.getElementById('line-items').innerHTML = '';
+    document.getElementById('modal-item-header').classList.add('hidden')
+    document.getElementById('modal-line-items').innerHTML = '';
+    document.getElementById('modal-line-items').classList.add('hidden');
+    document.getElementById('sale-form').reset();
+    document.getElementById('sale-edit-modal').classList.remove("open");
 }
 
-document.querySelector(".add-item").addEventListener('click', () => {
-    modal.classList.add("open")
-});
+/********* close modal *********/
+document.querySelectorAll('#close-sale-edit, #sale-modal-cancel').forEach(el => el.addEventListener('click', () => closeModal()));
 
-document.querySelector(".cancel-btn").addEventListener('click', () => {
-    closeModal();
-});
+/********* load *********/
+let saleId;
+document.querySelectorAll('.action-edit, #sale-details-edit').forEach(el => el.addEventListener('click', async(e) => { 
+    saleId = e.currentTarget.dataset.id;
+    helpers.rowForceClose();
+    closePanel();
 
-document.querySelector(".close-modal-btn").addEventListener('click', () => {
-    closeModal();
-});
+    const saleResponse = await fetch(`/sales/${saleId}`);
+    const sale = await saleResponse.json();
 
-/* add and delete row item in modal */
-document.getElementById('add-line-item').addEventListener('click', () => {
-    const newRow = document.createElement('div');
-    newRow.className = 'line-row';
+    document.getElementById('sale-edit-title').textContent = `Edit Sale #${sale.id}`;
+    document.getElementById('edit-modal-customer').textContent = `${sale.customer.full_name} · ${helpers.formatPhone(sale.customer.phone)}`;
 
-    newRow.innerHTML = `
-    <select name="item" class="line-item-select" required>
-        ${itemOptionHTML}
-    </select>
+    if (sale.items.length !== 0) {
+        const inventoryResponse = await fetch('/inventory')
+        const inventory = await inventoryResponse.json();
 
-    <input type="number" class="line-qty" placeholder="Qty" min="1">
-    <input type="number" class="line-price" placeholder="Price" min="0">
-    <button type="button" class="remove-line"><i data-lucide="trash-2"></i></button>`;
+        const optionsHTML = '<option value="" disabled hidden>Select item</option>' + inventory.map(i => `<option value="${i.id}" data-price="${i.sale_price}">${i.item}</option>`).join('');
+        
+        sale.items.forEach(item => {
+            const newWrapper = document.createElement('div')
+            newWrapper.className = 'line-wrapper'
 
-    document.getElementById('line-items').insertAdjacentElement('beforeend', newRow);
+            const newRow = document.createElement('div');
+            newRow.className = 'line-row';
+            newRow.innerHTML = `
+                <select class="required">${optionsHTML}</select>
+                <input type="number" name="quantity" class="required">
+                <input type="number" name="price" class="required">
+                <button type="button" class="close-modal-btn"><i data-lucide="trash-2"></i></button>
+            `;
+
+            newRow.querySelector('select').value = item.items_id;
+            newRow.querySelector('[name="quantity"]').value = item.quantity;
+            newRow.querySelector('[name="price"]').value = item.price;
+
+            newWrapper.appendChild(newRow);
+            newWrapper.insertAdjacentHTML('beforeend', '<p class="duplicate-error hidden"></p>');
+            document.getElementById('modal-line-items').appendChild(newWrapper);
+        })
+
+        document.getElementById('modal-item-header').classList.remove('hidden')
+        document.getElementById('modal-line-items').classList.remove('hidden')
+        lucide.createIcons();
+    }
+
+    document.querySelector('[name="date"]').value = sale.date;
+    document.querySelector('[name="payment_method"]').value = sale.payment_method;
+    document.querySelector('[name="payment_status"]').value = sale.payment_status;
+
+    modalRecomputeTotal();
+
+    document.getElementById('sale-edit-modal').classList.add('open');
+}));
+
+/********* add row item *********/
+document.querySelector('.sale-add-item').addEventListener('click', async() => {
+    const response = await fetch('/inventory');
+    const items = await response.json();
+
+    document.getElementById('modal-line-items').insertAdjacentHTML('beforeend', `
+    <div class="line-wrapper">
+        <div class="line-row">
+            <select class="required">
+                <option value="" disabled selected hidden>Select Item</option>
+                ${items.map(item => `<option value="${item.id}" data-price="${item.sale_price}">${item.item}</option>`).join('')}
+            </select>
+
+            <input type="number" name="quantity" class="required">
+            <input type="number" name="price" class="required">
+            <button class="close-modal-btn"><i data-lucide="trash-2"></i></button>
+        </div>
+        <p class="duplicate-error"></p>
+    </div>
+    `);
+
+    document.querySelector('.modal-item-header').classList.remove('hidden');
+    document.getElementById('modal-line-items').classList.remove('hidden');
     lucide.createIcons();
 });
 
-document.getElementById('line-items').addEventListener('click', (e) => {
-    const btn = e.target.closest('.remove-line');
-
+/********* delete row item *********/
+document.getElementById('modal-line-items').addEventListener('click', (e) => {
+    const btn = e.target.closest('.close-modal-btn');
     if (!btn) return;
+    
     btn.closest('.line-row').remove();
+
+    if (document.querySelectorAll('.line-row').length == 0) {
+        document.querySelector('.modal-item-header').classList.add('hidden')
+        document.getElementById('modal-line-items').classList.add('hidden');
+    };
+
+    modalRecomputeTotal();
 });
 
-/* row prefill when selecting an item */
-document.getElementById('line-items').addEventListener('change', (e) => {
-    const select = e.target.closest('.line-item-select');
+/********* Select item *********/
+document.getElementById('modal-line-items').addEventListener('change', (e) => {
+    const select = e.target.closest('select');
+
     if (!select) return;
-    const price = select.selectedOptions[0].dataset.price;
-
-    const row = select.closest('.line-row');
-    row.querySelector('.line-price').value = price;
-})
-
-/* submit behaviour add modal */
-form.addEventListener('submit', async(e) => {
-    e.preventDefault();
-
-    const data = Object.fromEntries(new FormData(form));
-
-    const items = []
+    
+    const currentRow = select.closest('.line-row')
+    const currentWrapper = select.closest('.line-wrapper')
+    let duplicate = false;
     document.querySelectorAll('.line-row').forEach(row => {
-        const items_id = row.querySelector('.line-item-select').value;
-        const quantity = Number(row.querySelector('.line-qty').value);
-        const price = Number(row.querySelector('.line-price').value);
-
-        if (items_id) {
-            items.push({items_id: Number(items_id), quantity, price});
+        if (row == currentRow) return;
+        if (row.querySelector('select').value == select.selectedOptions[0].value) {
+            currentWrapper.querySelector('.duplicate-error').textContent = `'${select.selectedOptions[0].textContent}' was already added.`;
+            currentWrapper.querySelector('.duplicate-error').classList.remove('hidden');
+            select.closest('.line-row').querySelector('[name="price"]').value = '';
+            select.value = '';
+            duplicate = true;
+            return
         }
     });
-
-    const send_body = {
-    customers_id: Number(data.customers_id),
-    date: data.date,
-    payment_method: data.payment_method,
-    payment_status: data.payment_status,
-    items: items
+    
+    if (!duplicate) {
+        select.closest('.line-row').querySelector('[name="price"]').value = select.selectedOptions[0].dataset.price;
+        currentWrapper.querySelector('.duplicate-error').classList.add('hidden')
     }
 
-    const response = await fetch('/sales', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(send_body)
-    })
+    modalRecomputeTotal();
+})
 
-    if (response.ok) {
+/********* Recompute total after every input *********/
+document.getElementById('modal-line-items').addEventListener('input', (e) => {
+    if (e.target.name !== "quantity" && e.target.name !== "price") return;
+    modalRecomputeTotal();
+})
+
+/********* Save *********/
+document.getElementById('sale-modal-save').addEventListener('click', async() => {
+    console.log(saleId);
+    const saleData = {
+        date: document.querySelector('[name="date"]').value,
+        payment_method: document.querySelector('[name="payment_method"]').value,
+        payment_status: document.querySelector('[name="payment_status"]').value,
+    };
+
+    try {
+        const saleResponse = await fetch(`/sales/${saleId}`, {
+            method: "PUT",
+            headers: {'Content-Type' : 'application/json'},
+            body: JSON.stringify(saleData),
+        });
+        if (!saleResponse.ok) throw new Error('Sale update failed');
+
+        const deleteResponse = await fetch(`/sales_items/${saleId}`, { method: 'DELETE' });
+        if (!deleteResponse.ok) throw new Error('Deleting old items failed');
+
+        const itemsResponses = await Promise.all([...document.querySelectorAll('.line-row')].map(row => {
+            const saleItemsData = {
+                sales_id: saleId,
+                items_id: Number(row.querySelector('select').selectedOptions[0].value),
+                quantity: Number(row.querySelector('[name="quantity"]').value),
+                price: Number(row.querySelector('[name="price"]').value),
+            };
+            return fetch('/sales_items', {
+                method: "POST",
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify(saleItemsData),
+            });
+        }));
+
+        if (!itemsResponses.every(r => r.ok)) throw new Error('Some items failed');
+
         closeModal();
         loadSales();
-    } else {
-        console.error('Failed', await response.text());
+        helpers.showToast('Success!', `Sale #${saleId} has been updated`)
+        saleId = null;
+    } catch (err) {
+        console.error('Failed to update sale:', err)
+        helpers.showToast('Error', 'Something went wrong updating the sale', 'circle-x');
     }
 });
 
+/*************************************** Add sale ***************************************/
+document.querySelector('.add-item').addEventListener('click', () => {
+    window.location.href = 'new_sale.html'
+});

@@ -42,11 +42,10 @@ def update_sales_items(sales_items_id: int, sale_item: SaleItemUpdate, db: Sessi
     db.refresh(existing_sale_item)
     return existing_sale_item
 
-@router.delete("/sales_items/{sales_items_id}")
-def delete_sales_items(sales_items_id: int, db: Session = Depends(get_db)):
+@router.delete("/sales_items/{sales_id}")
+def delete_sales_items(sales_id: int, db: Session = Depends(get_db)):
     
-    existing_sale_item = db.query(models.SalesItems).filter(models.SalesItems.id == sales_items_id).first()
+    db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).delete()
 
-    db.delete(existing_sale_item)
     db.commit()
     return {"message": "Sales item deleted successfully"}
