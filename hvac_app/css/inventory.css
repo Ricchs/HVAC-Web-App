@@ -119,54 +119,35 @@
     background-color: #FF0000;
 }
 
-/* -------------------------------------- Below is the dropzone in the modal overlay --------------------------------------*/
-.add-dropzone {
+/* -------------------------------------- Below is the tab bar --------------------------------------*/
+.tabs {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 15px;
-    border: 2px dashed #6366F1;
-    border-radius: 12px;
-    margin: 8px 0;
-    padding: 8px 0;
-    cursor: pointer;
+    width: fit-content;
+    border-radius: 10px;
+    background-color: #F3F4F6;
+    padding: 4px;
+
 }
 
-.add-dropzone:hover {
-    background-color: #EEF0FF;
-    border-color: #4F46E5;
-    border-radius: 6px;
-}
-
-.add-dropzone svg {
-    color: #6366F1;
-}
-
-.add-dropzone span {
+.tab {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 6px;
+    padding: 8px 20px;
+    border: none;
+    background: none;
     color: #636363;
-}
-
-.fake-drop {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 95%;
-    height: 40px;
-    border: 1px solid #6366F1;
+    font-weight: 500;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
     border-radius: 6px;
 }
 
-.fake-drop:hover {
-    text-decoration: underline;
-}
-
-.fake-drop span {
-    color: #6366F1;
-}
-
-
-.add-dropzone:dragover {  
-    background: #EEF0FF;
-    border-color: #4F46E5;
+.tab.active {
+    background-color: #FFFFFF;
+    color: black;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
