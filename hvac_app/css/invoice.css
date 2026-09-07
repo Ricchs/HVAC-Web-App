@@ -33,7 +33,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 8.5in;
-    min-height: 11in;
+    min-height: 10.5in;
     padding: 0.75in 0.75in 0.25in;
     box-sizing: border-box;
     margin: 0 auto;
@@ -80,7 +80,7 @@ body {
     color: #6B7280;
 }
 
-#print-customer, #print-customer-phone, #print-customer-company, #print-customer-ccq, #print-customer-rbq {
+.print-customer-info p{
     font-size: 14px;
 }
 
@@ -185,7 +185,7 @@ body {
     color: black;
 }
 
-.company-title p, .header-right-side, #print-customer-phone, #print-customer-company, #print-customer-ccq, #print-customer-rbq, #print-id, #print-date, .sale-total {
+.company-title p, .header-right-side, #print-customer-address, #print-customer-phone, #print-customer-company, #print-customer-ccq, #print-customer-rbq, #print-id, #print-date, .sale-total {
     color: #636363;
 }
 

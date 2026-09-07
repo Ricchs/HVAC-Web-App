@@ -1,0 +1,108 @@
+ <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+  
+        <link rel="stylesheet" href="../css/invoice.css">       
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+
+    <body>
+         <div class="print-invoice">
+            <div class="print-row">
+                <div class="header-left-side">
+                    <div class="company-title">
+                        <h2 class="print-company">Caobec Inc.</h2>
+                        <p>Heating · Ventilation · Air Conditioning</p>
+                    </div>
+                </div>
+
+                <div class="header-right-side">
+                    <p>2130 Rue Léger</p>
+                    <p>LaSalle, QC H8N 2L8C</p>
+                    <p>(514) 967-0818 · (514) 967-8878</p>
+                </div>
+            </div>
+
+            <hr class="first-line">
+
+            <div class="print-row">
+                <div class="print-customer-info">
+                    <p class="bill-to">BILLED TO</p>
+                    <p id="print-customer"></p>
+                    <p id="print-customer-address"></p>
+                    <p id="print-customer-phone"></p>
+                    <p class="hidden" id="print-customer-company"></p>
+                    <p class="hidden" id="print-customer-ccq"></p>
+                    <p class="hidden" id="print-customer-rbq"></p>
+                </div>
+
+                <div class="print-right-side">
+                    <h2>INVOICE</h2>
+
+                    <div class="id-date-wrapper">
+                        <p id="print-id"></p>
+                        <p id="print-job-date"></p>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="table-panel">
+                <table class="invoice-items">
+                    <thead>
+                        <tr>
+                            <th>DESCRIPTION</th>
+                            <th>PRICE</th>
+                            <th>QTY</th>
+                            <th>AMOUNT</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="print-sale-body"></tbody>
+                </table>
+            </div>
+            
+
+            <div class="sale-total">
+                <div class="payment-wrapper">
+                    <span class="subtotal-title">Payment method</span>
+                    <span class="subtotal-amount" id="print-payment-method"></span>
+                </div>
+                <div class="price-wrapper">
+                    <span class="subtotal-title">Subtotal</span>
+                    <span class="subtotal-amount" id="print-subtotal"></span>
+                </div>
+                
+                <div class="price-wrapper">
+                    <span class="subtotal-title">GST (5%)</span>
+                    <span class="subtotal-amount" id="print-GST"></span>
+                </div>
+
+                <div class="price-wrapper">
+                    <span class="subtotal-title">QST (9.975%)</span>
+                    <span class="subtotal-amount" id="print-QST"></span>
+                </div>
+
+                <hr>
+
+                <div class="total-wrapper">
+                    <span class="total-title">Total</span>
+                    <span class="subtotal" id="print-total"></span>
+                </div>
+            </div>
+
+            <div class="thank-you">
+                <p>Thank you for your business</p>
+                <p class="tax-number">GST #845569573 · QST #1220746077 · RBQ #5677-4508-01</p>
+                <img src="../logo/thank_you_logo.JPG" class="thank-you-logo">
+            </div>
+        </div>
+
+        <script src="../js/job-invoice.js" type="module"></script>
+    </body>
+ </html>
+ 
