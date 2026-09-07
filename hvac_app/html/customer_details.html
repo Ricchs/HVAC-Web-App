@@ -144,29 +144,39 @@
                                         </div>
                                     </div>
 
-                                    <table class="inventory-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Sale #</th>
-                                                <th>Date</th>
-                                                <th>Items</th>
-                                                <th>Amount</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="customer-details-body"></tbody>
-                                    </table>
-
-                                    <span class="pagination" id="customer-details-pagination"></span>
+                                    <div class="table-scroll">
+                                        <table class="inventory-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sale #</th>
+                                                    <th>Date</th>
+                                                    <th>Items</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+    
+                                            <tbody id="customer-details-body"></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="customer-notes">
                                 <div class="notes-wrapper">
-                                    <h2 class="notes-header">Notes</h2>
-                                    <textarea id="customer-notes" placeholder="Add a note about this customer..."></textarea>
+                                    <div class="notes-title-wrapper">
+                                        <h2 class="notes-header">Notes</h2>
+                                        
+                                        <div class="notes-button-wrapper">
+                                            <button class="print-btn hidden" id="customer-details-notes-cancel"><i data-lucide="x"></i></button>
+                                            <button class="print-btn hidden" id="customer-details-notes-done"><i data-lucide="circle-check-big"></i></button>
+                                            <button class="print-btn" id="customer-details-notes-edit"><i data-lucide="pen"></i></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-area"></p>
+                                    <textarea class="hidden" id="customer-notes" placeholder="Add a note about this customer..."></textarea>
                                 </div>
                             </div>
                         </div>

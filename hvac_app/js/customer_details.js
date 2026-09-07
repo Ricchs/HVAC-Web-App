@@ -39,6 +39,9 @@ async function loadCustomerDetails() {
     document.getElementById('outstanding').textContent = `$${helpers.money(customer.outstanding)}`;
     document.getElementById('last-order').textContent = helpers.formatDate(customer.last_order);
 
+    document.querySelector('.text-area').textContent = customer.notes;
+    document.getElementById('customer-notes').value = customer.notes;
+
     document.getElementById('customer-details-body').innerHTML = customer.sales.map(sale => `
         <tr data-id="${sale.id}">
             <td>${sale.id}</td>
@@ -47,9 +50,11 @@ async function loadCustomerDetails() {
             <td>$${helpers.money(sale.amount)}</td>
             <td><span class="badge ${sale.status === 'Paid' ? 'badge-in' : 'badge-out'}">${sale.status}</span></td>
             <td class="row-action"><button class="row-action-btn" data-id="${sale.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>`).join('');
+    </tr>`).join('');
 
-        lucide.createIcons();
+
+
+    lucide.createIcons();
 }
 
 let currentSaleId;
@@ -132,4 +137,43 @@ document.querySelector('.action-delete').addEventListener('click', async() => {
     }
     
     helpers.rowForceClose();
+})
+
+/* Notes behaviour */
+document.getElementById('customer-details-notes-edit').addEventListener('click', () => {
+    document.getElementById('customer-details-notes-edit').classList.add('hidden');
+    document.querySelector('.text-area').classList.add('hidden');
+
+    document.getElementById('customer-details-notes-cancel').classList.remove('hidden');
+    document.getElementById('customer-details-notes-done').classList.remove('hidden');
+    document.getElementById('customer-notes').classList.remove('hidden');
+})
+
+document.getElementById('customer-details-notes-done').addEventListener('click', async() => {
+    const note_body = {notes: document.getElementById('customer-notes').value};
+    await fetch(`/customers/${id}/notes`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(note_body)
+    });
+
+    document.getElementById('customer-details-notes-edit').classList.remove('hidden');
+    document.querySelector('.text-area').classList.remove('hidden');
+
+    document.getElementById('customer-details-notes-cancel').classList.add('hidden');
+    document.getElementById('customer-details-notes-done').classList.add('hidden');
+    document.getElementById('customer-notes').classList.add('hidden');
+
+    loadCustomerDetails();
+})
+
+document.getElementById('customer-details-notes-cancel').addEventListener('click', () => {
+    if (!confirm('Disregard the changes?')) return;
+    
+    document.getElementById('customer-details-notes-edit').classList.remove('hidden');
+    document.querySelector('.text-area').classList.remove('hidden');
+
+    document.getElementById('customer-details-notes-cancel').classList.add('hidden');
+    document.getElementById('customer-details-notes-done').classList.add('hidden');
+    document.getElementById('customer-notes').classList.add('hidden');
 })
