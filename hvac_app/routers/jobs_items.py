@@ -11,10 +11,19 @@ def get_jobs_items(db: Session = Depends(get_db)):
     jobs_items = db.query(models.JobsItems).all()
     return jobs_items
 
-@router.get("/jobs_items/{jobs_items_id}")
-def get_jobs_items(jobs_items_id: int, db: Session = Depends(get_db)):
-    existing_job_item = db.query(models.JobsItems).filter(models.JobsItems.id == jobs_items_id).first()
-    return existing_job_item
+@router.get("/jobs_items/{jobs_id}")
+def get_jobs_items(jobs_id: int, db: Session = Depends(get_db)):
+    result = db.query(models.JobsItems, models.Inventory)\
+            .filter(models.JobsItems.jobs_id == jobs_id)\
+            .outerjoin(models.Inventory, models.Inventory.id == models.JobsItems.items_id)\
+            .all()
+
+    return [{
+        "items_id": ji.items_id,
+        "item": inv.item,
+        "quantity": ji.quantity,
+        "price": ji.price
+    } for ji, inv in result]
 
 @router.post("/jobs_items")
 def create_jobs_items (job_item: JobItemCreate, db: Session = Depends(get_db)):
@@ -42,10 +51,9 @@ def update_jobs_items(jobs_items_id: int, job_item: JobItemUpdate, db: Session =
     db.refresh(existing_job_item)
     return existing_job_item
 
-@router.delete("/jobs_items/{jobs_items_id}")
-def delete_jobs_items(jobs_items_id: int, db: Session = Depends(get_db)):
-    existing_job_item = db.query(models.JobsItems).filter(models.JobsItems.id == jobs_items_id).first()
+@router.delete("/jobs_items/{jobs_id}")
+def delete_jobs_items(jobs_id: int, db: Session = Depends(get_db)):
+    db.query(models.JobsItems).filter(models.JobsItems.jobs_id == jobs_id).delete()
 
-    db.delete(existing_job_item)
     db.commit()
     return {"message": "jobs item deleted successfully"}

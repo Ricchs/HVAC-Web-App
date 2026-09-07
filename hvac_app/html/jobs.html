@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/shared-button.css">
+        <link rel="stylesheet" href="../css/step-wizard.css">
+        <link rel="stylesheet" href="../css/toast.css">
+        <link rel="stylesheet" href="../css/jobs.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    </head>
+
+    <body>
+        <div class="panel-overlay"></div>
+
+        <div class="app">
+            <div id="sidebar"></div>
+
+            <main class="main-content">
+                <div class="container">
+                    <h1>Jobs</h1>
+
+                    <div class="metrics">
+                        <div class="metric-widget">
+                            <p class="metric-label">Total Active Jobs</p>
+                            <p class="metric-value" id="active-jobs"></p>
+                        </div>
+
+                        <div class="metric-widget">
+                            <p class="metric-label">Scheduled this week</p>
+                            <p class="metric-value" id="scheduled"></p>
+                        </div>
+
+                        <div class="metric-widget">
+                            <p class="metric-label">Total labour revenue (month)</p>
+                            <p class="metric-value" id="job-revenue"></p>
+                        </div>
+
+                        <div class="metric-widget">
+                            <p class="metric-label">Completed this month</p>
+                            <p class="metric-value" id="completed-month"></p>
+                        </div>
+                    </div>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="tabs">
+                                    <button class="tab active" data-tab="table" id="table-tab">Table</button>
+                                    <button class="tab" data-tab="calendar" id="calendar-tab">Calendar</button>
+                                </div>
+
+                                <div class="calendar-scroll hidden">
+                                    <button class="calendar-button" id="prev-month"><i data-lucide="chevron-left"></i></button>
+                                    <span class="calendar-date" id="calendar-date"></span>
+                                    <button class="calendar-button" id="next-month"><i data-lucide="chevron-right"></i></button>
+                                </div>
+
+                                <div class="panel-right-side">
+                                    <div class="search">
+                                        <input type="search" placeholder="Search">
+                                        <i data-lucide="search"></i>
+                                    </div>
+
+                                <div class="calendar-select"></div>
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add job</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Job #</th>
+                                        <th>Type</th>
+                                        <th>Scheduled Date</th>
+                                        <th>Customer</th>
+                                        <th>Assigned Technician</th>
+                                        <th>Job Status</th>
+                                        <th>Service Price</th>
+                                        <th>Payment Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="jobs-body"></tbody>
+                            </table>
+
+                            <div class="calendar hidden" id="calendar">
+                                <div class="calendar-header">
+                                    <span>Sun</span>
+                                    <span>Mon</span>
+                                    <span>Tue</span>
+                                    <span>Wed</span>
+                                    <span>Thu</span>
+                                    <span>Fri</span>
+                                    <span>Sat</span>
+                                </div>
+                                <div class="calendar-grid" id="calendar-grid"></div>
+                            </div>
+
+                            <div class="pagination">
+                                <button class="pagination-arrow" id="job-first"><i data-lucide="chevron-first"></i></button>
+                                <button class="pagination-arrow" id="job-previous"><i data-lucide="chevron-left"></i></button>
+
+                                <span class="pagination-number">
+                                    <span id="pagination-current"></span>
+                                    /
+                                    <span id="pagination-last"></span>
+                                </span>
+
+                                <button class="pagination-arrow" id="job-next"><i data-lucide="chevron-right"></i></button>
+                                <button class="pagination-arrow" id="job-last"><i data-lucide="chevron-last"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+
+        <div class="modal-overlay" id="job-edit-modal">
+            <div class="modal">
+                <div class="modal-header-wrapper">
+                    <h2 id="job-edit-title"></h2>
+                    <button class="close-modal-btn" id="close-job-edit"><i data-lucide="x"></i></button>
+                </div>        
+                
+                <hr>
+
+                <form class='form' id="job-form">
+                    <div class="modal-section">
+                        <p class="modal-title">JOB</p>
+                        <div class="modal-row">
+                            <div class="modal-field">
+                                <p class="input-title">Type</p>
+    
+                                <select id="modal-job-type" class="required" name="job_type" required>
+                                    <option value="" disabled selected hidden>Select Type</option>
+                                    <option value="Installation">Installation</option>
+                                    <option value="Repair">Repair</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Technician</p>
+
+                                <select name="technician" id="modal-job-technician"></select>
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Scheduled date</p>
+                                <input type="date" id="job-modal-date" placeholder="yyyy-mm-dd">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <p class="modal-title">PAYMENT</p>
+                        <div class="modal-row">
+                            <div class="modal-field">
+                                <p class="input-title">Labour cost</p>
+                                
+                                <input type="number" id="job-modal-cost" placeholder="$0.00">
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Method</p>
+
+                                <select id="job-modal-payment" class="required" name="job_payment" required>
+                                    <option value="" disabled selected hidden>Select method</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Debit card">Debit card</option>
+                                        <option value="Credit card">Credit card</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="E-transfer">E-transfer</option>
+                                        <option value="Bank transfer/EFT">Bank Transfer/EFT</option>
+                                </select>
+                            </div>
+
+                            <div class="modal-field">
+                                <p class="input-title">Status</p>
+                                
+                                <select id="job-modal-payment-status" class="required" name="job_payment_status" required>
+                                    <option value="" disabled selected hidden>Select status</option>
+                                    <option value="Paid">Paid</option>
+                                    <option value="Unpaid">Unpaid</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="items-field">
+                        <span class="modal-title">ITEMS</span>
+
+                        <div class="modal-item-header hidden" id="modal-item-header">
+                            <span>ITEM</span>
+                            <span>QTY</span>
+                            <span>PRICE</span>
+                        </div>
+
+                        <div class="hidden" id="modal-line-items">
+
+                        </div>
+
+                        <button type="button" id="add-modal-item" class="cancel-btn"></i>+ Add Item</button>
+                    </div>
+
+                    <div class="modal-total-wrapper">
+                        <p class="modal-total">Total:</p>
+                        <span id="modal-items-total">$0.00</span>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn" id="job-modal-cancel">Cancel</button>
+                        <button type="submit" class="add-button" id="job-modal-save">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <aside id="job-details-panel">
+            <div class="panel-header">
+                <div class="title-wrapper">
+                    <h2 class="job-id"></h2>
+                    <p class="job-type"></p>
+                </div>
+
+                <div class="button-wrapper">
+                    <button class="print-btn" id="job-details-edit"><i data-lucide="pen"></i></button>
+                    <button class="print-btn" id="job-details-print"><i data-lucide="printer"></i></button>
+                    <button class="close-modal-btn" id="job-details-close"><i data-lucide="x"></i></button>
+                </div>
+                
+            </div>
+
+            <hr>
+
+            <div class="job-info">
+                <div class="info-wrapper">
+                    <span class="info-title">Customer</span>
+                    <span class="info-value" id="job-customer"></span>
+                </div>
+
+                <div class="info-wrapper">
+                    <span class="info-title">Technician</span>
+                    <span class="info-value" id="job-technician"></span>
+                </div>
+
+                <div class="info-wrapper">
+                    <span class="info-title">Scheduled</span>
+                    <span class="info-value" id="job-scheduled"></span>
+                </div>
+
+                <div class="info-wrapper">
+                    <span class="info-title">Status</span>
+                    <span class="info-value" id="job-status"></span>       
+                </div>
+
+                <div class="info-wrapper">
+                    <span class="info-title">Payment Status</span>
+                    <span class="info-value" id="job-payment-status">
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="item-labour">
+                <p class="item-labour-title">ITEMS & LABOUR</p>
+                
+                <div class="items-wrapper"></div>
+            </div>
+
+            <div class="job-total-wrapper">
+                <div class="info-wrapper">
+                    <span class="payment-title">Payment method</span>
+                    <span class="payment-method" id="payment-method"></span>
+                </div>
+
+                <hr>
+
+                <div class="info-wrapper">
+                    <span class="total-title">Total</span>
+                    <span class="total-value" id="job-total"></span>
+                </div>
+            </div>
+        </aside>
+
+        <aside id="calendar-details-panel">
+            <div class="calendar-views" id="calendar-day-view">
+                <div class="panel-header">
+                    <div class="title-wrapper">
+                        <div class="title-row">
+                            <h2 class="calendar-details-day"></h2>
+                            <p class="jobs-scheduled"></p>
+                        </div>
+                    </div>
+
+                    <div class="button-wrapper">
+                        <button class="close-modal-btn" id="calendar-details-close"><i data-lucide="x"></i></button>
+                    </div>
+                    
+                </div>
+
+                <hr>
+
+                <div class="job-list"></div>
+
+                <div class="add-button-wrapper">
+                    <button class="add-button" id="calendar-add">+ Add job on this day</button>
+                </div>
+            </div>
+
+            <div class="calendar-views hidden" id="calendar-job-view">
+                <div class="calendar-panel-header">
+                    <button class="close-modal-btn" id="calendar-job-back"><i data-lucide="arrow-left-to-line"></i></button>
+                    <h2 class="calendar-job"></h2>
+                    <p id="calendar-job-type"></p>
+
+                    <div class="calendar-button-wrapper">
+                        <button class="print-btn" id="calendar-details-edit"><i data-lucide="pen"></i></button>
+                        <button class="print-btn" id="calendar-details-print"><i data-lucide="printer"></i></button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="calendar-section">
+                    <div class="calendar-wrapper">
+                        <span class="calendar-text">Customer</span>
+                        <span class="calendar-value" id="calendar-job-customer"></span>
+                    </div>
+                    
+                    <div class="calendar-wrapper">
+                        <span class="calendar-text">Technician</span>
+                        <span class="calendar-value" id="calendar-job-technician"></span>
+                    </div>
+                    
+                    <div class="calendar-wrapper">
+                        <span class="calendar-text">Scheduled Date</span>
+                        <span class="calendar-value" id="calendar-job-date"></span>
+                    </div>
+
+                    <div class="calendar-wrapper">
+                        <span class="calendar-text">Status</span>
+                        <span class="calendar-value" id="calendar-job-status"></span>
+                    </div>
+
+                    <div class="calendar-wrapper">
+                        <span class="calendar-text">Payment Status</span>
+                        <span class="calendar-value" id="calendar-job-payment-status"></span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="item-labour">
+                    <p class="item-labour-title">ITEMS & LABOUR</p>
+                    
+                    <div class="items-wrapper" id="calendar-day-items"></div>
+                </div>
+
+                <div class="calendar-total-wrapper">
+                    <div class="calendar-wrapper">
+                        <span class="payment-title">Payment method</span>
+                        <span class="payment-method" id="calendar-job-payment-method"></span>
+                    </div>
+
+                    <hr>
+
+                    <div class="calendar-wrapper">
+                        <span class="total-title">Total</span>
+                        <span class="total-value" id="calendar-job-total"></span>
+                    </div>
+                </div>
+            </div>
+            
+        </aside>
+
+        <div class="modal-overlay" id="add-job-wizard">
+            <div class="step-wizard" id="step-wizard"></div>
+        </div>
+
+        <div class="toast-container"></div>
+
+        <script>lucide.createIcons();</script>
+
+        <!-- Inventory JS -->
+        <script src="../js/jobs.js" type="module"></script>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+    </body>
+</html>
