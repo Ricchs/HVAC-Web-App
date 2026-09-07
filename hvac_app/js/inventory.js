@@ -88,6 +88,8 @@ document.querySelector("#action-menu .action-delete").addEventListener('click', 
     const response = await fetch(`/inventory/${helpers.getActiveId()}`, {method: 'DELETE'});
     
     if (response.ok) {
+        const item = await response.json();
+        helpers.showToast('Success', `Item ${item.item} has been deleted.`);
         loadItems();
     } else {
         const err = await response.json();
@@ -185,11 +187,12 @@ helpers.rowAction('suppliers-body', 'suppliers-action-menu')
 helpers.rowClose();
 
 /* when user clicks on edit */
+let suppliersEditingId;
 document.querySelector("#suppliers-action-menu .action-edit").addEventListener('click', async () => {
-    editingId = helpers.getActiveId();
+    suppliersEditingId = helpers.getActiveId();
     helpers.rowForceClose();
 
-    const response = await fetch(`/suppliers/${editingId}`);
+    const response = await fetch(`/suppliers/${suppliersEditingId}`);
     const suppliers = await response.json();
 
     suppliersForm.company_name.value = suppliers.company_name;
@@ -197,6 +200,7 @@ document.querySelector("#suppliers-action-menu .action-edit").addEventListener('
     suppliersForm.phone.value = suppliers.phone;
     suppliersForm.email.value = suppliers.email;
 
+    document.getElementById('supplier-submit').textContent = 'Update Supplier';
     suppliersModal.classList.add('open');
 })
 
@@ -218,7 +222,7 @@ document.querySelector("#suppliers-action-menu .action-delete").addEventListener
     helpers.rowForceClose();
 })
 
-/*************************************** Suppliers modal behaviour ***************************************/
+/****************** Suppliers modal behaviour ******************/
 const suppliersModal = document.getElementById("supplier-modal");
 const suppliersForm = document.getElementById("supplier-form");
 
@@ -227,6 +231,39 @@ function closeSuppliersModal() {
     editingId = null;
     suppliersModal.classList.remove("open");
 }
+
+document.getElementById('add-supplier').addEventListener('click', () => {
+    document.getElementById('supplier-submit').textContent = 'Create Supplier';
+    suppliersModal.classList.add('open');
+});
+
+document.querySelectorAll('#close-supplier-btn, #supplier-cancel-btn').forEach(btn => {
+    btn.addEventListener('click', () => closeSuppliersModal());
+});
+
+suppliersForm.addEventListener('submit', async(e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(suppliersForm));
+
+    const url = suppliersEditingId ? `/suppliers/${suppliersEditingId}` : '/suppliers';
+    const method = suppliersEditingId ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+        method,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        const supplier = await response.json();
+        suppliersEditingId ? helpers.showToast('Success', `Supplier '${supplier.company_name}' has been updated.`) : helpers.showToast('Success', `Supplier '${supplier.company_name}' has been created.`);
+        closeSuppliersModal();
+        loadSuppliers();
+    } else {
+        const err = await response.json();
+        helpers.showToast('Error', err.detail, 'triangle-alert', 'fail')
+    }
+});
 
 /*************************************** Pagination ***************************************/
 const pageNumber = document.getElementById('pagination-current');

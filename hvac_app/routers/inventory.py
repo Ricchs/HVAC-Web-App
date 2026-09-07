@@ -95,6 +95,7 @@ def update_inventory (items_id: int, inventory: InventoryUpdate, db: Session = D
 @router.delete("/inventory/{items_id}")
 def delete_inventory(items_id: int, db: Session = Depends(get_db)):
     existing_inventory = db.query(models.Inventory).filter(models.Inventory.id == items_id).first()
+    name = existing_inventory.item
     try:
         db.delete(existing_inventory)
         db.commit()
@@ -102,4 +103,4 @@ def delete_inventory(items_id: int, db: Session = Depends(get_db)):
         db.rollback()
         raise HTTPException(status_code=400, detail="Can't delete — this item is used in existing jobs.")
     
-    return {"message": "Item successfully deleted"}
+    return {"message": "Item successfully deleted", "item": name}

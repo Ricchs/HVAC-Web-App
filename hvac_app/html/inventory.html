@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="../css/shared-table.css">
         <link rel="stylesheet" href="../css/shared-add-modal.css">
         <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/shared-button.css">
         <link rel="stylesheet" href="../css/toast.css">
         <link rel="stylesheet" href="../css/inventory.css">
 
@@ -134,9 +135,9 @@
 
         <div class="modal-overlay" id = "add-modal">
             <div class="modal">
-                <div class="modal-title">
+                <div class="modal-header-wrapper">
                     <h2>Add Item</h2>
-                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                    <button class="close-modal-btn" id="close-modal-btn"><i data-lucide="x"></i></button>
                 </div>
 
                 <hr>
@@ -181,8 +182,8 @@
                     <hr class="hr-bottom">
 
                     <div class="modal-actions">
-                        <button type="button" id="cancel-btn">Cancel</button>
-                        <button type="submit">Upload Inventory Item</button>
+                        <button class="cancel-btn" type="button" id="cancel-btn">Cancel</button>
+                        <button class="add-button" type="submit">Upload Inventory Item</button>
                     </div>
                 </form>
             </div>
@@ -190,55 +191,42 @@
 
          <div class="modal-overlay" id = "supplier-modal">
             <div class="modal">
-                <div class="modal-title">
-                    <h2>Add Item</h2>
-                    <button id="close-modal-btn"><i data-lucide="x"></i></button>
+                <div class="modal-header-wrapper">
+                    <h2>Add Supplier</h2>
+                    <button class="close-modal-btn" id="close-supplier-btn"><i data-lucide="x"></i></button>
                 </div>
 
                 <hr>
 
                 <form class="form" id="supplier-form">
                     <div class="modal-field">
-                        <span>Item Name</span>
-                        <input name="item" placeholder="Product name" required>
+                        <span>Company</span>
+                        <input name="company_name" placeholder="E.g., Lennox" required>
                     </div>
 
                     <div class="modal-field">
-                        <span>Supplier</span>
-                        <input name="supplier" list = "supplier-options" placeholder="Supplier" required>
-                        <datalist id="supplier-options">
-                            <option value="Lennox"></option>
-                            <option value="Carrier"></option>
-                        </datalist>
+                        <span>Representative</span>
+                        <input name="contact_name" placeholder="Contact name">
                     </div>
-
-                    <div class="modal-field">
-                        <span>Category</span>
-                        <input name="category" placeholder="Category" required>
-                    </div>
-
-                    <div class="modal-field">
-                        <span>Stock</span>
-                        <input name="stock" type="number" placeholder="Stock" required>
-                    </div>
-
-                    <div class="modal-price">
-                        <div class="price-field">
-                            <span>Item Bought Price</span>
-                            <input name="bought_price" type="number" placeholder="Bought price" required>
+                    
+                    <div class="modal-row">
+                        <div class="modal-field">
+                            <span>Phone</span>
+                            <input type="number" name="phone" placeholder="(514) 123-1234">
                         </div>
-
-                        <div class="price-field">
-                            <span>Item Sale Price</span>
-                            <input name="sale_price" type="number" placeholder="Sale price" required>
+    
+                        <div class="modal-field">
+                            <span>Email</span>
+                            <input name="email" placeholder="email">
                         </div>
                     </div>
+
 
                     <hr class="hr-bottom">
 
                     <div class="modal-actions">
-                        <button type="button" id="supplier-cancel-btn">Cancel</button>
-                        <button type="submit">Upload Inventory Item</button>
+                        <button class="cancel-btn" type="button" id="supplier-cancel-btn">Cancel</button>
+                        <button class="add-button" id="supplier-submit" type="submit"></button>
                     </div>
                 </form>
             </div>
