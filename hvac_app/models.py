@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, Numeric, Date, Time, ForeignKey
+from sqlalchemy import Column, Integer, Text, Numeric, Date, Time, ForeignKey, TIMESTAMP, func
 from hvac_app.database import Base
 
 class Suppliers(Base):
@@ -34,6 +34,7 @@ class Customers(Base):
     email = Column(Text)
     rbq = Column(Text)
     ccq = Column(Text)
+    notes = Column(Text)
 
 class Sales(Base):
     __tablename__ = "sales"
@@ -87,6 +88,7 @@ class Jobs(Base):
     completion_status = Column(Text)
     payment_method = Column(Text)
     payment_status = Column(Text)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
 class JobsItems(Base):
     __tablename__ = "jobs_items"

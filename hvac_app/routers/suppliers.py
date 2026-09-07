@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from hvac_app.database import get_db
 from hvac_app import models
@@ -45,6 +45,10 @@ def update_suppliers(suppliers_id: int, supplier: SupplierUpdate, db: Session = 
 @router.delete("/suppliers/{supplier_id}")
 def delete_suppliers(supplier_id: int, db: Session = Depends(get_db)):
     existing_supplier = db.query(models.Suppliers).filter(models.Suppliers.id == supplier_id).first()
+    items = db.query(models.Inventory).filter(models.Inventory.suppliers_id == supplier_id).first()
+    company_name = existing_supplier.company_name
+    if items:
+        raise HTTPException(status_code=400, detail=f"Cannot delete: '{company_name}' is still linked to other items.")
     db.delete(existing_supplier)
     db.commit()
-    return {"message": "Supplier deleted successfully"}
+    return {"message": f"Supplier '{company_name}' deleted successfully", "company_name": company_name}

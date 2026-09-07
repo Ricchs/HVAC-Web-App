@@ -15,6 +15,7 @@ class CustomerCreate(BaseModel):
     email: str
     rbq: str
     ccq: str
+    notes: Optional[str] = None
 
 class CustomerUpdate(BaseModel):
     full_name: Optional[str] = None
@@ -29,6 +30,7 @@ class CustomerUpdate(BaseModel):
     email: Optional[str] = None
     rbq: Optional[str] = None
     ccq: Optional[str] = None
+    notes: Optional[str] = None
 
 class SupplierCreate(BaseModel):
     company_name: str
@@ -48,7 +50,7 @@ class InventoryCreate(BaseModel):
     stock: int
     bought_price: float
     sale_price: float
-    supplier: str
+    suppliers_id: int
 
 class InventoryUpdate(BaseModel):
     category: Optional[str] = None
@@ -56,7 +58,7 @@ class InventoryUpdate(BaseModel):
     stock: Optional[int] = None
     bought_price: Optional[float] = None
     sale_price: Optional[float] = None
-    supplier: Optional[str] = None
+    suppliers_id: Optional[int] = None
 
 class TechnicianCreate(BaseModel):
     full_name: str
@@ -80,7 +82,6 @@ class SaleCreate(BaseModel):
     date: date_type
     payment_method: str
     payment_status: str
-    items: list[SaleItemIn]
 
 class SaleUpdate(BaseModel):
     customers_id: Optional[int] = None
@@ -124,9 +125,9 @@ class PayrollUpdate(BaseModel):
 class JobCreate(BaseModel): 
     customers_id: int
     job_type: str
-    technicians_id: int
+    technicians_id: Optional[int] = None
     labour_cost: float
-    scheduled_date: date_type
+    scheduled_date: Optional[date_type] = None
     completion_status: str
     payment_method: str
     payment_status: str  
