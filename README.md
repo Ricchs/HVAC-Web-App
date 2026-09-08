@@ -56,6 +56,8 @@ python -m uvicorn hvac_app.main:app --reload
 ```
 ## Features
 - Full CRUD for customers, jobs, sales, inventory, suppliers, and technicians.
+- Dedicated sale creation page with new-or-existing customer selection.
+- Duplicate-item guards on inventory and sales line items.
 - Multi-step job creation wizard with per-step validation.
 - Calendar scheduling view with day-level job details as well as interactive cells.
 - Customer details page showing sales history, totals, and outstanding balance with editable customer notes.
@@ -78,6 +80,7 @@ python -m uvicorn hvac_app.main:app --reload
 - [ ] Payroll management
 - [ ] Search and filtering across tables
 - [ ] Home/dashboard landing page
+- [ ] Input validation and duplicate guards on forms and tables
 - [ ] Analytics and reporting views once enough data accumulated
 - [ ] Migrate to ReactJS
 - [ ] Deployment to a live server
