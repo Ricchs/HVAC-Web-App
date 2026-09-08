@@ -390,7 +390,7 @@ document.getElementById('job-form').addEventListener('submit', async(e) => {
 
         if (!itemResponses.every(r => r.ok)) throw new Error('Some items failed');
 
-        helpers.showToast('Sucess!', `Job #${editingId} has been updated`)
+        helpers.showToast('Success!', `Job #${editingId} has been updated`)
         closeModal();
         loadJobs();
     } catch (err) {
