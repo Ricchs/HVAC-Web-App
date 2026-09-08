@@ -48,7 +48,7 @@ Create a `.env` file in root folder with the connection string. Replace `YOUR_US
 ```bash
 DATABASE_URL=postgresql://YOUR_USERNAME@localhost/office_web_app
 ```
-Finally, run the app
+Finally, run the app.
 ```bash
 python -m uvicorn hvac_app.main:app --reload
 ```
