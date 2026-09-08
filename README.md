@@ -1,5 +1,7 @@
 # HVAC Business Management Dashboard
 A full-stack CRUD web app to help HVAC businesses manage customers, jobs, sales, inventory, suppliers, and technicians. This project aims to reduce repetitive administrative work while also surfacing key business metrics and insights.
+![Jobs dashboard](screenshots/jobs.png)
+![Jobs review step in wizard](screenshots/review_step.png)
 ## Getting Started
 Want to improve the project? Here is how to get the project running locally for development.
 ### Prerequisites
@@ -79,6 +81,7 @@ python -m uvicorn hvac_app.main:app --reload
 - [ ] Analytics and reporting views once enough data accumulated
 - [ ] Migrate to ReactJS
 - [ ] Deployment to a live server
+- [ ] User menu, settings menu, notifications menu
 - [ ] Authentication and user accounts
 ## Authors
 Richard Cao — [@Ricchs](https://github.com/Ricchs)
