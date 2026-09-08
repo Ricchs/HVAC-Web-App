@@ -72,6 +72,13 @@ python -m uvicorn hvac_app.main:app --reload
 - Pydantic (request/response validation)
 - Vanilla JavaScript with ES modules (frontend logic)
 - HTML, CSS (structure and styling)
-## Road Map/Future Plans
-
+## Road Map
+- [ ] Payroll management
+- [ ] Search and filtering across tables
+- [ ] Home/dashboard landing page
+- [ ] Analytics and reporting views once enough data accumulated
+- [ ] Migrate to ReactJS
+- [ ] Deployment to a live server
+- [ ] Authentication and user accounts
 ## Authors
+Richard Cao — [@Ricchs](https://github.com/Ricchs)
