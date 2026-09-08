@@ -7,21 +7,21 @@ Want to improve the project? Here is how to get the project running locally for 
 - PostgreSQL
 - pip
 ### Installing
-To install Python and pip, use brew. **First check you have brew installed**.
+To install `Python` and `pip`, use `brew`. **First check you have `brew` installed**.
 ```bash
 brew --version
 ```
-If not, install brew.
+If not, install `brew`.
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-Install python using the following commands and make sure pip was also installed.
+Install `Python` using the following commands and make sure `pip` was also installed.
 ```bash
 brew install python
 python3 --version
 pip3 --version
 ```
-Install PostgreSQL and initiate.
+Install `PostgreSQL` and initiate.
 ```bash
 brew install postgresql
 brew services start postgresql
@@ -36,7 +36,7 @@ cd HVAC-Web-App
 python3 -m venv .venv
 source .venv/bin/activate
 ```
-Install dependencies.
+Install the dependencies.
 ```bash
 pip install -r requirements.txt
 ```
@@ -44,7 +44,7 @@ Create the database. *Note: Tables are created automatically the first time you 
 ```bash
 createdb office_web_app
 ```
-Create a .env file in root folder with connection string. Replace `YOUR_USERNAME` with your PostgreSQL/Laptop username.
+Create a `.env` file in root folder with the connection string. Replace `YOUR_USERNAME` with your PostgreSQL/Laptop username.
 ```bash
 DATABASE_URL=postgresql://YOUR_USERNAME@localhost/office_web_app
 ```
