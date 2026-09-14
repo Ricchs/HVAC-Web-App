@@ -8,8 +8,18 @@ router = APIRouter()
 
 @router.get("/payroll")
 def get_payroll(db: Session = Depends(get_db)):
-    payroll = db.query(models.Payroll).all()
-    return payroll
+    result = db.query(models.Payroll, models.Technicians)\
+                .join(models.Technicians, models.Payroll.technicians_id == models.Technicians.id)\
+                .order_by(models.Payroll.pay_date.desc())\
+                .all()
+
+    return [{
+        "id": payroll.id,
+        "technicians_id": technician.id,
+        "technicians_name": technician.full_name,
+        "pay_date": payroll.pay_date,
+        "amount": payroll.amount
+    } for payroll, technician in result]
 
 @router.get("/payroll/{payroll_id}")
 def get_payroll(payroll_id: int, db: Session = Depends(get_db)):

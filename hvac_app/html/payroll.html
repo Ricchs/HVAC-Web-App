@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name = "viewport" content="width=device-width, initial-scale=1.0" >
+        <title>Office Dashboard Web App</title>
+
+        <link rel="stylesheet" href="../css/base.css">       
+        <link rel="stylesheet" href="../css/sidebar.css"> 
+        <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-button.css">
+        <link rel="stylesheet" href="../css/shared-action-menu.css">
+        <link rel="stylesheet" href="../css/toast.css">
+        <link rel="stylesheet" href="../css/payroll.css">
+
+        <!-- Inter font -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+        
+        <!-- Lucide icons -->
+        <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    </head>
+
+    <body>
+        <div id="panel-overlay"></div>
+
+        <div class="app">
+            <div id="sidebar"></div>
+            <main class="main-content">
+                <div class="container">
+                    <h1>Payroll</h1>
+
+                    <p class="page-subtitle">Track and record technician payments</p>
+
+                    <div class="table-panel">
+                        <div class="table-container">
+                            <div class="top-part">
+                                <div class="search">
+                                    <input type="search" placeholder="Search">
+                                    <i data-lucide="search"></i>
+                                </div>
+
+                                <div class="panel-right-side">
+                                    <button class="filter-item"><i data-lucide="list-filter"></i>Filter</button>
+                                    <button class="add-item"><i data-lucide="plus"></i>Add Payment</button>
+                                </div>
+                            </div>
+
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Payment #</th>
+                                        <th>Technician</th>
+                                        <th>Pay date</th>
+                                        <th>Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="payroll-body"></tbody>
+                            </table>
+
+                            <div class="pagination">
+                                <button class="pagination-arrow" id="payroll-first"><i data-lucide="chevron-first"></i></button>
+                                <button class="pagination-arrow" id="payroll-previous"><i data-lucide="chevron-left"></i></button>
+
+                                <span class="pagination-number">
+                                    <span id="pagination-current"></span>
+                                    /
+                                    <span id="pagination-last"></span>
+                                </span>
+
+                                <button class="pagination-arrow" id="payroll-next"><i data-lucide="chevron-right"></i></button>
+                                <button class="pagination-arrow" id="payroll-last"><i data-lucide="chevron-last"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="action-menu" id="action-menu">
+            <button class="action-edit">Edit</button>
+            <button class="action-delete">Delete</button>
+        </div>
+
+        <div class="toast-container"></div>
+
+        <!-- Sidebar JS -->
+        <script src="../js/sidebar.js" defer></script>
+
+        <!-- page JS -->
+        <script src="../js/payroll.js" type="module"></script>
+    </body>
+</html>
