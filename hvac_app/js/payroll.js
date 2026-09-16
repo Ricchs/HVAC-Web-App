@@ -44,6 +44,7 @@ function updatePagination() {
 helpers.rowAction('payroll-body');
 helpers.rowClose();
 
+let editingId = null;
 /********* row edit *********/
 document.querySelector('.action-edit').addEventListener('click', () => {
     helpers.rowForceClose();
@@ -55,8 +56,55 @@ document.querySelector('.action-delete').addEventListener('click', async() => {
 
     const response = await fetch(`/payroll/${helpers.getActiveId()}`, {method: 'DELETE'});
     if (response.ok) {
-        helpers.showToast('Success!', `Payment #${helpers.getActiveId()} has been deleted`);
+        const data = await response.json()
+        helpers.showToast('Success!', `${data['message']}`);
         loadPayroll();
     }
     helpers.rowForceClose();
+});
+
+/*************************************** Modal behaviour ***************************************/
+/********* open *********/
+const modal = document.querySelector('.modal-overlay');
+document.querySelector('.add-item').addEventListener('click', async() => {
+    document.getElementById('payroll-title').textContent = 'Record payment';
+
+    const technicianResponse = await fetch('/technicians');
+    const technicians = await technicianResponse.json();
+    document.querySelector('[name="technician-select"]').innerHTML = '<option value=""disabled selected hidden>Select technician</option>' + 
+    technicians.map(technician => `
+        <option value=${technician.id}>${technician.full_name}</option>
+    `).join('');
+
+    document.querySelector('.add-button').textContent = 'Record payment';
+    modal.classList.add('open');
+});
+
+/********* show shifts when technician selected *********/
+document.querySelector('[name="technician-select"]').addEventListener('change', async() => {
+    const selectedTechnician = document.querySelector('[name="technician-select"]').value;
+    const response = await fetch(`/shifts/technician/${selectedTechnician}`);
+    const shifts = await response.json();
+
+    document.querySelector('.shifts').innerHTML = shifts.length ? 
+        shifts.map(shift => `
+            <div class="shift-row">
+                <input type="checkbox" data-id="${shift.id}" data-pay="${shift.total_pay}">
+                <span>${helpers.formatDate(shift.date)}</span>
+                <span>${shift.start_time.slice(0,5)}-${shift.end_time.slice(0,5)}</span>
+                <span>$${helpers.money(shift.total_pay)}</span>
+            </div>
+        `).join('')
+        : '<p>No unpaid shifts</p>';
+});
+
+/********* close *********/
+function closeModal() {
+    document.getElementById('payroll-form').reset();
+    modal.classList.remove("open");
+    editingId = null;
+}
+
+document.querySelectorAll('.close-modal-btn, .cancel-btn').forEach(btn => {
+    btn.addEventListener('click', () => closeModal());
 });

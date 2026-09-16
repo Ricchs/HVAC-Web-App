@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="../css/base.css">       
         <link rel="stylesheet" href="../css/sidebar.css"> 
         <link rel="stylesheet" href="../css/shared-table.css">
+        <link rel="stylesheet" href="../css/shared-add-modal.css">
         <link rel="stylesheet" href="../css/shared-button.css">
         <link rel="stylesheet" href="../css/shared-action-menu.css">
         <link rel="stylesheet" href="../css/toast.css">
@@ -82,6 +83,52 @@
         <div class="action-menu" id="action-menu">
             <button class="action-edit">Edit</button>
             <button class="action-delete">Delete</button>
+        </div>
+
+        <div class="modal-overlay">
+            <div class="modal">
+                <div class="modal-header-wrapper">
+                    <h2 id="payroll-title"></h2>
+                    <button class="close-modal-btn"><i data-lucide="x"></i></button>
+                </div>
+
+                <hr>
+
+                <form class="form" id="payroll-form">
+                    <div class="modal-section">
+                        <p class="modal-title">Technician</p>
+                        <div class="modal-field">
+                            <select name="technician-select"></select>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <p class="modal-title">Shifts</p>
+                        <div class="modal-field">
+                            <div class="shifts"></div>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <p class="modal-title">Amount</p>
+                        <div class="modal-field">
+                            <input name="amount" type="number" class="required">
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <p class="modal-title">Pay date</p>
+                        <div class="modal-field">
+                            <input name="pay-date" type="date" class="required">
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="add-button"></button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <div class="toast-container"></div>

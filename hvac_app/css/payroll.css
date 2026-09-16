@@ -1,0 +1,17 @@
+.shifts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.shift-row {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.shift-row input[type="checkbox"] {
+    height: 18px;
+    width: 18px;
+}

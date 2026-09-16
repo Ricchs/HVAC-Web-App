@@ -157,7 +157,7 @@ document.querySelector('.action-delete').addEventListener('click', async() => {
     
     const response = await fetch(`/technicians/${helpers.getActiveId()}`, {'method': 'DELETE'})
     if (response.ok) {
-        helpers.showToast('Success', `Item #${helpers.getActiveId()} has been deleted.`)
+        helpers.showToast('Success', `Technician #${helpers.getActiveId()} has been deleted.`)
         loadTechnicians();
     } else {
         const err = await response.json();

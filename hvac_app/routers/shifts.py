@@ -18,6 +18,21 @@ def get_shifts(shifts_id: int, db: Session = Depends(get_db)):
     existing_shift = db.query(models.Shifts).filter(models.Shifts.id == shifts_id).first()
     return existing_shift
 
+@router.get("/shifts/technician/{technicians_id}")
+def get_shifts(technicians_id: int, db: Session = Depends(get_db)):
+    result = db.query(models.Shifts)\
+        .filter(models.Shifts.technicians_id == technicians_id, models.Shifts.payroll_id == None)\
+        .order_by(models.Shifts.date.desc())\
+        .all()
+
+    return [{
+        "shift_id": shift.id,
+        "date": shift.date,
+        "start_time": shift.start_time,
+        "end_time": shift.end_time,
+        "total_pay": shift.total_pay
+    }for shift in result]
+
 @router.post("/shifts")
 def create_shifts(shift: ShiftCreate, db: Session = Depends(get_db)):
     technician = db.query(models.Technicians).filter(models.Technicians.id == shift.technicians_id).first()

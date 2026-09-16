@@ -60,8 +60,14 @@ def update_payroll(payroll_id: int, payroll: PayrollUpdate, db: Session = Depend
 
 @router.delete("/payroll/{payroll_id}")
 def delete_payroll(payroll_id: int, db: Session = Depends(get_db)):
-    existing_payroll = db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
+    existing_payroll = db.query(models.Payroll)\
+        .filter(models.Payroll.id == payroll_id)\
+        .first()
+    
+    db.query(models.Shifts)\
+        .filter(models.Shifts.payroll_id == payroll_id)\
+        .update({models.Shifts.payroll_id: None})
     
     db.delete(existing_payroll)
     db.commit()
-    return {"message": "Payroll deleted successfully"}
+    return {"message": f"Payment #{payroll_id} was deleted."}

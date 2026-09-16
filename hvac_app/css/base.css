@@ -69,13 +69,41 @@ h1 {
     color: #9CA3AF;
 }
 
-input, select, button {
+input, select {
     appearance: none;
-    border: none;
-    background: none;
+    padding: 10px;
+    border: 1px solid #C7C7C7;
+    cursor: pointer;
+    background-color: #FFFFFF;
+    flex: 1;
+    height: 40px;
 }
 
 input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+input[type="checkbox"] {
+    position: relative;
+    border: 1px solid #C7C7C7;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background: #6366F1;
+    border-color: #6366F1
+}
+
+input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }

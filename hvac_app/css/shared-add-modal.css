@@ -80,18 +80,9 @@
     gap: 6px;
 }
 
-.modal select {
-    appearance: none;
-}
-
 .modal input, .modal select {
-    padding: 10px;
-    border: 1px solid #C7C7C7;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    cursor: pointer;
-    background-color: #FFFFFF;
-    flex: 1;
     height: 40px;
 }
 
