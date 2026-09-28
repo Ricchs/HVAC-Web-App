@@ -116,11 +116,15 @@ class ShiftUpdate(BaseModel):
 
 class PayrollCreate(BaseModel):
     technicians_id: int
+    amount: float
     pay_date: date_type
+    shifts: list[int] = []
 
 class PayrollUpdate(BaseModel):
     technicians_id: Optional[int] = None
+    amount: Optional[float] = None
     pay_date: Optional[date_type] = None
+    shifts: Optional[list[int]] = None
 
 class JobCreate(BaseModel): 
     customers_id: int

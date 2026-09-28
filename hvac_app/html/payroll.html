@@ -98,28 +98,29 @@
                     <div class="modal-section">
                         <p class="modal-title">Technician</p>
                         <div class="modal-field">
-                            <select name="technician-select"></select>
+                            <select name="technicians_id"></select>
                         </div>
                     </div>
 
                     <div class="modal-section">
                         <p class="modal-title">Shifts</p>
                         <div class="modal-field">
-                            <div class="shifts"></div>
+                            <div class="shifts hidden"></div>
+                            <p class="shifts-info">Select a technician to view unpaid shifts</p>
                         </div>
                     </div>
 
                     <div class="modal-section">
                         <p class="modal-title">Amount</p>
                         <div class="modal-field">
-                            <input name="amount" type="number" class="required">
+                            <input name="amount" type="number" step="0.01" class="required">
                         </div>
                     </div>
 
                     <div class="modal-section">
                         <p class="modal-title">Pay date</p>
                         <div class="modal-field">
-                            <input name="pay-date" type="date" class="required">
+                            <input name="pay_date" type="date" class="required">
                         </div>
                     </div>
                     

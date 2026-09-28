@@ -9,9 +9,15 @@
     grid-template-columns: auto auto 1fr auto;
     gap: 12px;
     align-items: center;
+    padding: 10px 4px;  
+}
+
+.shift-row:not(:last-child) {
+    border-bottom: 0.5px solid #E5E7EB
 }
 
 .shift-row input[type="checkbox"] {
     height: 18px;
     width: 18px;
 }
+
