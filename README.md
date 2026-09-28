@@ -77,7 +77,7 @@ python -m uvicorn hvac_app.main:app --reload
 - Vanilla JavaScript with ES modules (frontend logic)
 - HTML, CSS (structure and styling)
 ## Road Map
-- [ ] Payroll management
+- [X] Payroll management
 - [ ] Search and filtering across tables
 - [ ] Home/dashboard landing page
 - [ ] Input validation and duplicate guards on forms and tables
