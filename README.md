@@ -78,6 +78,7 @@ python -m uvicorn hvac_app.main:app --reload
 - HTML, CSS (structure and styling)
 ## Road Map
 - [X] Payroll management
+- [ ] Shift management
 - [ ] Search and filtering across tables
 - [ ] Home/dashboard landing page
 - [ ] Input validation and duplicate guards on forms and tables
