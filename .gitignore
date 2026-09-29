@@ -3,3 +3,5 @@ __pycache__/
 .venv/
 .env
 *.command
+ruff.toml
+.ruff_cache/

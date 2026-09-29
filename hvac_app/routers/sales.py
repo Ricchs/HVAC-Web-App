@@ -1,26 +1,34 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 from sqlalchemy import func
-from hvac_app.database import get_db
+from sqlalchemy.orm import Session
+
 from hvac_app import models
+from hvac_app.database import get_db
 from hvac_app.schemas import *
 
 router = APIRouter()
 
+
 @router.get("/sales")
 def get_sales(db: Session = Depends(get_db)):
-    results = db.query(
-        models.Sales, 
-        models.Customers.full_name, 
-        func.coalesce(func.sum(models.SalesItems.quantity), 0).label('items_amount'),
-        func.coalesce(func.sum(models.SalesItems.quantity * models.SalesItems.price), 0).label('items_total'),
-    )\
-        .join(models.Customers, models.Sales.customers_id == models.Customers.id)\
-        .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)\
-        .group_by(models.Sales.id, models.Customers.full_name)\
-        .order_by(models.Sales.date.desc())\
+    results = (
+        db.query(
+            models.Sales,
+            models.Customers.full_name,
+            func.coalesce(func.sum(models.SalesItems.quantity), 0).label(
+                "items_amount"
+            ),
+            func.coalesce(
+                func.sum(models.SalesItems.quantity * models.SalesItems.price), 0
+            ).label("items_total"),
+        )
+        .join(models.Customers, models.Sales.customers_id == models.Customers.id)
+        .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)
+        .group_by(models.Sales.id, models.Customers.full_name)
+        .order_by(models.Sales.date.desc())
         .all()
-    
+    )
+
     return [
         {
             "id": sales.id,
@@ -29,41 +37,59 @@ def get_sales(db: Session = Depends(get_db)):
             "items_amount": items_amount,
             "items_total": items_total,
             "payment_method": sales.payment_method,
-            "payment_status": sales.payment_status
+            "payment_status": sales.payment_status,
         }
         for sales, full_name, items_amount, items_total in results
     ]
 
+
 @router.get("/sales/{sales_id}")
-def get_sales(sales_id: int, db: Session = Depends(get_db)):
-    items = db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).all()
+def get_one_sale(sales_id: int, db: Session = Depends(get_db)):
+    items = (
+        db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).all()
+    )
     sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    customer = db.query(models.Customers).filter(models.Customers.id == sales_info.customers_id).first()
+    customer = (
+        db.query(models.Customers)
+        .filter(models.Customers.id == sales_info.customers_id)
+        .first()
+    )
 
     return {
         "id": sales_info.id,
-        "customer": {
-            "full_name": customer.full_name,
-            "phone": customer.phone
-        },
+        "customer": {"full_name": customer.full_name, "phone": customer.phone},
         "date": sales_info.date,
         "payment_method": sales_info.payment_method,
         "payment_status": sales_info.payment_status,
-        "items": [{
-            "items_id": i.items_id,
-            "quantity": i.quantity,
-            "price": i.price
-        } for i in items]
-        }
+        "items": [
+            {"items_id": i.items_id, "quantity": i.quantity, "price": i.price}
+            for i in items
+        ],
+    }
+
 
 @router.get("/sales/{sales_id}/items")
-def get_sales(sales_id: int, db: Session = Depends(get_db)):
-    items_info = db.query(models.SalesItems, models.Inventory.item).join(models.Inventory, models.SalesItems.items_id == models.Inventory.id).filter(models.SalesItems.sales_id == sales_id).all()
+def get_sale_invoice(sales_id: int, db: Session = Depends(get_db)):
+    items_info = (
+        db.query(models.SalesItems, models.Inventory.item)
+        .join(models.Inventory, models.SalesItems.items_id == models.Inventory.id)
+        .filter(models.SalesItems.sales_id == sales_id)
+        .all()
+    )
     sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    customer = db.query(models.Customers).filter(models.Customers.id == sales_info.customers_id).first()
+    customer = (
+        db.query(models.Customers)
+        .filter(models.Customers.id == sales_info.customers_id)
+        .first()
+    )
 
     items_info = [
-        {"item": item_name, "quantity": sale.quantity, "price": sale.price, "subtotal": sale.quantity * sale.price}
+        {
+            "item": item_name,
+            "quantity": sale.quantity,
+            "price": sale.price,
+            "subtotal": sale.quantity * sale.price,
+        }
         for sale, item_name in items_info
     ]
 
@@ -77,22 +103,24 @@ def get_sales(sales_id: int, db: Session = Depends(get_db)):
         "date": sales_info.date,
         "payment_method": sales_info.payment_method,
         "payment_status": sales_info.payment_status,
-        "items_info": items_info
+        "items_info": items_info,
     }
+
 
 @router.post("/sales")
 def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):
-    new_sale = models.Sales (
-        customers_id = sale.customers_id,
-        date = sale.date,
-        payment_method = sale.payment_method,
-        payment_status = sale.payment_status
+    new_sale = models.Sales(
+        customers_id=sale.customers_id,
+        date=sale.date,
+        payment_method=sale.payment_method,
+        payment_status=sale.payment_status,
     )
 
-    db.add(new_sale) 
+    db.add(new_sale)
     db.commit()
     db.refresh(new_sale)
     return new_sale
+
 
 @router.put("/sales/{sales_id}")
 def update_sales(sales_id: int, sale: SaleUpdate, db: Session = Depends(get_db)):
@@ -106,12 +134,13 @@ def update_sales(sales_id: int, sale: SaleUpdate, db: Session = Depends(get_db))
     db.refresh(existing_sale)
     return existing_sale
 
+
 @router.delete("/sales/{sales_id}")
 def delete_sales(sales_id: int, db: Session = Depends(get_db)):
     db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).delete()
 
     existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
     db.delete(existing_sale)
-    
+
     db.commit()
     return {"message": "Sale deleted successfully"}

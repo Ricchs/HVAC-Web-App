@@ -1,13 +1,26 @@
-from sqlalchemy import Column, Integer, Text, Numeric, Date, Time, ForeignKey, TIMESTAMP, func
+from sqlalchemy import (
+    TIMESTAMP,
+    Column,
+    Date,
+    ForeignKey,
+    Integer,
+    Numeric,
+    Text,
+    Time,
+    func,
+)
+
 from hvac_app.database import Base
+
 
 class Suppliers(Base):
     __tablename__ = "suppliers"
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     company_name = Column(Text)
     contact_name = Column(Text)
     phone = Column(Text)
     email = Column(Text)
+
 
 class Inventory(Base):
     __tablename__ = "inventory"
@@ -18,6 +31,7 @@ class Inventory(Base):
     bought_price = Column(Numeric)
     sale_price = Column(Numeric)
     suppliers_id = Column(Integer, ForeignKey("suppliers.id"))
+
 
 class Customers(Base):
     __tablename__ = "customers"
@@ -36,6 +50,7 @@ class Customers(Base):
     ccq = Column(Text)
     notes = Column(Text)
 
+
 class Sales(Base):
     __tablename__ = "sales"
     id = Column(Integer, primary_key=True)
@@ -43,6 +58,7 @@ class Sales(Base):
     date = Column(Date)
     payment_method = Column(Text)
     payment_status = Column(Text)
+
 
 class SalesItems(Base):
     __tablename__ = "sales_items"
@@ -52,6 +68,7 @@ class SalesItems(Base):
     quantity = Column(Integer)
     price = Column(Numeric)
 
+
 class Technicians(Base):
     __tablename__ = "technicians"
     id = Column(Integer, primary_key=True)
@@ -59,6 +76,7 @@ class Technicians(Base):
     phone = Column(Text)
     email = Column(Text)
     hourly_rate = Column(Numeric)
+
 
 class Shifts(Base):
     __tablename__ = "shifts"
@@ -70,12 +88,14 @@ class Shifts(Base):
     total_pay = Column(Numeric)
     payroll_id = Column(Integer, ForeignKey("payroll.id"))
 
+
 class Payroll(Base):
     __tablename__ = "payroll"
     id = Column(Integer, primary_key=True)
     technicians_id = Column(Integer, ForeignKey("technicians.id"))
     pay_date = Column(Date)
     amount = Column(Numeric)
+
 
 class Jobs(Base):
     __tablename__ = "jobs"
@@ -90,6 +110,7 @@ class Jobs(Base):
     payment_status = Column(Text)
     created_at = Column(TIMESTAMP, server_default=func.now())
 
+
 class JobsItems(Base):
     __tablename__ = "jobs_items"
     id = Column(Integer, primary_key=True)
@@ -97,5 +118,3 @@ class JobsItems(Base):
     items_id = Column(Integer, ForeignKey("inventory.id"))
     quantity = Column(Integer)
     price = Column(Numeric)
-
-

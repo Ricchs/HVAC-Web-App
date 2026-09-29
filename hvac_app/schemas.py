@@ -1,6 +1,8 @@
+from datetime import date as date_type
+from datetime import time
+
 from pydantic import BaseModel
-from typing import Optional
-from datetime import date as date_type, time
+
 
 class CustomerCreate(BaseModel):
     full_name: str
@@ -15,22 +17,24 @@ class CustomerCreate(BaseModel):
     email: str
     rbq: str
     ccq: str
-    notes: Optional[str] = None
+    notes: str | None = None
+
 
 class CustomerUpdate(BaseModel):
-    full_name: Optional[str] = None
-    phone: Optional[str] = None
-    company_name: Optional[str] = None
-    business_phone: Optional[str] = None
-    street_address: Optional[str] = None
-    city: Optional[str] = None
-    postal_code: Optional[str] = None
-    country: Optional[str] = None
-    province: Optional[str] = None
-    email: Optional[str] = None
-    rbq: Optional[str] = None
-    ccq: Optional[str] = None
-    notes: Optional[str] = None
+    full_name: str | None = None
+    phone: str | None = None
+    company_name: str | None = None
+    business_phone: str | None = None
+    street_address: str | None = None
+    city: str | None = None
+    postal_code: str | None = None
+    country: str | None = None
+    province: str | None = None
+    email: str | None = None
+    rbq: str | None = None
+    ccq: str | None = None
+    notes: str | None = None
+
 
 class SupplierCreate(BaseModel):
     company_name: str
@@ -38,11 +42,13 @@ class SupplierCreate(BaseModel):
     phone: str
     email: str
 
+
 class SupplierUpdate(BaseModel):
-    company_name: Optional[str] = None
-    contact_name: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
+    company_name: str | None = None
+    contact_name: str | None = None
+    phone: str | None = None
+    email: str | None = None
+
 
 class InventoryCreate(BaseModel):
     category: str
@@ -52,13 +58,15 @@ class InventoryCreate(BaseModel):
     sale_price: float
     suppliers_id: int
 
+
 class InventoryUpdate(BaseModel):
-    category: Optional[str] = None
-    item: Optional[str] = None
-    stock: Optional[int] = None
-    bought_price: Optional[float] = None
-    sale_price: Optional[float] = None
-    suppliers_id: Optional[int] = None
+    category: str | None = None
+    item: str | None = None
+    stock: int | None = None
+    bought_price: float | None = None
+    sale_price: float | None = None
+    suppliers_id: int | None = None
+
 
 class TechnicianCreate(BaseModel):
     full_name: str
@@ -66,16 +74,19 @@ class TechnicianCreate(BaseModel):
     email: str
     hourly_rate: float
 
+
 class TechnicianUpdate(BaseModel):
-    full_name: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    hourly_rate: Optional[float] = None
+    full_name: str | None = None
+    phone: str | None = None
+    email: str | None = None
+    hourly_rate: float | None = None
+
 
 class SaleItemIn(BaseModel):
     items_id: int
     quantity: int
     price: float
+
 
 class SaleCreate(BaseModel):
     customers_id: int
@@ -83,11 +94,13 @@ class SaleCreate(BaseModel):
     payment_method: str
     payment_status: str
 
+
 class SaleUpdate(BaseModel):
-    customers_id: Optional[int] = None
-    date: Optional[date_type] = None
-    payment_method: Optional[str] = None
-    payment_status: Optional[str] = None
+    customers_id: int | None = None
+    date: date_type | None = None
+    payment_method: str | None = None
+    payment_status: str | None = None
+
 
 class SaleItemCreate(BaseModel):
     sales_id: int
@@ -95,24 +108,28 @@ class SaleItemCreate(BaseModel):
     quantity: int
     price: float
 
+
 class SaleItemUpdate(BaseModel):
-    sales_id: Optional[int] = None
-    items_id: Optional[int] = None
-    quantity: Optional[int] = None
-    price: Optional[float] = None
+    sales_id: int | None = None
+    items_id: int | None = None
+    quantity: int | None = None
+    price: float | None = None
+
 
 class ShiftCreate(BaseModel):
     technicians_id: int
-    start_time: time 
+    start_time: time
     end_time: time
     date: date_type
 
+
 class ShiftUpdate(BaseModel):
-    technicians_id: Optional[int] = None
-    start_time: Optional[time] = None 
-    end_time: Optional[time] = None
-    date: Optional[date_type] = None
-    total_pay: Optional[float] = None
+    technicians_id: int | None = None
+    start_time: time | None = None
+    end_time: time | None = None
+    date: date_type | None = None
+    total_pay: float | None = None
+
 
 class PayrollCreate(BaseModel):
     technicians_id: int
@@ -120,31 +137,35 @@ class PayrollCreate(BaseModel):
     pay_date: date_type
     shifts: list[int] = []
 
-class PayrollUpdate(BaseModel):
-    technicians_id: Optional[int] = None
-    amount: Optional[float] = None
-    pay_date: Optional[date_type] = None
-    shifts: Optional[list[int]] = None
 
-class JobCreate(BaseModel): 
+class PayrollUpdate(BaseModel):
+    technicians_id: int | None = None
+    amount: float | None = None
+    pay_date: date_type | None = None
+    shifts: list[int] | None = None
+
+
+class JobCreate(BaseModel):
     customers_id: int
     job_type: str
-    technicians_id: Optional[int] = None
+    technicians_id: int | None = None
     labour_cost: float
-    scheduled_date: Optional[date_type] = None
+    scheduled_date: date_type | None = None
     completion_status: str
     payment_method: str
-    payment_status: str  
+    payment_status: str
 
-class JobUpdate(BaseModel): 
-    customers_id: Optional[int] = None
-    job_type: Optional[str] = None
-    technicians_id: Optional[int] = None
-    labour_cost: Optional[float] = None
-    scheduled_date: Optional[date_type] = None
-    completion_status: Optional[str] = None
-    payment_method: Optional[str] = None
-    payment_status: Optional[str] = None
+
+class JobUpdate(BaseModel):
+    customers_id: int | None = None
+    job_type: str | None = None
+    technicians_id: int | None = None
+    labour_cost: float | None = None
+    scheduled_date: date_type | None = None
+    completion_status: str | None = None
+    payment_method: str | None = None
+    payment_status: str | None = None
+
 
 class JobItemCreate(BaseModel):
     jobs_id: int
@@ -152,8 +173,9 @@ class JobItemCreate(BaseModel):
     quantity: int
     price: float
 
+
 class JobItemUpdate(BaseModel):
-    jobs_id: Optional[int] = None
-    items_id: Optional[int] = None
-    quantity: Optional[int] = None
-    price: Optional[float] = None
+    jobs_id: int | None = None
+    items_id: int | None = None
+    quantity: int | None = None
+    price: float | None = None
