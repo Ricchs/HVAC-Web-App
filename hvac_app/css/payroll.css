@@ -1,23 +1,22 @@
 .shifts {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .shift-row {
-    display: grid;
-    grid-template-columns: auto auto 1fr auto;
-    gap: 12px;
-    align-items: center;
-    padding: 10px 4px;  
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 4px;
 }
 
 .shift-row:not(:last-child) {
-    border-bottom: 0.5px solid #E5E7EB
+  border-bottom: 0.5px solid #e5e7eb;
 }
 
 .shift-row input[type="checkbox"] {
-    height: 18px;
-    width: 18px;
+  height: 18px;
+  width: 18px;
 }
-

@@ -4,7 +4,7 @@
 
 ## Context
 
-When adding an inventory item, the item needs to be linked to a supplier (`suppliers_id` foreign key.). However, I made the form to ask the user to type a supplie *name* (e.g., Lennox) and not an ID to enhance UX. The backend must turn that name into a supplier ID before saving the item. Options considered:
+When adding an inventory item, the item needs to be linked to a supplier (`suppliers_id` foreign key.). However, I made the form to ask the user to type a supplie _name_ (e.g., Lennox) and not an ID to enhance UX. The backend must turn that name into a supplier ID before saving the item. Options considered:
 
 1. Require users to select an existing supplier from the drop down menu. No option to add new one.
 2. Make the user create the supplier first (and separately) then selecting it

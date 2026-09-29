@@ -4,7 +4,7 @@
 
 ## Context
 
-When a user deletes an item from the inventory, that item may be referenced by other rows. For example, deleting a job with a row referencing to job_items (an item used in a job). The databases enforces a foreign key constraint, so deleting a referenced item raises an `IntegrityError`. 
+When a user deletes an item from the inventory, that item may be referenced by other rows. For example, deleting a job with a row referencing to job_items (an item used in a job). The databases enforces a foreign key constraint, so deleting a referenced item raises an `IntegrityError`.
 
 I can either do a cascade delete (delete everything including the referenced rows) or I can block the delete.
 
