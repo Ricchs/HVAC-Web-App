@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/customers")
-def get_customers(db: Session = Depends(get_db)):
+def get_customers(search: str | None = None, db: Session = Depends(get_db)):
     result = (
         db.query(
             models.Customers,
@@ -22,8 +22,29 @@ def get_customers(db: Session = Depends(get_db)):
         .outerjoin(models.Sales, models.Sales.customers_id == models.Customers.id)
         .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)
         .group_by(models.Customers.id)
-        .all()
     )
+
+    if search:
+        similarity = func.greatest(
+            func.word_similarity(search, models.Customers.full_name),
+            func.word_similarity(search, models.Customers.phone),
+            func.word_similarity(search, func.coalesce(models.Customers.email, '')),
+            func.word_similarity(search, func.coalesce(models.Customers.company_name, ''))
+        )
+
+        result = (
+            result
+            .filter(
+                similarity > 0.2
+            )
+            .order_by(
+                similarity.desc()
+            )
+            .all()
+        )
+    else:
+        result = result.all()
+
     return [
         {
             "full_name": customer.full_name,

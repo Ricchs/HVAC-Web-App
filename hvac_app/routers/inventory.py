@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -10,12 +11,24 @@ router = APIRouter()
 
 
 @router.get("/inventory")
-def get_inventory(db: Session = Depends(get_db)):
+def get_inventory(search: str | None = None, db: Session = Depends(get_db)):
     inventory = (
         db.query(models.Inventory, models.Suppliers.company_name)
         .join(models.Suppliers, models.Inventory.suppliers_id == models.Suppliers.id)
-        .all()
     )
+
+    if search:
+        similarity = func.word_similarity(search, models.Inventory.item)
+
+        inventory = (
+            inventory
+            .filter(similarity > 0.2)
+            .order_by(similarity.desc())
+            .all()
+        )
+    else:
+        inventory = inventory.all()
+
     return [
         {
             "id": inv.id,

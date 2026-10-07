@@ -3,117 +3,97 @@ import * as helpers from "./helper_functions.js";
 const modal = document.getElementById("add-modal");
 const form = document.getElementById("add-customer-form");
 
-/* load customers */
+/* ========== Load page ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadCustomers() {
-  const response = await fetch("/customers");
+let currentSearch = "";
+async function loadCustomers(search = currentSearch) {
+  currentSearch = search;
+
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/customers?${params}`);
   const customers = await response.json();
 
+  // Pagination button management
   if (rowsPerPage === undefined) rowsPerPage = helpers.rowPerPage();
+
   rowsTotal = customers.length;
-  numberPages = Math.ceil(rowsTotal / rowsPerPage);
-  if (currentPage == numberPages) {
-    document.getElementById("customer-next").disabled = true;
-    document.getElementById("customer-last").disabled = true;
-  }
+  numberPages = Math.max(1, Math.ceil(rowsTotal / rowsPerPage));
+
+  document.getElementById("customer-first").disabled = currentPage == 1;
+  document.getElementById("customer-previous").disabled = currentPage == 1;
+
+  document.getElementById("customer-next").disabled =
+    currentPage >= numberPages;
+  document.getElementById("customer-last").disabled =
+    currentPage >= numberPages;
+
+  document.getElementById("pagination-current").textContent = currentPage;
   document.getElementById("pagination-last").textContent = numberPages;
 
-  document.getElementById("customers-body").innerHTML = customers
-    .slice(0, rowsPerPage)
-    .map(
-      (i) => `
-        <tr data-id="${i.id}">
-            <td>${i.full_name}</td>
-            <td>${i.company_name || "-"}</td>
-            <td>${helpers.formatPhone(i.phone)}</td>
-            <td>${i.email || "-"}</td>
-            <td>${i.order_count}</td>
-            <td>$${helpers.money(i.total_spent)}</td>
-            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>
-    `,
-    )
-    .join("");
+  // Load data
+  if (customers.length === 0) {
+    document.getElementById("customers-body").innerHTML = "";
+    document.getElementById("customers-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("customers-empty").classList.add("hidden");
+
+    const start = (currentPage - 1) * rowsPerPage;
+    document.getElementById("customers-body").innerHTML = customers
+      .slice(start, start + rowsPerPage)
+      .map(
+        (i) => `
+          <tr data-id="${i.id}">
+              <td>${i.full_name}</td>
+              <td>${i.company_name || "-"}</td>
+              <td>${helpers.formatPhone(i.phone)}</td>
+              <td>${i.email || "-"}</td>
+              <td>${i.order_count}</td>
+              <td>$${helpers.money(i.total_spent)}</td>
+              <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
+          </tr>
+      `,
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 
 loadCustomers();
 
-/* pagination */
-document.getElementById("customer-first").disabled = true;
-document.getElementById("customer-previous").disabled = true;
-document.getElementById("pagination-current").textContent = currentPage;
+/* ----- Search ----- */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  currentPage = 1;
+  const search = e.target.value;
+  loadCustomers(search);
+});
 
-const pageNumber = document.getElementById("pagination-current");
-
+/* ----- Pagination ----- */
 document.getElementById("customer-first").addEventListener("click", () => {
   currentPage = 1;
-  document.querySelector(".pagination").dispatchEvent(new Event("change"));
+  loadCustomers();
 });
 
 document.getElementById("customer-previous").addEventListener("click", () => {
   currentPage = Math.max(1, currentPage - 1);
-  document.querySelector(".pagination").dispatchEvent(new Event("change"));
+  loadCustomers();
 });
 
 document.getElementById("customer-next").addEventListener("click", () => {
   currentPage = Math.min(numberPages, currentPage + 1);
-  document.querySelector(".pagination").dispatchEvent(new Event("change"));
+  loadCustomers();
 });
 
 document.getElementById("customer-last").addEventListener("click", () => {
   currentPage = numberPages;
-  document.querySelector(".pagination").dispatchEvent(new Event("change"));
+  loadCustomers();
 });
-
-document.querySelector(".pagination").addEventListener("change", async () => {
-  if (currentPage == 1) {
-    document.getElementById("customer-first").disabled = true;
-    document.getElementById("customer-previous").disabled = true;
-  } else {
-    document.getElementById("customer-first").disabled = false;
-    document.getElementById("customer-previous").disabled = false;
-  }
-
-  if (currentPage == numberPages) {
-    document.getElementById("customer-next").disabled = true;
-    document.getElementById("customer-last").disabled = true;
-  } else {
-    document.getElementById("customer-next").disabled = false;
-    document.getElementById("customer-last").disabled = false;
-  }
-
-  pageNumber.textContent = currentPage;
-
-  const start = (currentPage - 1) * rowsPerPage;
-
-  const response = await fetch("/customers");
-  const customers = await response.json();
-
-  document.getElementById("customers-body").innerHTML = customers
-    .slice(start, start + rowsPerPage)
-    .map(
-      (i) => `
-        <tr data-id="${i.id}">
-            <td>${i.full_name}</td>
-            <td>${i.company_name || "-"}</td>
-            <td>${helpers.formatPhone(i.phone)}</td>
-            <td>${i.email || "-"}</td>
-            <td>${i.order_count}</td>
-            <td>$${helpers.money(i.total_spent)}</td>
-            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>
-    `,
-    )
-    .join("");
-
-  lucide.createIcons();
-});
-
+/* ========== Row behaviour ========== */
 /* table row action*/
 helpers.rowAction("customers-body");
 

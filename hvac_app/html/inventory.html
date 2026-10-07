@@ -81,6 +81,7 @@
                   >
                     Inventory
                   </button>
+
                   <button class="tab" data-tab="calendar" id="suppliers-tab">
                     Suppliers
                   </button>
@@ -135,6 +136,11 @@
 
                 <tbody id="suppliers-body"></tbody>
               </table>
+
+              <div class="empty-search hidden" id="inventory-empty">
+                <i data-lucide="search-x"></i>
+                <p>No customers match your search.</p>
+              </div>
 
               <div class="pagination">
                 <button class="pagination-arrow" id="inventory-first">
