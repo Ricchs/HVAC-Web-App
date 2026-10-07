@@ -3,7 +3,7 @@ import * as helpers from "./helper_functions.js";
 const modal = document.getElementById("add-modal");
 const form = document.getElementById("add-customer-form");
 
-/* ========== Load page ========== */
+/* ========== Load Customers ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;

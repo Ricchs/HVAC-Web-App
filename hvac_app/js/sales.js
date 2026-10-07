@@ -13,13 +13,19 @@ if (sessionStorage.getItem("createdSaleId")) {
   sessionStorage.removeItem("createdSaleId");
 }
 
-/* load sales */
+/* ========== Load Sales ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadSales() {
-  const response = await fetch("/sales");
+let currentSearch = "";
+async function loadSales(search = currentSearch) {
+  currentSearch = search;
+  const params = new URLSearchParams();
+
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/sales?${params}`);
   const items = await response.json();
 
   rowsPerPage = helpers.rowPerPage();
@@ -31,28 +37,41 @@ async function loadSales() {
 
   document.getElementById("pagination-last").textContent = numberPages;
 
-  document.getElementById("sales-body").innerHTML = items
-    .slice(start, start + rowsPerPage)
-    .map(
-      (i) => `
-        <tr data-id="${i.id}">
-            <td>Sale #${i.id}</td>
-            <td>${i.customers_name}</td>
-            <td>${i.date}</td>
-            <td>${i.items_amount} Units</td>
-            <td>$${helpers.money(i.items_total)}</td>
-            <td>${i.payment_method}</td>
-            <td><span class="badge ${statusClass[i.payment_status]}">${i.payment_status}</span></td>
-            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>
-    `,
-    )
-    .join("");
+  // Load data
+  if (items.length === 0) {
+    document.getElementById("sales-body").innerHTML = "";
+    document.getElementById("sales-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("sales-empty").classList.add("hidden");
+    document.getElementById("sales-body").innerHTML = items
+      .slice(start, start + rowsPerPage)
+      .map(
+        (i) => `
+          <tr data-id="${i.id}">
+              <td>Sale #${i.id}</td>
+              <td>${i.customers_name}</td>
+              <td>${i.date}</td>
+              <td>${i.items_amount} Units</td>
+              <td>$${helpers.money(i.items_total)}</td>
+              <td>${i.payment_method}</td>
+              <td><span class="badge ${statusClass[i.payment_status]}">${i.payment_status}</span></td>
+              <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
+          </tr>
+      `,
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 
 loadSales();
+
+/* ========== Search ========== */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  const search = e.target.value;
+  loadSales(search);
+});
 
 /* pagination */
 document.getElementById("sale-first").addEventListener("click", () => {
@@ -121,7 +140,7 @@ document.getElementById("sales-body").addEventListener("click", async (e) => {
                 <span class="row-name">${i.item}</span>
                 <span class="row-quantity">× ${i.quantity}</span>
             </div>
-            
+
             <span class="row-subtotal">$${helpers.money(i.subtotal)}</span>
         </div>`,
     )

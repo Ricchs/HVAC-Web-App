@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from hvac_app import models
@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/sales")
-def get_sales(db: Session = Depends(get_db)):
+def get_sales(search: str | None = None, db: Session = Depends(get_db)):
     results = (
         db.query(
             models.Sales,
@@ -26,8 +26,35 @@ def get_sales(db: Session = Depends(get_db)):
         .outerjoin(models.SalesItems, models.SalesItems.sales_id == models.Sales.id)
         .group_by(models.Sales.id, models.Customers.full_name)
         .order_by(models.Sales.date.desc())
-        .all()
     )
+
+    if search:
+        customer_similarity = func.word_similarity(
+            search, models.Customers.full_name
+        )
+
+        item_match = (
+            db.query(models.SalesItems.id)
+            .join(models.Inventory, models.Inventory.id == models.SalesItems.items_id)
+            .filter(
+                models.SalesItems.sales_id == models.Sales.id,
+                func.word_similarity(search, models.Inventory.item) > 0.2
+            )
+            .exists()
+        )
+
+        results = (
+            results
+            .filter(
+                or_(
+                    customer_similarity > 0.2,
+                    item_match
+                )
+            )
+            .all()
+        )
+    else:
+        results = results.all()
 
     return [
         {

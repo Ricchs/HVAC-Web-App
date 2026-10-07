@@ -1,12 +1,18 @@
 import * as helpers from "./helper_functions.js";
 
-/* Load table */
+/* ========== Load Technicians ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadTechnicians() {
-  const response = await fetch("/technicians");
+let currentSearch = "";
+async function loadTechnicians(search = currentSearch) {
+  currentSearch = search;
+
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/technicians?${params}`);
   const technicians = await response.json();
 
   rowsPerPage = helpers.rowPerPage();
@@ -17,27 +23,41 @@ async function loadTechnicians() {
   updatePagination();
   document.getElementById("pagination-last").textContent = numberPages;
 
-  document.getElementById("technicians-body").innerHTML = technicians
-    .slice(start, start + rowsPerPage)
-    .map(
-      (i) =>
-        `<tr data-id="${i.id}">
-            <td>${i.full_name}</td>
-            <td>${helpers.formatPhone(i.phone)}</td>
-            <td>${i.email ? i.email : "-"}</td>
-            <td>${i.hourly_rate}/h</td>
-            <td>${i.paid_status || "-"}</td>
-            <td>${i.last_paid_date ? helpers.formatDate(i.last_paid_date) : "-"}</td>
-            <td>${i.last_shift ? helpers.formatRelativeDate(i.last_shift) : "-"}</td>
-            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>`,
-    )
-    .join("");
+  // Load data
+  if (technicians.length === 0) {
+    document.getElementById("technicians-body").innerHTML = "";
+    document.getElementById("technicians-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("technicians-empty").classList.add("hidden");
+
+    document.getElementById("technicians-body").innerHTML = technicians
+      .slice(start, start + rowsPerPage)
+      .map(
+        (i) =>
+          `<tr data-id="${i.id}">
+              <td>${i.full_name}</td>
+              <td>${helpers.formatPhone(i.phone)}</td>
+              <td>${i.email ? i.email : "-"}</td>
+              <td>${i.hourly_rate}/h</td>
+              <td>${i.paid_status || "-"}</td>
+              <td>${i.last_paid_date ? helpers.formatDate(i.last_paid_date) : "-"}</td>
+              <td>${i.last_shift ? helpers.formatRelativeDate(i.last_shift) : "-"}</td>
+              <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
+          </tr>`,
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 
 loadTechnicians();
+
+/* ========== Search ========== */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  const search = e.target.value;
+  loadTechnicians(search);
+});
 
 /* pagination */
 document.getElementById("technician-first").addEventListener("click", () => {

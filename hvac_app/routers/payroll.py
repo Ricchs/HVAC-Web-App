@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from hvac_app import models
@@ -10,15 +10,27 @@ router = APIRouter()
 
 
 @router.get("/payroll")
-def get_payroll(db: Session = Depends(get_db)):
+def get_payroll(search: str | None = None, db: Session = Depends(get_db)):
     result = (
         db.query(models.Payroll, models.Technicians)
         .join(
             models.Technicians, models.Payroll.technicians_id == models.Technicians.id
         )
         .order_by(models.Payroll.pay_date.desc())
-        .all()
     )
+
+    if search:
+        similarity = func.word_similarity(
+            search,
+            models.Technicians.full_name
+        )
+        result = (
+            result
+            .filter(similarity > 0.2)
+            .all()
+        )
+    else:
+        result = result.all()
 
     return [
         {

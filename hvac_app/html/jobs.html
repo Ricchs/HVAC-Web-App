@@ -112,6 +112,11 @@
                 <tbody id="jobs-body"></tbody>
               </table>
 
+              <div class="empty-search hidden" id="jobs-empty">
+                <i data-lucide="search-x"></i>
+                <p>No jobs match your search.</p>
+              </div>
+
               <div class="calendar hidden" id="calendar">
                 <div class="calendar-header">
                   <span>Sun</span>
@@ -469,10 +474,6 @@
     </div>
 
     <div class="toast-container"></div>
-
-    <script>
-      lucide.createIcons();
-    </script>
 
     <!-- Inventory JS -->
     <script src="../js/jobs.js" type="module"></script>

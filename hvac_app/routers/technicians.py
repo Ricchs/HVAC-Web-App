@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/technicians")
-def get_technicians(db: Session = Depends(get_db)):
+def get_technicians(search: str | None = None, db: Session = Depends(get_db)):
     result = (
         db.query(
             models.Technicians,
@@ -22,8 +22,30 @@ def get_technicians(db: Session = Depends(get_db)):
         )
         .outerjoin(models.Shifts, models.Shifts.technicians_id == models.Technicians.id)
         .group_by(models.Technicians.id)
-        .all()
     )
+
+    if search:
+        similarity = func.greatest(
+            func.word_similarity(search, models.Technicians.full_name),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Technicians.phone, '')
+            ),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Technicians.email, '')
+            ),
+        )
+
+        result = (
+            result
+            .filter(similarity > 0.2)
+            .order_by(similarity.desc())
+            .all()
+        )
+    else:
+        result = result.all()
+
     return [
         {
             "id": technician.id,

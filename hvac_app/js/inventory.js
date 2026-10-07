@@ -21,8 +21,8 @@ async function loadItems(search = currentSearch) {
   rowsTotal = items.length;
   numberPages = Math.max(Math.ceil(rowsTotal / rowsPerPage), 1);
 
-  document.getElementById("inventory-first").disabled = currentPage == 1;
-  document.getElementById("inventory-previous").disabled = currentPage == 1;
+  document.getElementById("inventory-first").disabled = currentPage === 1;
+  document.getElementById("inventory-previous").disabled = currentPage === 1;
 
   document.getElementById("inventory-next").disabled =
     currentPage >= numberPages;
@@ -86,6 +86,14 @@ async function loadItems(search = currentSearch) {
 }
 
 loadItems();
+
+/* ----- Search ----- */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  currentPage = 1;
+
+  const search = e.target.value;
+  loadItems(search);
+});
 
 /* ----- Pagination ----- */
 document.getElementById("inventory-first").addEventListener("click", () => {

@@ -10,11 +10,11 @@ router = APIRouter()
 
 
 @router.get("/jobs")
-def get_jobs(db: Session = Depends(get_db)):
+def get_jobs(search: str | None = None, db: Session = Depends(get_db)):
     result = (
         db.query(
             models.Jobs,
-            models.Customers.full_name,
+            models.Customers,
             models.Technicians.full_name,
             func.coalesce(
                 func.sum(models.JobsItems.quantity * models.JobsItems.price), 0
@@ -26,16 +26,45 @@ def get_jobs(db: Session = Depends(get_db)):
         )
         .outerjoin(models.JobsItems, models.JobsItems.jobs_id == models.Jobs.id)
         .group_by(
-            models.Jobs.id, models.Customers.full_name, models.Technicians.full_name
+            models.Jobs.id, models.Customers.id, models.Technicians.full_name
         )
-        .all()
     )
+
+    if search:
+        similarity = func.greatest(
+            func.word_similarity(search, models.Customers.full_name),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Technicians.full_name, '')
+                ),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Customers.street_address, '')
+            ),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Customers.city, '')
+            ),
+            func.word_similarity(
+                search,
+                func.coalesce(models.Customers.postal_code, '')
+            )
+        )
+
+        result = (
+            result
+            .filter(similarity > 0.2)
+            .order_by(similarity.desc())
+            .all()
+        )
+    else:
+        result = result.all()
 
     return [
         {
             "id": job.id,
             "type": job.job_type,
-            "customer": customer,
+            "customer": customer.full_name,
             "technician": technician,
             "scheduled_date": job.scheduled_date,
             "job_status": job.completion_status,

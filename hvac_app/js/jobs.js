@@ -14,13 +14,19 @@ const jobStatusClass = {
 
 let editingId = null;
 
-/* Load jobs */
+/* ========== Load page ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadJobs() {
-  const response = await fetch("/jobs");
+let currentSearch = "";
+async function loadJobs(search = currentSearch) {
+  currentSearch = search;
+  const params = new URLSearchParams();
+
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/jobs?${params}`);
   const job = await response.json();
 
   rowsPerPage = helpers.rowPerPage();
@@ -32,6 +38,7 @@ async function loadJobs() {
 
   document.getElementById("pagination-last").textContent = numberPages;
 
+  // Metrics
   const active = job.filter((j) => j.job_status !== "Completed");
   document.getElementById("active-jobs").textContent = active.length;
 
@@ -51,10 +58,17 @@ async function loadJobs() {
   document.getElementById("completed-month").textContent =
     completed_month.length;
 
-  document.getElementById("jobs-body").innerHTML = job
-    .slice(start, start + rowsPerPage)
-    .map(
-      (j) => `
+  // Load data
+  if (job.length === 0) {
+    document.getElementById("jobs-body").innerHTML = "";
+    document.getElementById("jobs-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("jobs-empty").classList.add("hidden");
+
+    document.getElementById("jobs-body").innerHTML = job
+      .slice(start, start + rowsPerPage)
+      .map(
+        (j) => `
         <tr data-id=${j.id}>
             <td>Job #${j.id}</td>
             <td>${j.type}</td>
@@ -66,15 +80,22 @@ async function loadJobs() {
             <td><span class="badge ${paidStatusClass[j.payment_status]}">${j.payment_status}</span></td>
             <td class="row-action"><button class="row-action-btn" data-id="${j.id}"><i data-lucide="ellipsis"></i></button></td>
         </tr>`,
-    )
-    .join("");
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 
 loadJobs();
 
-/* pagination */
+/* ========== Search ========== */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  const search = e.target.value;
+  loadJobs(search);
+});
+
+/* ========== Pagination ========== */
 const pageNumber = document.getElementById("pagination-current");
 
 document.getElementById("job-first").addEventListener("click", () => {

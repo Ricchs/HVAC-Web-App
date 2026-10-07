@@ -1,12 +1,18 @@
 import * as helpers from "./helper_functions.js";
 
-/*************************************** Load page ***************************************/
+/* ========== Load page ========== */
 let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadPayroll() {
-  const response = await fetch("/payroll");
+let currentSearch = "";
+async function loadPayroll(search = currentSearch) {
+  currentSearch = search;
+
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/payroll?${params}`);
   const payroll = await response.json();
 
   rowsPerPage = helpers.rowPerPage();
@@ -17,24 +23,38 @@ async function loadPayroll() {
   document.getElementById("pagination-last").textContent = numberPages;
   updatePagination();
 
-  document.getElementById("payroll-body").innerHTML = payroll
-    .slice(start, start + rowsPerPage)
-    .map(
-      (i) => `
-        <tr data-id="${i.id}">
-            <td>Payment #${i.id}</td>
-            <td>${i.technicians_name}</td>
-            <td>${i.pay_date}</td>
-            <td>$${helpers.money(i.amount)}</td>
-            <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>
-    `,
-    )
-    .join("");
+  // Load table
+  if (payroll.length === 0) {
+    document.getElementById("payroll-body").innerHTML = "";
+    document.getElementById("payroll-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("payroll-empty").classList.add("hidden");
+
+    document.getElementById("payroll-body").innerHTML = payroll
+      .slice(start, start + rowsPerPage)
+      .map(
+        (i) => `
+          <tr data-id="${i.id}">
+              <td>Payment #${i.id}</td>
+              <td>${i.technicians_name}</td>
+              <td>${i.pay_date}</td>
+              <td>$${helpers.money(i.amount)}</td>
+              <td class="row-action"><button class="row-action-btn" data-id="${i.id}"><i data-lucide="ellipsis"></i></button></td>
+          </tr>
+      `,
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 loadPayroll();
+
+/* ========== Search ========== */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  const search = e.target.value;
+  loadPayroll(search);
+});
 
 /********* pagination function *********/
 function updatePagination() {

@@ -4,9 +4,16 @@ let rowsPerPage;
 let rowsTotal;
 let numberPages;
 let currentPage = 1;
-async function loadShifts() {
-  const response = await fetch("/shifts");
+let currentSearch = "";
+async function loadShifts(search = currentSearch) {
+  currentSearch = search;
+
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+
+  const response = await fetch(`/shifts?${params}`);
   const data = await response.json();
+
   const metrics = data.metrics;
   const shifts = data.shifts;
 
@@ -26,27 +33,40 @@ async function loadShifts() {
   updatePagination();
 
   // Table
-  document.getElementById("shifts-body").innerHTML = shifts
-    .slice(start, start + rowsPerPage)
-    .map(
-      (shift) => `
-        <tr data-id="${shift.id}">
-            <td>Shift #${shift.id}</td>
-            <td>${shift.technician}</td>
-            <td>${helpers.formatDate(shift.date)}</td>
-            <td>${shift.time}</td>
-            <td>$${helpers.money(shift.total_pay)}</td>
-            <td><span class="badge badge-${shift.payroll_id ? "in" : "out"}">${shift.payroll_id ? "Paid" : "Unpaid"}</span></td>
-            <td class="row-action"><button class="row-action-btn" data-id="${shift.id}"><i data-lucide="ellipsis"></i></button></td>
-        </tr>
-    `,
-    )
-    .join("");
+  if (shifts.length === 0) {
+    document.getElementById("shifts-body").innerHTML = "";
+    document.getElementById("shifts-empty").classList.remove("hidden");
+  } else {
+    document.getElementById("shifts-empty").classList.add("hidden");
+
+    document.getElementById("shifts-body").innerHTML = shifts
+      .slice(start, start + rowsPerPage)
+      .map(
+        (shift) => `
+          <tr data-id="${shift.id}">
+              <td>Shift #${shift.id}</td>
+              <td>${shift.technician}</td>
+              <td>${helpers.formatDate(shift.date)}</td>
+              <td>${shift.time}</td>
+              <td>$${helpers.money(shift.total_pay)}</td>
+              <td><span class="badge badge-${shift.payroll_id ? "in" : "out"}">${shift.payroll_id ? "Paid" : "Unpaid"}</span></td>
+              <td class="row-action"><button class="row-action-btn" data-id="${shift.id}"><i data-lucide="ellipsis"></i></button></td>
+          </tr>
+      `,
+      )
+      .join("");
+  }
 
   lucide.createIcons();
 }
 
 loadShifts();
+
+/* ========== Search ========== */
+document.querySelector("[type=search]").addEventListener("input", (e) => {
+  const search = e.target.value;
+  loadShifts(search);
+});
 
 /* ========== Pagination ========== */
 function updatePagination() {

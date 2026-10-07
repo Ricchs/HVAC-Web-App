@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/shifts")
-def get_shifts(db: Session = Depends(get_db)):
+def get_shifts(search: str | None = None, db: Session = Depends(get_db)):
     unpaid_owed = (
         db.query(func.coalesce(func.sum(models.Shifts.total_pay), 0))
         .filter(models.Shifts.payroll_id == None)
@@ -44,9 +44,28 @@ def get_shifts(db: Session = Depends(get_db)):
     result = (
         db.query(models.Shifts, models.Technicians.full_name)
         .join(models.Technicians, models.Technicians.id == models.Shifts.technicians_id)
-        .order_by(models.Shifts.date.desc())
-        .all()
     )
+
+    if search:
+        similarity = func.word_similarity(
+            search, models.Technicians.full_name)
+
+        result = (
+            result
+            .filter(similarity > 0.2)
+            .order_by(
+                similarity.desc(),
+                models.Shifts.date.desc()
+            )
+            .all()
+        )
+    else:
+        result = (
+            result
+            .order_by(models.Shifts.date.desc())
+            .all()
+        )
+
     shifts = [
         {
             "id": shift.id,
