@@ -1,0 +1,49 @@
+/* ---------- Metrics ---------- */
+.metrics {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.metric-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #636363;
+}
+
+.metric-amount {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* ---------- Modal ---------- */
+.modal-row {
+  align-items: center;
+}
+
+.text-separator {
+  color: #9ca3af;
+}
+
+.shift-pay {
+  color: #636363;
+  font-size: 14px;
+}
+
+.amount {
+  color: black;
+  font-size: 16px;
+  font-weight: 500;
+}

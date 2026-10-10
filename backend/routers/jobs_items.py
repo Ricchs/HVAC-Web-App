@@ -1,0 +1,74 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from backend import models
+from backend.database import get_db
+from backend.schemas import *
+
+router = APIRouter()
+
+
+@router.get("/jobs_items")
+def get_jobs_items(db: Session = Depends(get_db)):
+    jobs_items = db.query(models.JobsItems).all()
+    return jobs_items
+
+
+@router.get("/jobs_items/{jobs_id}")
+def get_one_job_item(jobs_id: int, db: Session = Depends(get_db)):
+    result = (
+        db.query(models.JobsItems, models.Inventory)
+        .filter(models.JobsItems.jobs_id == jobs_id)
+        .outerjoin(models.Inventory, models.Inventory.id == models.JobsItems.items_id)
+        .all()
+    )
+
+    return [
+        {
+            "items_id": ji.items_id,
+            "item": inv.item,
+            "quantity": ji.quantity,
+            "price": ji.price,
+        }
+        for ji, inv in result
+    ]
+
+
+@router.post("/jobs_items")
+def create_jobs_items(job_item: JobItemCreate, db: Session = Depends(get_db)):
+    new_jobs_item = models.JobsItems(
+        jobs_id=job_item.jobs_id,
+        items_id=job_item.items_id,
+        quantity=job_item.quantity,
+        price=job_item.price,
+    )
+
+    db.add(new_jobs_item)
+    db.commit()
+    db.refresh(new_jobs_item)
+    return new_jobs_item
+
+
+@router.put("/jobs_items/{jobs_items_id}")
+def update_jobs_items(
+    jobs_items_id: int, job_item: JobItemUpdate, db: Session = Depends(get_db)
+):
+    existing_job_item = (
+        db.query(models.JobsItems).filter(models.JobsItems.id == jobs_items_id).first()
+    )
+    existing_job_item.jobs_id = job_item.jobs_id or existing_job_item.jobs_id
+    existing_job_item.items_id = job_item.items_id or existing_job_item.items_id
+    existing_job_item.quantity = job_item.quantity or existing_job_item.quantity
+    existing_job_item.price = job_item.price or existing_job_item.price
+
+    db.commit()
+    db.refresh(existing_job_item)
+    return existing_job_item
+
+
+@router.delete("/jobs_items/{jobs_id}")
+def delete_jobs_items(jobs_id: int, db: Session = Depends(get_db)):
+    db.query(models.JobsItems).filter(models.JobsItems.jobs_id == jobs_id).delete()
+
+    db.commit()
+    return {"message": "jobs item deleted successfully"}

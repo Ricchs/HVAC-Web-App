@@ -1,0 +1,191 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Office Web App</title>
+
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/sidebar.css" />
+    <link rel="stylesheet" href="../css/shared-table.css" />
+    <link rel="stylesheet" href="../css/shared-add-modal.css" />
+    <link rel="stylesheet" href="../css/shared-button.css" />
+    <link rel="stylesheet" href="../css/shared-action-menu.css" />
+    <link rel="stylesheet" href="../css/toast.css" />
+    <link rel="stylesheet" href="../css/shifts.css" />
+
+    <!-- Inter font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Lucide icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  </head>
+
+  <body>
+    <div class="app">
+      <div id="sidebar"></div>
+      <main class="main-content">
+        <div class="container">
+          <h1>Shifts</h1>
+
+          <div class="metrics">
+            <div class="metric-card">
+              <p class="metric-title">Total Unpaid Owed</p>
+              <p class="metric-amount" id="total-unpaid"></p>
+            </div>
+
+            <div class="metric-card">
+              <p class="metric-title">Unpaid Shifts</p>
+              <p class="metric-amount" id="unpaid-shifts"></p>
+            </div>
+
+            <div class="metric-card">
+              <p class="metric-title">Shifts This Week</p>
+              <p class="metric-amount" id="shifts-weel"></p>
+            </div>
+          </div>
+
+          <div class="table-panel">
+            <div class="table-container">
+              <div class="top-part">
+                <div class="search">
+                  <input type="search" placeholder="Search" />
+                  <i data-lucide="search"></i>
+                </div>
+
+                <div class="panel-right-side">
+                  <button class="filter-item">
+                    <i data-lucide="list-filter"></i>Filter
+                  </button>
+                  <button class="add-item">
+                    <i data-lucide="plus"></i>Add Shift
+                  </button>
+                </div>
+              </div>
+
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Shift #</th>
+                    <th>Technician</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Total pay</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody id="shifts-body"></tbody>
+              </table>
+
+              <div class="empty-search hidden" id="shifts-empty">
+                <i data-lucide="search-x"></i>
+                <p>No shifts match your search.</p>
+              </div>
+
+              <div class="pagination">
+                <button class="pagination-arrow" id="shift-first">
+                  <i data-lucide="chevron-first"></i>
+                </button>
+                <button class="pagination-arrow" id="shift-previous">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+
+                <span class="pagination-number">
+                  <span id="pagination-current"></span>
+                  /
+                  <span id="pagination-last"></span>
+                </span>
+
+                <button class="pagination-arrow" id="shift-next">
+                  <i data-lucide="chevron-right"></i>
+                </button>
+                <button class="pagination-arrow" id="shift-last">
+                  <i data-lucide="chevron-last"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="action-menu" id="action-menu">
+      <button class="action-edit">Edit</button>
+      <button class="action-delete">Delete</button>
+    </div>
+
+    <div class="modal-overlay" id="shift-modal">
+      <div class="modal">
+        <div class="modal-header-wrapper">
+          <h2 id="shift-modal-title"></h2>
+          <button class="close-modal-btn" id="close-shift-edit">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <hr />
+
+        <form class="form" id="shift-form">
+          <div class="modal-section">
+            <p class="modal-title">Technician</p>
+
+            <div class="modal-field">
+              <select name="technicians_id">
+                <option value="" hidden selected>Select a technician</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <p class="modal-title">Date</p>
+
+            <div class="modal-field">
+              <input name="date" type="date" class="required" />
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <p class="modal-title">Shift time</p>
+
+            <div class="modal-row">
+              <div class="modal-field">
+                <input name="start_time" type="time" class="required" />
+              </div>
+              <span class="text-separator">to</span>
+              <div class="modal-field">
+                <input name="end_time" type="time" class="required" />
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <p class="shift-pay">
+              Total pay: <span class="amount" id="shift-amount">$0.00</span>
+            </p>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="cancel-btn" id="shift-modal-cancel">
+              Cancel
+            </button>
+            <button type="submit" class="add-button" id="shift-modal-save">
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast-container"></div>
+  </body>
+
+  <!-- Sidebar JS -->
+  <script src="../js/sidebar.js" defer></script>
+
+  <!-- page JS -->
+  <script src="../js/shifts.js" type="module"></script>
+</html>
