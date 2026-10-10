@@ -6,6 +6,7 @@ __pycache__/
 ruff.toml
 .ruff_cache/
 node_modules/
-eslint.config.mjs
-package.json
-package-lock.json
+/eslint.config.mjs
+/package.json
+/package-lock.json
+.vscode/*
