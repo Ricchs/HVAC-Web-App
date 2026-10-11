@@ -56,7 +56,7 @@ function CustomerForm({
 
     setIsSubmitting(true);
 
-    const url = customer ? `/customers/${customer.id}` : "/customers";
+    const url = customer ? `/api/customers/${customer.id}` : "/api/customers";
     const method = customer ? "PUT" : "POST";
 
     try {

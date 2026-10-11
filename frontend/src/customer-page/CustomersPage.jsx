@@ -1,11 +1,12 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { UserRound } from "lucide-react";
 
 import EmptyState from "../components/EmptyState";
 import Modal from "../components/Modal";
 import PageHeader from "../components/PageHeader";
 import { ToastContext } from "../notifications/ToastProvider";
-import { apiFetch } from "../utils/api";
+import useResource from "../hooks/useResource";
+import useModalState from "../hooks/useModalState";
 
 import CustomerTable from "./CustomerTable";
 import CustomerForm from "./CustomerForm";
@@ -13,67 +14,30 @@ import CustomerForm from "./CustomerForm";
 function CustomersPage() {
   const { addToast } = useContext(ToastContext);
 
-  const [customers, setCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  // Customers list
+  const {
+    items: customers,
+    search,
+    setSearch,
+    loadItems: loadCustomers,
+    deleteItem: deleteCustomer,
+  } = useResource({
+    endpoint: "/api/customers",
+    noun: "customer",
+    pluralNoun: "customers",
+    getName: (customer) => customer.full_name,
+  });
 
-  const [search, setSearch] = useState("");
-
-  const [isModalActive, setIsModalActive] = useState(false);
-  const [shouldCloseModal, setShouldCloseModal] = useState(false);
-
-  // Load customer function
-  async function loadCustomers(signal) {
-    const params = new URLSearchParams();
-    if (search) params.append("search", search);
-
-    try {
-      const data = await apiFetch(`/customers?${params}`, { signal });
-      setCustomers(data);
-    } catch (error) {
-      if (error.name === "AbortError") return;
-
-      addToast({
-        message: "Couldn't load customers",
-        submessage: error.message,
-        status: "error",
-      });
-    }
-  }
-
-  // Delete customer function
-  async function handleDeleteCustomer(customer) {
-    if (!confirm(`Delete ${customer.full_name}?`)) return;
-
-    try {
-      await apiFetch(`/customers/${customer.id}`, { method: "DELETE" });
-      await loadCustomers();
-
-      addToast({
-        message: "Customer deleted",
-        submessage: `${customer.full_name} was removed from your customers.`,
-        status: "success",
-      });
-    } catch (error) {
-      addToast({
-        message: "Couldn't delete customer",
-        submessage: error.message,
-        status: "error",
-      });
-    }
-  }
-
-  // Refresh table when user searches
-  useEffect(() => {
-    const controller = new AbortController();
-    const timer = setTimeout(() => {
-      loadCustomers(controller.signal);
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [search]);
+  // Modal state
+  const {
+    selectedItem: selectedCustomer,
+    isOpen,
+    shouldClose,
+    openAddModal,
+    openEditModal,
+    requestClose,
+    handleClosed,
+  } = useModalState();
 
   return (
     <div className="page">
@@ -81,10 +45,7 @@ function CustomersPage() {
       <PageHeader
         title="Customers"
         actionLabel="+ Add Customer"
-        onAction={() => {
-          setSelectedCustomer(null);
-          setIsModalActive(true);
-        }}
+        onAction={openAddModal}
       />
 
       {/* Table toolbar */}
@@ -97,7 +58,7 @@ function CustomersPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select className="tab-filter">
+        <select className="table-filter">
           <option value="">Filter</option>
         </select>
       </div>
@@ -108,36 +69,27 @@ function CustomersPage() {
       ) : (
         <CustomerTable
           customers={customers}
-          onEditCustomer={(customer) => {
-            setSelectedCustomer(customer);
-            setIsModalActive(true);
-          }}
-          onDeleteCustomer={handleDeleteCustomer}
+          onEditCustomer={openEditModal}
+          onDeleteCustomer={deleteCustomer}
         />
       )}
 
       {/* Modal */}
-      {isModalActive &&
+      {isOpen &&
         (selectedCustomer ? (
           // Edit modal
           <Modal
-            onClose={() => {
-              setSelectedCustomer(null);
-              setShouldCloseModal(false);
-              setIsModalActive(false);
-            }}
-            shouldCloseModal={shouldCloseModal}
+            onClose={handleClosed}
+            shouldCloseModal={shouldClose}
             modalTitle={`Edit Customer #${selectedCustomer.id}`}
             modalSubtitle="Modify the customer's information below"
           >
             <CustomerForm
               customer={selectedCustomer}
-              onCancel={() => {
-                setShouldCloseModal(true);
-              }}
+              onCancel={requestClose}
               onCustomerUpdated={async (customerName) => {
                 await loadCustomers();
-                setShouldCloseModal(true);
+                requestClose();
                 addToast({
                   message: "Customer updated",
                   submessage: `${customerName}'s changes were saved.`,
@@ -149,21 +101,16 @@ function CustomersPage() {
         ) : (
           // Add modal
           <Modal
-            onClose={() => {
-              setIsModalActive(false);
-              setShouldCloseModal(false);
-            }}
-            shouldCloseModal={shouldCloseModal}
+            onClose={handleClosed}
+            shouldCloseModal={shouldClose}
             modalTitle="Add Customer"
             modalSubtitle="Enter the customer's information below."
           >
             <CustomerForm
-              onCancel={() => {
-                setShouldCloseModal(true);
-              }}
+              onCancel={requestClose}
               onCustomerCreated={async (customerName) => {
                 await loadCustomers();
-                setShouldCloseModal(true);
+                requestClose();
                 addToast({
                   message: "Customer created",
                   submessage: `${customerName} was added to your customers.`,

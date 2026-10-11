@@ -14,7 +14,7 @@ function CustomerTable({ customers, onEditCustomer, onDeleteCustomer }) {
             <th>Phone</th>
             <th>Email</th>
             <th>Address</th>
-            <th>Actions</th>
+            <th className="cell-right">Actions</th>
           </tr>
         </thead>
 
@@ -30,7 +30,7 @@ function CustomerTable({ customers, onEditCustomer, onDeleteCustomer }) {
                   .filter(Boolean)
                   .join(", ") || "-"}
               </td>
-              <td>
+              <td className="cell-right">
                 <ActionMenu
                   actions={[
                     {
@@ -39,7 +39,7 @@ function CustomerTable({ customers, onEditCustomer, onDeleteCustomer }) {
                     },
                     {
                       label: "Delete",
-                      varaint: "danger",
+                      variant: "danger",
                       onClick: () => onDeleteCustomer(customer),
                     },
                   ]}
