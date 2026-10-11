@@ -1,10 +1,14 @@
 function SelectField({
   label,
   fieldId,
+
+  placeholder,
+  options,
+
   fieldValue,
   onChange,
-  options,
-  placeholder,
+  error,
+
   full,
 }) {
   return (
@@ -14,9 +18,10 @@ function SelectField({
       </label>
 
       <select
+        className={error ? "form-select error" : "form-select"}
         id={fieldId}
-        className="form-select"
         name={fieldId}
+
         value={fieldValue}
         onChange={onChange}
       >
@@ -27,6 +32,7 @@ function SelectField({
           </option>
         ))}
       </select>
+      {error && <p className="form-error">{error}</p>}
     </div>
   );
 }

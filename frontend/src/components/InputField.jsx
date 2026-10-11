@@ -1,11 +1,15 @@
 function InputField({
   label,
   fieldId,
+
   fieldType,
-  fieldPlaceholder,
-  fieldValue,
   inputMode,
+  fieldPlaceholder,
+
+  fieldValue,
   onChange,
+  error,
+
   full,
 }) {
   return (
@@ -15,15 +19,18 @@ function InputField({
       </label>
 
       <input
+        className={error ? "form-input error" : "form-input"}
         id={fieldId}
-        className="form-input"
         name={fieldId}
+
         type={fieldType}
+        inputMode={inputMode}
         placeholder={fieldPlaceholder}
+
         value={fieldValue}
         onChange={onChange}
-        inputMode={inputMode}
       />
+      {error && <p className="form-error">{error}</p>}
     </div>
   );
 }

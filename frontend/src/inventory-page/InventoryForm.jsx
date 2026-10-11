@@ -5,8 +5,18 @@ import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
 import { ToastContext } from "../notifications/ToastProvider";
 import { apiFetch } from "../utils/api";
+import { validation } from "../utils/validation";
 
 import "../styles/forms.css";
+
+const requiredFields = [
+  "item",
+  "suppliers_id",
+  "category",
+  "stock",
+  "bought_price",
+  "sale_price",
+];
 
 function InventoryForm({
   item,
@@ -23,6 +33,8 @@ function InventoryForm({
     sale_price: item ? (item.sale_price ?? "") : "",
     suppliers_id: item ? (item.suppliers_id ?? "") : "",
   });
+
+  const [errors, setErrors] = useState({});
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitLabel = item ? "Save changes" : "Create item";
@@ -48,12 +60,22 @@ function InventoryForm({
       ...formData,
       [name]: value,
     });
+
+    const { [name]: _removed, ...rest } = errors;
+    setErrors(rest);
   }
 
   async function handleFormSubmit(e) {
     e.preventDefault();
 
     if (isSubmitting) return;
+
+    const result = validation(requiredFields, formData);
+    if (Object.keys(result).length > 0) {
+      setErrors(result);
+      return;
+    }
+
     setIsSubmitting(true);
 
     const url = item ? `/api/inventory/${item.id}` : "/api/inventory";
@@ -88,38 +110,51 @@ function InventoryForm({
         <InputField
           label="Item name"
           fieldId="item"
+
           fieldType="text"
+          inputMode="text"
           fieldPlaceholder="Enter product name"
+
           fieldValue={formData.item}
           onChange={handleFormChange}
+          error={errors.item}
         />
 
         <SelectField
           label="Supplier"
           fieldId="suppliers_id"
+
+          placeholder="Select supplier"
+          options={supplierOptions}
+
           fieldValue={formData.suppliers_id}
           onChange={handleFormChange}
-          options={supplierOptions}
-          placeholder="Select supplier"
+          error={errors.suppliers_id}
         />
 
         <SelectField
           label="Category"
           fieldId="category"
+
+          placeholder="Select category"
+          options={[{ value: "placeholder", label: "Placeholder" }]}
+
           fieldValue={formData.category}
           onChange={handleFormChange}
-          options={[{ value: "placeholder", label: "Placeholder" }]}
-          placeholder="Select category"
+          error={errors.category}
         />
 
         <InputField
           label="Stock"
           fieldId="stock"
+
           fieldType="text"
-          fieldPlaceholder="0"
-          fieldValue={formData.stock}
           inputMode="numeric"
+          fieldPlaceholder="0"
+
+          fieldValue={formData.stock}
           onChange={handleFormChange}
+          error={errors.stock}
         />
       </FormSection>
 
@@ -128,21 +163,27 @@ function InventoryForm({
         <InputField
           label="Cost price"
           fieldId="bought_price"
+
           fieldType="text"
-          fieldPlaceholder="0.00"
-          fieldValue={formData.bought_price}
           inputMode="decimal"
+          fieldPlaceholder="0.00"
+
+          fieldValue={formData.bought_price}
           onChange={handleFormChange}
+          error={errors.bought_price}
         />
 
         <InputField
           label="Sale price"
           fieldId="sale_price"
+
           fieldType="text"
-          fieldPlaceholder="0.00"
-          fieldValue={formData.sale_price}
           inputMode="decimal"
+          fieldPlaceholder="0.00"
+
+          fieldValue={formData.sale_price}
           onChange={handleFormChange}
+          error={errors.sale_price}
         />
       </FormSection>
 

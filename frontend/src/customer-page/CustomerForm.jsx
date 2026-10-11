@@ -5,8 +5,11 @@ import InputField from "../components/InputField";
 import { ToastContext } from "../notifications/ToastProvider";
 import { apiFetch } from "../utils/api";
 import { formatPhone } from "../utils/format";
+import { validation } from "../utils/validation";
 
 import "../styles/forms.css";
+
+const requiredFields = ["full_name", "phone"];
 
 function CustomerForm({
   customer,
@@ -31,6 +34,8 @@ function CustomerForm({
     ccq: customer ? (customer.ccq ?? "") : "",
   });
 
+  const [errors, setErrors] = useState({});
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitLabel = customer ? "Save changes" : "Create customer";
@@ -47,12 +52,21 @@ function CustomerForm({
       ...formData,
       [name]: value,
     });
+
+    const { [name]: _removed, ...rest } = errors;
+    setErrors(rest);
   }
 
   async function handleFormSubmit(e) {
     e.preventDefault();
 
     if (isSubmitting) return;
+
+    const result = validation(requiredFields, formData);
+    if (Object.keys(result).length > 0) {
+      setErrors(result);
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -88,20 +102,27 @@ function CustomerForm({
         <InputField
           label="Full name"
           fieldId="full_name"
+
           fieldType="text"
+          inputMode="text"
           fieldPlaceholder="Enter full name"
+
           fieldValue={formData.full_name}
           onChange={handleFormChange}
+          error={errors.full_name}
         />
 
         <InputField
           label="Phone"
           fieldId="phone"
+
           fieldType="tel"
-          fieldPlaceholder="(514) 123-1234"
-          fieldValue={formData.phone}
           inputMode="numeric"
+          fieldPlaceholder="(514) 123-1234"
+
+          fieldValue={formData.phone}
           onChange={handleFormChange}
+          error={errors.phone}
         />
 
         <InputField

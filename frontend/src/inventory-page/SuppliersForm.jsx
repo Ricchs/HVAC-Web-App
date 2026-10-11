@@ -5,8 +5,12 @@ import InputField from "../components/InputField";
 import { ToastContext } from "../notifications/ToastProvider";
 import { apiFetch } from "../utils/api";
 import { formatPhone } from "../utils/format";
+import { validation } from "../utils/validation";
 
 import "../styles/forms.css";
+
+const requiredFields = ["company_name"];
+
 function SuppliersForm({
   supplier,
   onCancel,
@@ -19,6 +23,8 @@ function SuppliersForm({
     phone: supplier ? (supplier.phone ?? "") : "",
     email: supplier ? (supplier.email ?? "") : "",
   });
+
+  const [errors, setErrors] = useState({});
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitLabel = supplier ? "Save changes" : "Create supplier";
@@ -35,12 +41,21 @@ function SuppliersForm({
       ...formData,
       [name]: value,
     });
+    const { [name]: _removed, ...rest } = errors;
+    setErrors(rest);
   }
 
   async function handleFormSubmit(e) {
     e.preventDefault();
 
     if (isSubmitting) return;
+
+    const result = validation(requiredFields, formData);
+    if (Object.keys(result).length > 0) {
+      setErrors(result);
+      return;
+    }
+
     setIsSubmitting(true);
 
     const url = supplier ? `/api/suppliers/${supplier.id}` : "/api/suppliers";
@@ -74,10 +89,15 @@ function SuppliersForm({
         <InputField
           label="Company name"
           fieldId="company_name"
+
           fieldType="text"
+          inputMode="text"
           fieldPlaceholder="Enter company's name"
+
           fieldValue={formData.company_name}
           onChange={handleFormChange}
+          error={errors.company_name}
+
           full
         />
       </FormSection>

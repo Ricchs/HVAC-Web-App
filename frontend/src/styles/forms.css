@@ -1,13 +1,8 @@
+/* ---------- Layout ---------- */
 .form {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
 }
 
 .form-section {
@@ -26,22 +21,30 @@
   border-bottom: 0.5px solid var(--border);
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
+/* Spans both columns of .form-grid */
 .form-group.full {
   grid-column: 1 / -1;
 }
 
+/* ---------- Label ---------- */
 .form-label {
   font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary);
 }
 
+/* ---------- Inputs and selects ---------- */
 .form-input,
 .form-select {
   width: 100%;
@@ -52,25 +55,40 @@
   box-sizing: border-box;
 }
 
-.form-textarea {
+/* Grey text while the empty "Select…" option is chosen */
+.form-select:has(option[value=""]:checked) {
+  color: #9ca3af;
 }
 
+/* Focus */
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
-.form-select:has(option[value=""]:checked) {
-  color: #9ca3af;
+
+/* ---------- Validation error ---------- */
+.form-input.error,
+.form-select.error {
+  border-color: #dc2626;
 }
 
+.form-input.error:focus,
+.form-select.error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.form-error {
+  font-size: 12px;
+  color: #dc2626;
+}
+
+/* ---------- Actions ---------- */
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
-}
-
-.form-error {
 }
