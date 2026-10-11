@@ -33,6 +33,17 @@ function InventoryForm({
     const name = e.target.name;
     let value = e.target.value;
 
+    if (name === "stock") {
+      value = value.replace(/\D/g, "");
+    } else if (name === "sale_price" || name === "bought_price") {
+      value = value.replace(/[^\d.]/g, "");
+
+      const [whole, ...rest] = value.split(".");
+      if (rest.length > 0) {
+        value = whole + "." + rest.join("").slice(0, 2);
+      }
+    }
+
     setFormData({
       ...formData,
       [name]: value,
@@ -104,9 +115,10 @@ function InventoryForm({
         <InputField
           label="Stock"
           fieldId="stock"
-          fieldType="number"
+          fieldType="text"
           fieldPlaceholder="0"
           fieldValue={formData.stock}
+          inputMode="numeric"
           onChange={handleFormChange}
         />
       </FormSection>
@@ -119,6 +131,7 @@ function InventoryForm({
           fieldType="text"
           fieldPlaceholder="0.00"
           fieldValue={formData.bought_price}
+          inputMode="decimal"
           onChange={handleFormChange}
         />
 
@@ -128,6 +141,7 @@ function InventoryForm({
           fieldType="text"
           fieldPlaceholder="0.00"
           fieldValue={formData.sale_price}
+          inputMode="decimal"
           onChange={handleFormChange}
         />
       </FormSection>

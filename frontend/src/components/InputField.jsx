@@ -4,6 +4,7 @@ function InputField({
   fieldType,
   fieldPlaceholder,
   fieldValue,
+  inputMode,
   onChange,
   full,
 }) {
@@ -21,6 +22,7 @@ function InputField({
         placeholder={fieldPlaceholder}
         value={fieldValue}
         onChange={onChange}
+        inputMode={inputMode}
       />
     </div>
   );

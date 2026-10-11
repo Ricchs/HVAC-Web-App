@@ -100,6 +100,7 @@ function CustomerForm({
           fieldType="tel"
           fieldPlaceholder="(514) 123-1234"
           fieldValue={formData.phone}
+          inputMode="numeric"
           onChange={handleFormChange}
         />
 
@@ -131,6 +132,7 @@ function CustomerForm({
           fieldType="tel"
           fieldPlaceholder="(514) 123-1234"
           fieldValue={formData.business_phone}
+          inputMode="numeric"
           onChange={handleFormChange}
         />
 
