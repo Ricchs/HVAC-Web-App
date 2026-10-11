@@ -1,25 +1,38 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
 
 @router.get("/suppliers")
-def get_suppliers(db: Session = Depends(get_db)):
-    suppliers = db.query(models.Suppliers).all()
+def get_suppliers(search: str | None = None, db: Session = Depends(get_db)):
+    suppliers = db.query(models.Suppliers)
+
+    if search:
+        similarity = func.greatest(
+            func.similarity(search, models.Suppliers.company_name),
+            func.similarity(search, models.Suppliers.contact_name),
+            func.similarity(search, models.Suppliers.phone),
+            func.similarity(search, models.Suppliers.email),
+        )
+        suppliers = suppliers.filter(similarity > 0.2).order_by(similarity.desc())
+
+    suppliers = suppliers.all()
+
     return suppliers
 
 
 @router.get("/suppliers/{supplier_id}")
 def get_one_supplier(supplier_id: int, db: Session = Depends(get_db)):
-    existing_supplier = (
-        db.query(models.Suppliers).filter(models.Suppliers.id == supplier_id).first()
-    )
-    return existing_supplier
+    supplier = get_or_404(db, models.Suppliers, supplier_id, "Supplier")
+
+    return supplier
 
 
 @router.post("/suppliers")
@@ -41,17 +54,10 @@ def create_suppliers(supplier: SupplierCreate, db: Session = Depends(get_db)):
 def update_suppliers(
     suppliers_id: int, supplier: SupplierUpdate, db: Session = Depends(get_db)
 ):
-    existing_supplier = (
-        db.query(models.Suppliers).filter(models.Suppliers.id == suppliers_id).first()
-    )
-    existing_supplier.company_name = (
-        supplier.company_name or existing_supplier.company_name
-    )
-    existing_supplier.contact_name = (
-        supplier.contact_name or existing_supplier.contact_name
-    )
-    existing_supplier.phone = supplier.phone or existing_supplier.phone
-    existing_supplier.email = supplier.email or existing_supplier.email
+    existing_supplier = get_or_404(db, models.Suppliers, suppliers_id, "Supplier")
+
+    for field, value in supplier.model_dump(exclude_unset=True).items():
+        setattr(existing_supplier, field, value)
 
     db.commit()
     db.refresh(existing_supplier)
@@ -60,9 +66,8 @@ def update_suppliers(
 
 @router.delete("/suppliers/{supplier_id}")
 def delete_suppliers(supplier_id: int, db: Session = Depends(get_db)):
-    existing_supplier = (
-        db.query(models.Suppliers).filter(models.Suppliers.id == supplier_id).first()
-    )
+    existing_supplier = get_or_404(db, models.Suppliers, supplier_id, "Supplier")
+
     items = (
         db.query(models.Inventory)
         .filter(models.Inventory.suppliers_id == supplier_id)

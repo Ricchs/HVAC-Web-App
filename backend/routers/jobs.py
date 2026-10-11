@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -25,38 +26,25 @@ def get_jobs(search: str | None = None, db: Session = Depends(get_db)):
             models.Technicians, models.Technicians.id == models.Jobs.technicians_id
         )
         .outerjoin(models.JobsItems, models.JobsItems.jobs_id == models.Jobs.id)
-        .group_by(
-            models.Jobs.id, models.Customers.id, models.Technicians.full_name
-        )
+        .group_by(models.Jobs.id, models.Customers.id, models.Technicians.full_name)
     )
 
     if search:
         similarity = func.greatest(
             func.word_similarity(search, models.Customers.full_name),
             func.word_similarity(
-                search,
-                func.coalesce(models.Technicians.full_name, '')
-                ),
-            func.word_similarity(
-                search,
-                func.coalesce(models.Customers.street_address, '')
+                search, func.coalesce(models.Technicians.full_name, "")
             ),
             func.word_similarity(
-                search,
-                func.coalesce(models.Customers.city, '')
+                search, func.coalesce(models.Customers.street_address, "")
             ),
+            func.word_similarity(search, func.coalesce(models.Customers.city, "")),
             func.word_similarity(
-                search,
-                func.coalesce(models.Customers.postal_code, '')
-            )
+                search, func.coalesce(models.Customers.postal_code, "")
+            ),
         )
 
-        result = (
-            result
-            .filter(similarity > 0.2)
-            .order_by(similarity.desc())
-            .all()
-        )
+        result = result.filter(similarity > 0.2).order_by(similarity.desc()).all()
     else:
         result = result.all()
 
@@ -88,6 +76,9 @@ def get_one_job(jobs_id: int, db: Session = Depends(get_db)):
         )
         .first()
     )
+
+    if result is None:
+        raise HTTPException(status_code=404, detail="Job not found")
 
     job, customer, technician = result
 
@@ -131,6 +122,8 @@ def get_job_invoice(jobs_id: int, db: Session = Depends(get_db)):
         )
         .first()
     )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Job not found")
 
     job, customer, technician = result
 
@@ -197,17 +190,10 @@ def create_jobs(job: JobCreate, db: Session = Depends(get_db)):
 
 @router.put("/jobs/{jobs_id}")
 def update_jobs(jobs_id: int, job: JobUpdate, db: Session = Depends(get_db)):
-    existing_job = db.query(models.Jobs).filter(models.Jobs.id == jobs_id).first()
-    existing_job.customers_id = job.customers_id or existing_job.customers_id
-    existing_job.job_type = job.job_type or existing_job.job_type
-    existing_job.technicians_id = job.technicians_id or existing_job.technicians_id
-    existing_job.labour_cost = job.labour_cost or existing_job.labour_cost
-    existing_job.scheduled_date = job.scheduled_date or existing_job.scheduled_date
-    existing_job.completion_status = (
-        job.completion_status or existing_job.completion_status
-    )
-    existing_job.payment_method = job.payment_method or existing_job.payment_method
-    existing_job.payment_status = job.payment_status or existing_job.payment_status
+    existing_job = get_or_404(db, models.Jobs, jobs_id, "Job")
+
+    for field, value in job.model_dump(exclude_unset=True).items():
+        setattr(existing_job, field, value)
 
     db.commit()
     db.refresh(existing_job)

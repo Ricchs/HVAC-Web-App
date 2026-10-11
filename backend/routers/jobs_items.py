@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -22,6 +23,9 @@ def get_one_job_item(jobs_id: int, db: Session = Depends(get_db)):
         .outerjoin(models.Inventory, models.Inventory.id == models.JobsItems.items_id)
         .all()
     )
+
+    if result is None:
+            raise HTTPException(status_code=404, detail="Job not found")
 
     return [
         {
@@ -53,13 +57,10 @@ def create_jobs_items(job_item: JobItemCreate, db: Session = Depends(get_db)):
 def update_jobs_items(
     jobs_items_id: int, job_item: JobItemUpdate, db: Session = Depends(get_db)
 ):
-    existing_job_item = (
-        db.query(models.JobsItems).filter(models.JobsItems.id == jobs_items_id).first()
-    )
-    existing_job_item.jobs_id = job_item.jobs_id or existing_job_item.jobs_id
-    existing_job_item.items_id = job_item.items_id or existing_job_item.items_id
-    existing_job_item.quantity = job_item.quantity or existing_job_item.quantity
-    existing_job_item.price = job_item.price or existing_job_item.price
+    existing_job_item = get_or_404(db, models.JobsItems, jobs_items_id, "Job item")
+
+    for field, value in job_item.model_dump(exclude_unset=True).items():
+            setattr(existing_job_item, field, value)
 
     db.commit()
     db.refresh(existing_job_item)

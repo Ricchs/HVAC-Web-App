@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 BUSINESS_TZ = ZoneInfo("America/Toronto")
 
@@ -83,9 +84,8 @@ def get_shifts(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/shifts/{shifts_id}")
 def get_one_shift(shifts_id: int, db: Session = Depends(get_db)):
-    existing_shift = (
-        db.query(models.Shifts).filter(models.Shifts.id == shifts_id).first()
-    )
+    existing_shift = get_or_404(db, models.Shifts, shifts_id, "Shift")
+
     return existing_shift
 
 
@@ -115,11 +115,8 @@ def get_technician_shift(technicians_id: int, db: Session = Depends(get_db)):
 
 @router.post("/shifts")
 def create_shifts(shift: ShiftCreate, db: Session = Depends(get_db)):
-    technician = (
-        db.query(models.Technicians)
-        .filter(models.Technicians.id == shift.technicians_id)
-        .first()
-    )
+    technician = get_or_404(db, models.Technicians, shift.technicians_id, "Technician")
+
     start = datetime.combine(datetime.now(BUSINESS_TZ), shift.start_time)
     end = datetime.combine(datetime.now(BUSINESS_TZ), shift.end_time)
     duration = end - start
@@ -143,21 +140,19 @@ def create_shifts(shift: ShiftCreate, db: Session = Depends(get_db)):
 
 @router.put("/shifts/{shifts_id}")
 def update_shifts(shifts_id: int, shift: ShiftUpdate, db: Session = Depends(get_db)):
-    existing_shift = (
-        db.query(models.Shifts).filter(models.Shifts.id == shifts_id).first()
-    )
+    existing_shift = get_or_404(db, models.Shifts, shifts_id, "Shift")
+
     if existing_shift.payroll_id:
         raise HTTPException(
             status_code=400,
             detail="Cannot modify a shift that's already been paid. Remove it from the payment first.",
         )
 
-    existing_shift.technicians_id = (
-        shift.technicians_id or existing_shift.technicians_id
-    )
-    existing_shift.start_time = shift.start_time or existing_shift.start_time
-    existing_shift.end_time = shift.end_time or existing_shift.end_time
-    existing_shift.date = shift.date or existing_shift.date
+    for field, value in shift.model_dump(exclude_unset=True).items():
+        if value is None:
+            continue
+
+        setattr(existing_shift, field, value)
 
     today = datetime.now(BUSINESS_TZ).date()
     start = datetime.combine(today, existing_shift.start_time)
@@ -166,7 +161,7 @@ def update_shifts(shifts_id: int, shift: ShiftUpdate, db: Session = Depends(get_
     if hours < 0:
         hours += 24
 
-    technician = db.query(models.Technicians).filter(models.Technicians.id == existing_shift.technicians_id).first()
+    technician = get_or_404(db, models.Technicians, existing_shift.technicians_id, "Technician")
     existing_shift.total_pay = float(technician.hourly_rate) * hours
 
     db.commit()
@@ -176,9 +171,7 @@ def update_shifts(shifts_id: int, shift: ShiftUpdate, db: Session = Depends(get_
 
 @router.delete("/shifts/{shifts_id}")
 def delete_shifts(shifts_id: int, db: Session = Depends(get_db)):
-    existing_shift = (
-        db.query(models.Shifts).filter(models.Shifts.id == shifts_id).first()
-    )
+    existing_shift = get_or_404(db, models.Shifts, shifts_id, "Shift")
 
     if existing_shift.payroll_id:
         raise HTTPException(

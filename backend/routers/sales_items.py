@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -16,11 +17,8 @@ def get_sales_items(db: Session = Depends(get_db)):
 
 @router.get("/sales_items/{sales_items_id}")
 def get_one_sales_item(sales_items_id: int, db: Session = Depends(get_db)):
-    existing_sale_item = (
-        db.query(models.SalesItems)
-        .filter(models.SalesItems.id == sales_items_id)
-        .first()
-    )
+    existing_sale_item = get_or_404(db, models.SalesItems, sales_items_id, "Sale item")
+
     return existing_sale_item
 
 
@@ -43,15 +41,10 @@ def create_sales_items(sale_item: SaleItemCreate, db: Session = Depends(get_db))
 def update_sales_items(
     sales_items_id: int, sale_item: SaleItemUpdate, db: Session = Depends(get_db)
 ):
-    existing_sale_item = (
-        db.query(models.SalesItems)
-        .filter(models.SalesItems.id == sales_items_id)
-        .first()
-    )
-    existing_sale_item.sales_id = sale_item.sales_id or existing_sale_item.sales_id
-    existing_sale_item.items_id = sale_item.items_id or existing_sale_item.items_id
-    existing_sale_item.quantity = sale_item.quantity or existing_sale_item.quantity
-    existing_sale_item.price = sale_item.price or existing_sale_item.price
+    existing_sale_item = get_or_404(db, models.SalesItems, sales_items_id, "Sale item")
+
+    for field, value in sale_item.model_dump(exclude_unset=True).items():
+        setattr(existing_sale_item, field, value)
 
     db.commit()
     db.refresh(existing_sale_item)
@@ -60,7 +53,6 @@ def update_sales_items(
 
 @router.delete("/sales_items/{sales_id}")
 def delete_sales_items(sales_id: int, db: Session = Depends(get_db)):
-
     db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).delete()
 
     db.commit()

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -46,11 +47,7 @@ def get_payroll(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/payroll/{payroll_id}")
 def get_one_payroll(payroll_id: int, db: Session = Depends(get_db)):
-    existing_payroll = (
-        db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
-    )
-    if existing_payroll is None:
-        raise HTTPException(404, "Payroll not found")
+    existing_payroll = get_or_404(db, models.Payroll, payroll_id, "Payroll")
 
     all_shifts = (
         db.query(models.Shifts)
@@ -108,9 +105,8 @@ def create_payroll(payroll: PayrollCreate, db: Session = Depends(get_db)):
 def update_payroll(
     payroll_id: int, payroll: PayrollUpdate, db: Session = Depends(get_db)
 ):
-    existing_payroll = (
-        db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
-    )
+    existing_payroll = get_or_404(db, models.Payroll, payroll_id, "Payroll")
+
     existing_payroll.amount = (
         payroll.amount if payroll.amount is not None else existing_payroll.amount
     )
@@ -144,9 +140,7 @@ def update_payroll(
 
 @router.delete("/payroll/{payroll_id}")
 def delete_payroll(payroll_id: int, db: Session = Depends(get_db)):
-    existing_payroll = (
-        db.query(models.Payroll).filter(models.Payroll.id == payroll_id).first()
-    )
+    existing_payroll = get_or_404(db, models.Payroll, payroll_id, "Payroll")
 
     db.query(models.Shifts).filter(models.Shifts.payroll_id == payroll_id).update(
         {models.Shifts.payroll_id: None}

@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import distinct, func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -28,20 +30,13 @@ def get_customers(search: str | None = None, db: Session = Depends(get_db)):
         similarity = func.greatest(
             func.word_similarity(search, models.Customers.full_name),
             func.word_similarity(search, models.Customers.phone),
-            func.word_similarity(search, func.coalesce(models.Customers.email, '')),
-            func.word_similarity(search, func.coalesce(models.Customers.company_name, ''))
+            func.word_similarity(search, func.coalesce(models.Customers.email, "")),
+            func.word_similarity(
+                search, func.coalesce(models.Customers.company_name, "")
+            ),
         )
 
-        result = (
-            result
-            .filter(
-                similarity > 0.2
-            )
-            .order_by(
-                similarity.desc()
-            )
-            .all()
-        )
+        result = result.filter(similarity > 0.2).order_by(similarity.desc()).all()
     else:
         result = result.all()
 
@@ -69,9 +64,7 @@ def get_customers(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/customers/{customer_id}")
 def get_one_customer(customer_id: int, db: Session = Depends(get_db)):
-    customer = (
-        db.query(models.Customers).filter(models.Customers.id == customer_id).first()
-    )
+    customer = get_or_404(db, models.Customers, customer_id, "Customer")
 
     sales = (
         db.query(
@@ -156,9 +149,7 @@ def create_customers(customer: CustomerCreate, db: Session = Depends(get_db)):
 def update_customers(
     customer_id: int, customer: CustomerUpdate, db: Session = Depends(get_db)
 ):
-    existing_customer = (
-        db.query(models.Customers).filter(models.Customers.id == customer_id).first()
-    )
+    existing_customer = get_or_404(db, models.Customers, customer_id, "Customer")
 
     for field, value in customer.model_dump(exclude_unset=True).items():
         setattr(existing_customer, field, value)
@@ -172,9 +163,8 @@ def update_customers(
 def update_customer_notes(
     customer_id: int, customer: CustomerUpdate, db: Session = Depends(get_db)
 ):
-    existing_customer = (
-        db.query(models.Customers).filter(models.Customers.id == customer_id).first()
-    )
+    existing_customer = get_or_404(db, models.Customers, customer_id, "Customer")
+
     if customer.notes is not None:
         existing_customer.notes = customer.notes
 
@@ -185,9 +175,41 @@ def update_customer_notes(
 
 @router.delete("/customers/{customer_id}")
 def delete_customers(customer_id: int, db: Session = Depends(get_db)):
-    existing_customer = (
-        db.query(models.Customers).filter(models.Customers.id == customer_id).first()
-    )
-    db.delete(existing_customer)
-    db.commit()
+    existing_customer = get_or_404(db, models.Customers, customer_id, "Customer")
+
+    name = existing_customer.full_name
+
+    try:
+        db.delete(existing_customer)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        sales_count = (
+            db.query(func.count())
+            .filter(models.Sales.customers_id == existing_customer.id)
+            .scalar()
+        )
+
+        job_count = (
+            db.query(func.count())
+            .filter(models.Jobs.customers_id == customer_id.id)
+            .scalar()
+        )
+
+        parts = []
+        if sales_count:
+            parts.append(f"{sales_count} sales")
+        if job_count:
+            parts.append(f"{job_count} jobs")
+
+        detail = (
+            f"{name} has {', '.join(parts)}."
+            if parts
+            else f"{name} is still referenced by other records."
+        )
+
+        raise HTTPException(
+            status_code=400,
+            detail=detail,
+        )
     return {"message": "Customer deleted successfully"}

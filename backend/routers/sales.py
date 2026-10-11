@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -29,30 +30,19 @@ def get_sales(search: str | None = None, db: Session = Depends(get_db)):
     )
 
     if search:
-        customer_similarity = func.word_similarity(
-            search, models.Customers.full_name
-        )
+        customer_similarity = func.word_similarity(search, models.Customers.full_name)
 
         item_match = (
             db.query(models.SalesItems.id)
             .join(models.Inventory, models.Inventory.id == models.SalesItems.items_id)
             .filter(
                 models.SalesItems.sales_id == models.Sales.id,
-                func.word_similarity(search, models.Inventory.item) > 0.2
+                func.word_similarity(search, models.Inventory.item) > 0.2,
             )
             .exists()
         )
 
-        results = (
-            results
-            .filter(
-                or_(
-                    customer_similarity > 0.2,
-                    item_match
-                )
-            )
-            .all()
-        )
+        results = results.filter(or_(customer_similarity > 0.2, item_match)).all()
     else:
         results = results.all()
 
@@ -72,15 +62,13 @@ def get_sales(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/sales/{sales_id}")
 def get_one_sale(sales_id: int, db: Session = Depends(get_db)):
-    items = (
+    sales_info = get_or_404(db, models.Sales, sales_id, "Sale")
+
+    sale_items = (
         db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).all()
     )
-    sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    customer = (
-        db.query(models.Customers)
-        .filter(models.Customers.id == sales_info.customers_id)
-        .first()
-    )
+
+    customer = get_or_404(db, models.Customers, sales_info.customers_id, "Customer")
 
     return {
         "id": sales_info.id,
@@ -90,24 +78,22 @@ def get_one_sale(sales_id: int, db: Session = Depends(get_db)):
         "payment_status": sales_info.payment_status,
         "items": [
             {"items_id": i.items_id, "quantity": i.quantity, "price": i.price}
-            for i in items
+            for i in sale_items
         ],
     }
 
 
 @router.get("/sales/{sales_id}/items")
 def get_sale_invoice(sales_id: int, db: Session = Depends(get_db)):
+    sales_info = get_or_404(db, models.Sales, sales_id, "Sale")
+
+    customer = get_or_404(db, models.Customers, sales_info.customers_id, "Customer")
+
     items_info = (
         db.query(models.SalesItems, models.Inventory.item)
         .join(models.Inventory, models.SalesItems.items_id == models.Inventory.id)
         .filter(models.SalesItems.sales_id == sales_id)
         .all()
-    )
-    sales_info = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    customer = (
-        db.query(models.Customers)
-        .filter(models.Customers.id == sales_info.customers_id)
-        .first()
     )
 
     items_info = [
@@ -151,11 +137,10 @@ def create_sales(sale: SaleCreate, db: Session = Depends(get_db)):
 
 @router.put("/sales/{sales_id}")
 def update_sales(sales_id: int, sale: SaleUpdate, db: Session = Depends(get_db)):
-    existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
-    existing_sale.customers_id = sale.customers_id or existing_sale.customers_id
-    existing_sale.date = sale.date or existing_sale.date
-    existing_sale.payment_method = sale.payment_method or existing_sale.payment_method
-    existing_sale.payment_status = sale.payment_status or existing_sale.payment_status
+    existing_sale = get_or_404(db, models.Sales, sales_id, "Sale")
+
+    for field, value in sale.model_dump(exclude_unset=True).items():
+        setattr(existing_sale, field, value)
 
     db.commit()
     db.refresh(existing_sale)
@@ -166,7 +151,8 @@ def update_sales(sales_id: int, sale: SaleUpdate, db: Session = Depends(get_db))
 def delete_sales(sales_id: int, db: Session = Depends(get_db)):
     db.query(models.SalesItems).filter(models.SalesItems.sales_id == sales_id).delete()
 
-    existing_sale = db.query(models.Sales).filter(models.Sales.id == sales_id).first()
+    existing_sale = get_or_404(db, models.Sales, sales_id, "Sale")
+
     db.delete(existing_sale)
 
     db.commit()

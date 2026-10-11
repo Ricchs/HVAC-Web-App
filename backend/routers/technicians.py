@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
@@ -27,22 +29,11 @@ def get_technicians(search: str | None = None, db: Session = Depends(get_db)):
     if search:
         similarity = func.greatest(
             func.word_similarity(search, models.Technicians.full_name),
-            func.word_similarity(
-                search,
-                func.coalesce(models.Technicians.phone, '')
-            ),
-            func.word_similarity(
-                search,
-                func.coalesce(models.Technicians.email, '')
-            ),
+            func.word_similarity(search, func.coalesce(models.Technicians.phone, "")),
+            func.word_similarity(search, func.coalesce(models.Technicians.email, "")),
         )
 
-        result = (
-            result
-            .filter(similarity > 0.2)
-            .order_by(similarity.desc())
-            .all()
-        )
+        result = result.filter(similarity > 0.2).order_by(similarity.desc()).all()
     else:
         result = result.all()
 
@@ -62,14 +53,7 @@ def get_technicians(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/technicians/{technicians_id}")
 def get_one_technician(technicians_id: int, db: Session = Depends(get_db)):
-    technician = (
-        db.query(models.Technicians)
-        .filter(models.Technicians.id == technicians_id)
-        .first()
-    )
-
-    if not technician:
-        raise HTTPException(status_code=404, detail="Technician not found")
+    technician = get_or_404(db, models.Technicians, technicians_id, "Technician")
 
     last_paid_date = (
         db.query(func.max(models.Payroll.pay_date))
@@ -129,19 +113,12 @@ def create_technicians(technician: TechnicianCreate, db: Session = Depends(get_d
 def update_technicians(
     technicians_id: int, technician: TechnicianUpdate, db: Session = Depends(get_db)
 ):
-    existing_technician = (
-        db.query(models.Technicians)
-        .filter(models.Technicians.id == technicians_id)
-        .first()
+    existing_technician = get_or_404(
+        db, models.Technicians, technicians_id, "Technician"
     )
-    existing_technician.full_name = (
-        technician.full_name or existing_technician.full_name
-    )
-    existing_technician.phone = technician.phone or existing_technician.phone
-    existing_technician.email = technician.email or existing_technician.email
-    existing_technician.hourly_rate = (
-        technician.hourly_rate or existing_technician.hourly_rate
-    )
+
+    for field, value in technician.model_dump(exclude_unset=True).items():
+        setattr(existing_technician, field, value)
 
     db.commit()
     db.refresh(existing_technician)
@@ -150,12 +127,50 @@ def update_technicians(
 
 @router.delete("/technicians/{technicians_id}")
 def delete_technicians(technicians_id: int, db: Session = Depends(get_db)):
-    existing_technician = (
-        db.query(models.Technicians)
-        .filter(models.Technicians.id == technicians_id)
-        .first()
+    existing_technician = get_or_404(
+        db, models.Technicians, technicians_id, "Technician"
     )
 
-    db.delete(existing_technician)
-    db.commit()
+    name = existing_technician.full_name
+    try:
+        db.delete(existing_technician)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        shifts_count = (
+            db.query(func.count())
+            .filter(models.Shifts.technicians_id == technicians_id)
+            .scalar()
+        )
+
+        payroll_count = (
+            db.query(func.count())
+            .filter(models.Payroll.technicians_id == technicians_id)
+            .scalar()
+        )
+
+        jobs_count = (
+            db.query(func.count())
+            .filter(models.Jobs.technicians_id == technicians_id)
+            .scalar()
+        )
+
+        parts = []
+        if shifts_count:
+            parts.append(f"{shifts_count} shifts")
+        if payroll_count:
+            parts.append(f"{payroll_count} payments")
+        if jobs_count:
+            parts.append(f"{jobs_count} jobs")
+
+        detail = (
+            f"{name} has {', '.join(parts)}."
+            if parts
+            else f"{name} is still referenced by other records."
+        )
+
+        raise HTTPException(
+            status_code=400,
+            detail=detail,
+        )
     return {"message": "Technician deleted successfully"}

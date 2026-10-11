@@ -6,28 +6,51 @@ from sqlalchemy.orm import Session
 from backend import models
 from backend.database import get_db
 from backend.schemas import *
+from backend.utils import get_or_404
 
 router = APIRouter()
 
 
+@router.get("/inventory/summary")
+def get_summary(db: Session = Depends(get_db)):
+    metrics = db.query(
+        # Total asset
+        func.coalesce(
+            func.sum(models.Inventory.stock * models.Inventory.bought_price), 0
+        ),
+        # No stock
+        func.count().filter(models.Inventory.stock == 0),
+        # Low stock
+        func.count().filter(models.Inventory.stock > 0, models.Inventory.stock <= 15),
+        # In stock
+        func.count().filter(models.Inventory.stock > 15),
+        # Total items
+        func.count()
+    ).one()
+
+    total_asset, no_stock, low_stock, in_stock, total = metrics
+
+    return {
+        "total_asset": float(total_asset),
+        "no_stock": no_stock,
+        "low_stock": low_stock,
+        "in_stock": in_stock,
+        "total": total
+    }
+
+
 @router.get("/inventory")
 def get_inventory(search: str | None = None, db: Session = Depends(get_db)):
-    inventory = (
-        db.query(models.Inventory, models.Suppliers.company_name)
-        .join(models.Suppliers, models.Inventory.suppliers_id == models.Suppliers.id)
+    inventory = db.query(models.Inventory, models.Suppliers.company_name).join(
+        models.Suppliers, models.Inventory.suppliers_id == models.Suppliers.id
     )
 
     if search:
         similarity = func.word_similarity(search, models.Inventory.item)
 
-        inventory = (
-            inventory
-            .filter(similarity > 0.2)
-            .order_by(similarity.desc())
-            .all()
-        )
+        inventory = inventory.filter(similarity > 0.2).order_by(similarity.desc()).all()
     else:
-        inventory = inventory.all()
+        inventory = inventory.order_by(models.Inventory.item.asc()).all()
 
     return [
         {
@@ -44,7 +67,7 @@ def get_inventory(search: str | None = None, db: Session = Depends(get_db)):
             "bought_price": inv.bought_price,
             "sale_price": inv.sale_price,
             "supplier": company_name,
-            "suppliers_id": inv.suppliers_id
+            "suppliers_id": inv.suppliers_id,
         }
         for inv, company_name in inventory
     ]
@@ -52,14 +75,8 @@ def get_inventory(search: str | None = None, db: Session = Depends(get_db)):
 
 @router.get("/inventory/{items_id}")
 def get_one_item(items_id: int, db: Session = Depends(get_db)):
-    existing_inventory = (
-        db.query(models.Inventory, models.Suppliers)
-        .join(models.Suppliers, models.Inventory.suppliers_id == models.Suppliers.id)
-        .filter(models.Inventory.id == items_id)
-        .first()
-    )
-
-    inv, supplier = existing_inventory
+    inv = get_or_404(db, models.Inventory, items_id, "Item")
+    supplier = get_or_404(db, models.Suppliers, inv.suppliers_id, "Supplier")
 
     return {
         "id": inv.id,
@@ -69,8 +86,9 @@ def get_one_item(items_id: int, db: Session = Depends(get_db)):
         "bought_price": inv.bought_price,
         "sale_price": inv.sale_price,
         "supplier": supplier.company_name,
-        "suppliers_id": supplier.id
+        "suppliers_id": supplier.id,
     }
+
 
 @router.post("/inventory")
 def create_inventory(inventory: InventoryCreate, db: Session = Depends(get_db)):
@@ -93,9 +111,7 @@ def create_inventory(inventory: InventoryCreate, db: Session = Depends(get_db)):
 def update_inventory(
     items_id: int, inventory: InventoryUpdate, db: Session = Depends(get_db)
 ):
-    existing_inventory = (
-        db.query(models.Inventory).filter(models.Inventory.id == items_id).first()
-    )
+    existing_inventory = get_or_404(db, models.Inventory, items_id, "Item")
 
     for field, value in inventory.model_dump(exclude_unset=True).items():
         setattr(existing_inventory, field, value)
@@ -107,10 +123,10 @@ def update_inventory(
 
 @router.delete("/inventory/{items_id}")
 def delete_inventory(items_id: int, db: Session = Depends(get_db)):
-    existing_inventory = (
-        db.query(models.Inventory).filter(models.Inventory.id == items_id).first()
-    )
+    existing_inventory = get_or_404(db, models.Inventory, items_id, "Item")
+
     name = existing_inventory.item
+
     try:
         db.delete(existing_inventory)
         db.commit()
