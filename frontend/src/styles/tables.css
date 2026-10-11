@@ -55,6 +55,71 @@
   font-weight: 600;
   color: #111827;
 }
+.cell-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* badge */
+.badge {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+.badge.green {
+  color: #166534;
+  background-color: #dcfce7;
+}
+.badge.yellow {
+  color: #92400e;
+  background-color: #fef3c7;
+}
+.badge.red {
+  color: #991b1b;
+  background-color: #fee2e2;
+}
+
+/* Tabs */
+.table-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.table-tab {
+  padding: 10px 16px;
+  border-bottom: 2px solid transparent;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+.table-tab:not(.active):hover {
+  border-radius: 6px;
+  color: #1d4ed8;
+  background-color: #eff6ff;
+}
+.table-tab.active:hover {
+  border-radius: 6px 6px 0 0;
+  color: #1d4ed8;
+  background-color: #eff6ff;
+}
+.table-tab.active {
+  color: #6366f1;
+  border-bottom: 2px solid #6366f1;
+}
+.table-tab:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+  border-radius: 6px;
+}
 
 /* Search and filters */
 .table-toolbar {
@@ -79,11 +144,34 @@
 .table-search::placeholder {
   color: #9ca3af;
 }
+.table-search:hover {
+  border-color: #8c8ef2;
+}
 .table-search:focus {
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 .table-filter {
+  padding: 12px 36px 12px 16px;
+
+  background-color: #ffffff;
+  border-radius: 8px;
+
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.table-filter:hover {
+  border-color: #8c8ef2;
+}
+.table-filter:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
 /* Empty search */

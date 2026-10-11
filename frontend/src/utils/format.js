@@ -15,3 +15,36 @@ export function formatPhone(phone) {
 
   return digits;
 }
+
+/** Formats an amount as a dollar string with two decimals.
+ *
+ * @param {number|string|null} phone - The phone number to format.
+ * @returns {string} The formatted amount (e.g. "$4,000.00"), or "-" if the value is missing or not a number.
+ */
+export function formatMoney(amount) {
+  if (amount === null || amount === undefined || amount === "") return "-";
+
+  const value = Number(amount);
+  if (!Number.isFinite(value)) return "-";
+
+  const formattedAmount = value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  return "$" + formattedAmount;
+}
+
+/** Formats a count as a percentage of a total, with one decimal
+ *
+ * @param {number} amount - The count.
+ * @param {number} totalAmount - The whole the count is part of.
+ * @returns {string} e.g. "7.7%", or "0.0%" if totalAmount is missing or 0.
+ */
+export function formatPercentage(amount, totalAmount) {
+  if (!totalAmount) return "0.0%";
+
+  const count = amount ?? 0;
+
+  return `${((count / totalAmount) * 100).toFixed(1)}%`;
+}

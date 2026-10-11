@@ -15,8 +15,8 @@ function App() {
 
         <main className="main-content">
           <Routes>
-            <Route path="/app/customers" element={<CustomersPage />} />
-            <Route path="/app/inventory" element={<InventoryPage />} />
+            <Route path="/customers" element={<CustomersPage />} />
+            <Route path="/inventory" element={<InventoryPage />} />
           </Routes>
         </main>
 

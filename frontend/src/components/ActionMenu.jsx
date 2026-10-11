@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { EllipsisVertical } from "lucide-react";
-import "../styles/ActionMenu.css";
+import "../styles/actionmenu.css";
 
 function ActionMenu({ actions }) {
   const [isOpen, setIsOpen] = useState(false);

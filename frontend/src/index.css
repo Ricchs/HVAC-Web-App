@@ -24,7 +24,7 @@ button {
   cursor: pointer;
 }
 
-input:where(input:not([type="checkbox"]):not([type="radio"]), select) {
+:where(input:not([type="checkbox"]):not([type="radio"]), select) {
   appearance: none;
   border: 1px solid #c7c7c7;
   background-color: #ffffff;
